@@ -141,7 +141,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
                             className={`cursor-pointer relative rounded-xl p-4 border-2 transition-all duration-200 ${isSelected ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(127,86,217,0.3)]' : 'border-neutral-800 bg-[#111317] hover:border-neutral-600'}`}
                         >
                             {isOneTime && (
-                                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                <span className="absolute whitespace-nowrap -top-2.5 left-1/2 -translate-x-1/2 bg-green-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
                                     {t('membershipPricing.card.bestValue')}
                                 </span>
                             )}
