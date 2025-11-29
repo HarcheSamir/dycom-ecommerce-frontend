@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo, type FC } from 'react';
 import { useCreateSubscription, useUserProfile, useGetSubscriptionPlans, useCancelSubscription, useReactivateSubscription, type SubscriptionPlan } from '../hooks/useUser';
 import { loadStripe } from '@stripe/stripe-js';
-import { 
-    Elements, 
-    useStripe, 
-    useElements, 
-    CardNumberElement, 
-    CardExpiryElement, 
-    CardCvcElement 
+import {
+    Elements,
+    useStripe,
+    useElements,
+    CardNumberElement,
+    CardExpiryElement,
+    CardCvcElement
 } from '@stripe/react-stripe-js';
 import toast from 'react-hot-toast';
 import { FaCheckCircle, FaExclamationTriangle, FaLock, FaCreditCard, FaCrown, FaShieldAlt, FaCalendarAlt } from 'react-icons/fa';
@@ -77,7 +77,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
     }, [plans]);
 
     const selectedPlan = plans?.find(p => p.id === selectedPlanId);
-    
+
     // Currency Handling
     const locale = i18n.language === 'fr' ? 'fr-FR' : (i18n.language === 'ar' ? 'ar-AE' : 'en-US');
 
@@ -89,7 +89,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             setError(t('membershipBilling.form.errors.plansUnavailable'));
             return;
         }
-        
+
         // --- CHANGED: Get CardNumberElement instead of CardElement ---
         const cardElement = elements.getElement(CardNumberElement);
         if (!cardElement) return;
@@ -133,9 +133,9 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
                     const isOneTime = installments === 1;
                     const isSelected = plan.id === selectedPlanId;
                     const price = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(plan.price / 100);
-                    
+
                     return (
-                        <div 
+                        <div
                             key={plan.id}
                             onClick={() => setSelectedPlanId(plan.id)}
                             className={`cursor-pointer relative rounded-xl p-4 border-2 transition-all duration-200 ${isSelected ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(127,86,217,0.3)]' : 'border-neutral-800 bg-[#111317] hover:border-neutral-600'}`}
@@ -172,8 +172,8 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
                     {parseInt(selectedPlan.metadata?.installments || '1') > 1 && (
                         <div className="text-right border-t sm:border-t-0 sm:border-l border-neutral-800 pt-4 sm:pt-0 sm:pl-6 w-full sm:w-auto">
                             <p className="text-xs text-neutral-500">
-                                {t('membershipPricing.card.totalCost', { 
-                                    amount: new Intl.NumberFormat(locale, { style: 'currency', currency: selectedPlan.currency }).format((selectedPlan.price * parseInt(selectedPlan.metadata?.installments || '1')) / 100) 
+                                {t('membershipPricing.card.totalCost', {
+                                    amount: new Intl.NumberFormat(locale, { style: 'currency', currency: selectedPlan.currency }).format((selectedPlan.price * parseInt(selectedPlan.metadata?.installments || '1')) / 100)
                                 })}
                             </p>
                         </div>
@@ -186,7 +186,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
                 <div className="flex items-center gap-2 text-white font-medium text-sm mb-2">
                     <FaCreditCard className="text-primary" /> {t('membershipBilling.form.secure')}
                 </div>
-                
+
                 {/* Card Number */}
                 <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-3">
                     <CardNumberElement options={elementOptions} />
@@ -204,11 +204,11 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             </div>
 
             {error && <div className="p-3 rounded-lg bg-red-900/20 border border-red-500/50 text-red-200 text-sm text-center">{error}</div>}
-            
+
             <button type="submit" disabled={isPending || !stripe || !selectedPlanId} className="w-full py-4 rounded-xl text-lg font-bold bg-white text-black hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-wait shadow-[0_0_20px_rgba(255,255,255,0.1)]">
                 {isPending ? t('membershipBilling.form.processing') : (parseInt(selectedPlan?.metadata?.installments || '1') > 1 ? t('membershipBilling.form.payInstallment') : t('membershipBilling.form.payFull'))}
             </button>
-            
+
             <div className="flex items-center justify-center gap-2 text-xs text-neutral-500">
                 <FaShieldAlt />
                 <span>SSL Encrypted Transaction</span>
@@ -222,7 +222,7 @@ const ManageSubscription: FC = () => {
     const { t, i18n } = useTranslation();
     const { data: user } = useUserProfile();
     const navigate = useNavigate();
-    
+
     // Redirect to settings for detailed management
     const goToSettings = () => navigate('/dashboard/settings');
 
@@ -262,9 +262,12 @@ const ManageSubscription: FC = () => {
                     <span className="text-white font-bold">{paid} / {required}</span>
                 </div>
                 <div className="w-full bg-neutral-800 rounded-full h-3 mb-6 overflow-hidden">
-                    <div className="bg-primary h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(127,86,217,0.5)]" style={{ width: `${progressPercent}%` }}></div>
+                    <div
+                        className="h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(127,86,217,0.5)] bg-gradient-to-r from-[#7F56D9] via-[#4C6EF5] to-[#0EA5E9]"
+                        style={{ width: `${progressPercent}%` }}
+                    ></div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 text-sm text-neutral-400 justify-center">
                     <FaCheckCircle className="text-green-400" />
                     <span>{t('membershipBilling.manage.statusActive')}</span>
@@ -307,7 +310,7 @@ export const BillingPage: FC = () => {
 
     const renderContent = () => {
         if (isLoadingProfile) return <div className="text-center py-20"><div className="w-12 h-12 border-4 border-dashed rounded-full animate-spin border-primary mx-auto"></div></div>;
-        
+
         if (isVerifying) {
             return (
                 <div className="text-center py-12">
@@ -326,10 +329,10 @@ export const BillingPage: FC = () => {
 
         return (
             <Elements stripe={stripePromise}>
-                <PaymentForm 
-                    onPaymentSuccess={handlePaymentSuccess} 
-                    plans={plans} 
-                    isLoadingPlans={isLoadingPlans} 
+                <PaymentForm
+                    onPaymentSuccess={handlePaymentSuccess}
+                    plans={plans}
+                    isLoadingPlans={isLoadingPlans}
                 />
             </Elements>
         );
