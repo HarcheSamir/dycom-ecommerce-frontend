@@ -1,0 +1,786 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "category": "الفئة",
+    "viewAll": "عرض الكل"
+  },
+  "timeAgo": {
+    "years": "قبل {{count}} سنة (سنوات)",
+    "months": "قبل {{count}} شهر (أشهر)",
+    "days": "قبل {{count}} يوم (أيام)",
+    "hours": "قبل {{count}} ساعة (ساعات)",
+    "minutes": "قبل {{count}} دقيقة (دقائق)",
+    "seconds": "قبل بضع ثوان"
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "products": "المنتجات الرائجة",
+      "training": "التدريب بالفيديو",
+      "suppliers": "الموردون",
+      "influencers": "المؤثرون",
+      "billing": "الفواتير",
+      "settings": "الإعدادات",
+      "affiliate": "التسويق بالعمولة",
+      "admin": "الإدارة"
+    },
+    "logout": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "loadingWorkspace": "جاري تحميل مساحة العمل الخاصة بك...",
+    "welcome": "أهلاً بك، {{name}}!",
+    "welcomeSubtitle": "إليك نظرة عامة على نشاطك اليوم",
+    "stats": {
+      "trendingProducts": "المنتجات الرائجة",
+      "availableCourses": "الدورات المتاحة",
+      "activeInfluencers": "المؤثرون النشطون",
+      "countriesCovered": "الدول المغطاة"
+    },
+    "productsOfTheDay": "منتجات اليوم",
+    "viewAllProducts": "عرض كل المنتجات",
+    "salesPerMonth": "{{count}} مبيعات",
+    "soldBy": "تم البيع بواسطة",
+    "from": "من",
+    "promo": {
+      "discoverTrends": {
+        "title": "اكتشف الصيحات",
+        "description": "استكشف أحدث المنتجات الرائجة مع بيانات Google Trends في الوقت الفعلي.",
+        "link": "شاهد الصيحات"
+      },
+      "startTraining": {
+        "title": "ابدأ التدريب",
+        "description": "احصل على دورات فيديو متخصصة لتعزيز مهاراتك.",
+        "link": "شاهد الدورات"
+      },
+      "findInfluencers": {
+        "title": "ابحث عن المؤثرين",
+        "description": "تواصل مع المؤثرين لتعزيز حملاتك التسويقية.",
+        "link": "تصفح المؤثرين"
+      }
+    },
+    "recentActivity": "النشاط الأخير",
+    "loadingActivity": "جاري تحميل النشاط...",
+    "noRecentActivity": "لا يوجد نشاط حديث لعرضه."
+  },
+  "comingSoon": {
+    "subtitle": "هذا القسم قيد الإنشاء.",
+    "title": "قريباً",
+    "description": "نحن نعمل بجد لتقديم هذه الميزة لك!"
+  },
+  "toasts": {
+    "linkCopiedSuccess": "تم نسخ الرابط إلى الحافظة!",
+    "linkCopiedError": "تعذر نسخ الرابط."
+  },
+  "settingsPage": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
+    "profile": {
+      "title": "معلومات الملف الشخصي",
+      "changeAvatar": "تغيير الصورة الرمزية",
+      "avatarHint": "JPG، PNG أو GIF. الحجم الأقصى: 2 ميجابايت.",
+      "lastNameLabel": "الاسم الأخير",
+      "firstNameLabel": "الاسم الأول",
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "savingButton": "جاري الحفظ...",
+      "saveButton": "حفظ التغييرات"
+    },
+    "affiliate": {
+      "title": "برنامج التسويق بالعمولة",
+      "subtitle": "شارك رابطك لكسب عمولات على كل مشترك جديد.",
+      "premiumAccess": "كن عضوًا مميزًا للوصول إلى برنامج التسويق بالعمولة.",
+      "loading": "جاري تحميل بيانات التسويق بالعمولة...",
+      "stats": {
+        "totalReferrals": "الأشخاص المحالون",
+        "activeSubscribers": "المشتركون النشطون",
+        "pendingCommissions": "العمولات المعلقة"
+      },
+      "yourLink": "رابط التسويق بالعمولة الخاص بك",
+      "copy": "نسخ",
+      "how": " شارك هذا الرابط مع أصدقائك. كل تسجيل يمنحك ",
+      "how2": " خصماً على دورة تدريبية ",
+      "referrals": {
+        "title": "الأشخاص الذين قمت بإحالتهم",
+        "table": {
+          "name": "الاسم",
+          "signupDate": "تاريخ التسجيل",
+          "paymentStatus": "حالة الدفع"
+        },
+        "status": {
+          "paid": "مدفوع",
+          "pending": "معلق"
+        },
+        "noReferrals": "لم تقم بإحالة أي شخص بعد."
+      }
+    },
+    "billing": {
+      "title": "الفواتير والاشتراك",
+      "loading": "جاري تحميل معلومات الاشتراك...",
+      "noActiveSubscription": "ليس لديك اشتراك نشط.",
+      "statusActive": "نشط",
+      "perMonth": "/شهر",
+      "perYear": "/سنة",
+      "cancellationNotice": "تم إلغاء الاشتراك في: {{date}}",
+      "nextBillingDate": "تاريخ الفاتورة التالي: {{date}}",
+      "cancelConfirm": "هل أنت متأكد أنك تريد إلغاء اشتراكك؟ سيظل وصولك نشطًا حتى نهاية فترة الفوترة الحالية.",
+      "reactivatingButton": "جاري إعادة التفعيل...",
+      "reactivateButton": "إعادة تفعيل اشتراكي",
+      "cancellingButton": "جاري الإلغاء...",
+      "cancelButton": "إلغاء الاشتراك"
+    }
+  },
+  "adminPage": {
+    "title": "لوحة تحكم الإدارة",
+    "subtitle": "نظرة عامة كاملة على منصتك",
+    "toasts": {
+      "courseCreateSuccess": "تم إنشاء الدورة بنجاح!",
+      "courseCreateError": "خطأ في إنشاء الدورة.",
+      "imageUploadError": "فشل في تحميل الصورة.",
+      "cloudinaryError": "فشل في التحميل إلى Cloudinary",
+      "titleAndImageRequired": "العنوان وصورة الغلاف مطلوبان.",
+      "sectionAdded": "تمت إضافة القسم!",
+      "videoAdded": "تمت إضافة الفيديو!",
+      "genericError": "خطأ.",
+      "dndError": "نقل مقاطع الفيديو بين الأقسام لم يتم تنفيذه بعد.",
+      "invalidSettings": "الرجاء إدخال أرقام صالحة. يجب أن تكون العمولة بين 1 و 100."
+    },
+    "confirm": {
+      "deleteCourse": "هل تريد حذف هذه الدورة؟",
+      "deleteSection": "هل تريد حذف هذا القسم؟",
+      "deleteVideo": "هل تريد حذف هذا الفيديو؟"
+    },
+    "stats": {
+      "activeSubscribers": "المشتركون النشطون",
+      "totalUsers": "إجمالي المستخدمين المسجلين",
+      "monthlyRevenue": "الإيرادات الشهرية",
+      "publishedVideos": "مقاطع الفيديو المنشورة",
+      "availableCourses": "الدورات المتاحة",
+      "activeInfluencers": "المؤثرون النشطون",
+      "trendingProducts": "المنتجات الرائجة"
+    },
+    "courseManagement": {
+      "title": "إدارة الدورات",
+      "subtitle": "قم بتحميل وإدارة مقاطع الفيديو التدريبية الخاصة بك",
+      "uploadButton": "تحميل دورة",
+      "noDescription": "لا يوجد وصف",
+      "lessons": "{{count}} دروس",
+      "table": {
+        "course": "الدورة",
+        "lessons": "الدروس",
+        "priceEur": "السعر (EUR)",
+        "priceUsd": "السعر (USD)",
+        "actions": "الإجراءات"
+      },
+      "price": {
+        "notApplicable": "غير متاح",
+        "included": "مشمول"
+      }
+    },
+    "monthlyRevenue": {
+      "title": "الإيرادات الشهرية",
+      "subtitle": "اتجاه الإيرادات خلال الـ 6 أشهر الماضية",
+      "noData": "لا توجد بيانات إيرادات."
+    },
+    "platformSettings": {
+      "title": "إعدادات المنصة",
+      "loading": "جاري تحميل الإعدادات...",
+      "payoutThresholdLabel": "الحد الأدنى للدفع للمسوقين بالعمولة (€)",
+      "payoutThresholdPlaceholder": "على سبيل المثال، 100",
+      "commissionRateLabel": "معدل عمولة التسويق بالعمولة (%)",
+      "commissionRatePlaceholder": "على سبيل المثال، 20",
+      "saving": "جاري الحفظ...",
+      "save": "حفظ الإعدادات"
+    },
+    "topAffiliates": {
+      "title": "أفضل المسوقين بالعمولة  ",
+      "viewAll": "عرض الكل",
+      "subscribers": "{{count}} مشتركين",
+      "tier": {
+        "platinum": "بلاتيني",
+        "gold": "ذهبي",
+        "silver": "فضي"
+      },
+      "noAffiliates": "لم يتم العثور على مسوقين بالعمولة."
+    },
+    "payouts": {
+      "title": "طلبات الدفع",
+      "subtitle": "إدارة طلبات العمولة من المسوقين بالعمولة.",
+      "tabs": {
+        "pending": "معلق",
+        "approved": "موافق عليه",
+        "paid": "مدفوع",
+        "rejected": "مرفوض"
+      },
+      "requestedOn": "تم الطلب في {{date}}",
+      "approve": "موافقة",
+      "reject": "رفض",
+      "markAsPaid": "تحديد كمدفوع",
+      "noRequests": "لا توجد طلبات دفع في هذه الفئة."
+    },
+    "courseDetail": {
+      "back": "رجوع",
+      "addSection": "قسم",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "noSections": "لا توجد أقسام.",
+      "noVideos": "لا توجد مقاطع فيديو."
+    },
+    "modals": {
+      "common": {
+        "title": "العنوان",
+        "description": "الوصف",
+        "priceEur": "السعر (يورو €)",
+        "priceUsd": "السعر (دولار أمريكي $)",
+        "vimeoId": "معرف Vimeo",
+        "cancel": "إلغاء",
+        "add": "إضافة",
+        "create": "إنشاء",
+        "update": "تحديث",
+        "saving": "جاري الحفظ...",
+        "loading": "جاري التحميل...",
+        "duration": "المدة (بالدقائق)"
+      },
+      "uploadCourse": {
+        "title": "تحميل دورة",
+        "priceHint": "اتركه فارغًا إذا كان مدرجًا في الاشتراك",
+        "pricePlaceholder": "على سبيل المثال، 49.99",
+        "coverImage": "صورة الغلاف",
+        "uploadFile": "تحميل ملف",
+        "dragAndDrop": "أو قم بالسحب والإفلات",
+        "imageHint": "PNG، JPG، GIF حتى 2 ميجابايت"
+      },
+      "addSection": {
+        "title": "إضافة قسم"
+      },
+      "addVideo": {
+        "title": "إضافة فيديو"
+      },
+      "editSection": {
+        "title": "تعديل القسم"
+      },
+      "editVideo": {
+        "title": "تعديل الفيديو"
+      },
+      "editCourse": {
+        "title": "تعديل الدورة",
+        "priceHint": "اتركه فارغًا إذا كان مجانيًا/مدرجًا"
+      }
+    },
+    "common": {
+      "loading": "جاري التحميل...",
+      "error": "خطأ."
+    }
+  },
+  "billingPage": {
+    "features": [
+      "الوصول إلى جميع المنتجات الرابحة",
+      "تحليل غير محدود للسوق",
+      "دورات تدريبية كاملة بالفيديو",
+      "قاعدة بيانات المؤثرين",
+      "دعم ذو أولوية"
+    ],
+    "form": {
+      "title": "اختر خطتك",
+      "subtitle": "افتح الوصول الكامل إلى المنصة.",
+      "monthly": "شهريًا",
+      "yearly": "سنويًا",
+      "save": "(وفر {{percent}}%)",
+      "perMonth": "/شهر",
+      "perYear": "/سنة",
+      "subscribeButton": "اشترك الآن",
+      "processingButton": "جاري المعالجة...",
+      "errors": {
+        "plansUnavailable": "خطط الاشتراك غير متوفرة في هذا الوقت.",
+        "cardValidation": "خطأ في التحقق من البطاقة.",
+        "3dsFailed": "فشل التحقق من 3D Secure.",
+        "generic": "حدث خطأ.",
+        "loadPlansFailed": "تعذر تحميل خطط الاشتراك."
+      }
+    },
+    "manage": {
+      "title": "إدارة الاشتراك",
+      "subtitle": "لديك وصول كامل إلى المنصة.",
+      "cancelConfirm": "هل أنت متأكد أنك تريد إلغاء اشتراكك؟ سيظل وصولك نشطًا حتى نهاية فترة الفوترة الحالية.",
+      "cancellationNotice": "سيتم إلغاء اشتراكك في {{date}}.",
+      "nextBillingDate": "الفاتورة التالية في {{date}}.",
+      "reactivatingButton": "جاري إعادة التفعيل...",
+      "reactivateButton": "إعادة تفعيل اشتراكي",
+      "cancellingButton": "جاري الإلغاء...",
+      "cancelButton": "إلغاء الاشتراك"
+    },
+    "verifying": {
+      "title": "جاري التحقق من الدفع...",
+      "subtitle": "يرجى الانتظار، نحن نؤكد اشتراكك."
+    }
+  },
+  "affiliatePage": {
+    "loading": "جاري تحميل مساحة التسويق بالعمولة الخاصة بك...",
+    "error": {
+      "title": "الوصول إلى برنامج التسويق بالعمولة",
+      "generic": "حدث خطأ."
+    },
+    "title": "مساحة التسويق بالعمولة",
+    "subtitle": "تتبع إحالاتك وعمولاتك.",
+    "stats": {
+      "signups": "التسجيلات عبر رابطك",
+      "activeSubscribers": "المشتركون النشطون",
+      "pendingCommissions": "العمولات المعلقة",
+      "commissionRate": "معدل العمولة"
+    },
+    "referralLink": {
+      "title": "رابط الإحالة الخاص بك",
+      "copyButton": "نسخ"
+    },
+    "payout": {
+      "title": "العمولات غير المدفوعة",
+      "minimumRequired": "الحد الأدنى المطلوب للدفع هو {{amount}} يورو.",
+      "requestingButton": "جاري إرسال الطلب...",
+      "requestButton": "طلب دفعة"
+    },
+    "history": {
+      "title": "سجل طلبات الدفع",
+      "table": {
+        "requestDate": "تاريخ الطلب",
+        "amount": "المبلغ",
+        "status": "الحالة",
+        "processingDate": "تاريخ المعالجة"
+      },
+      "noRequests": "لا توجد طلبات دفع في الوقت الحالي."
+    },
+    "referrals": {
+      "title": "الأشخاص الذين قمت بإحالتهم",
+      "table": {
+        "name": "الاسم",
+        "signupDate": "تاريخ التسجيل",
+        "paymentStatus": "حالة الدفع",
+        "commission": "العمولة"
+      },
+      "status": {
+        "paid": "مدفوع",
+        "pending": "معلق"
+      },
+      "noReferrals": "لم تقم بإحالة أي شخص بعد."
+    },
+    "status": {
+      "pending": "معلق",
+      "approved": "موافق عليه",
+      "paid": "مدفوع",
+      "rejected": "مرفوض"
+    }
+  },
+  "loginPage": {
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "title": "تسجيل الدخول",
+    "subtitle": "الوصول إلى مساحة العمل الخاصة بك",
+    "emailLabel": "عنوان البريد الإلكتروني",
+    "emailPlaceholder": "lorem@ipsum.com",
+    "passwordLabel": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "passwordPlaceholder": "Lorem ipsum",
+    "invalidCredentials": "بيانات الاعتماد غير صالحة. يرجى المحاولة مرة أخرى.",
+    "loggingInButton": "جاري تسجيل الدخول...",
+    "loginButton": "تسجيل الدخول",
+    "noAccount": "ليس لديك حساب بعد؟",
+    "createAccount": "إنشاء حساب"
+  },
+  "signupPage": {
+    "toasts": {
+      "affiliateSuccess": "تم تطبيق رابط التسويق بالعمولة!",
+      "signupSuccess": "تم إنشاء الحساب بنجاح! جاري إعادة التوجيه...",
+      "signupError": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
+      "unknownError": "حدث خطأ غير معروف."
+    },
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "title": "أنشئ حسابك",
+    "firstNameLabel": "الاسم الأول",
+    "lastNameLabel": "الاسم الأخير",
+    "emailLabel": "عنوان البريد الإلكتروني",
+    "emailPlaceholder": "lorem@ipsum.com",
+    "passwordLabel": "كلمة المرور",
+    "passwordPlaceholder": "Lorem ipsum",
+    "creatingButton": "جاري إنشاء الحساب...",
+    "createButton": "إنشاء حساب",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "loginLink": "تسجيل الدخول",
+    "featuresHeader": "كل شيء لنجاح التجارة الإلكترونية",
+    "features": [
+      {
+        "title": "بحث عن المنتجات الرائجة",
+        "description": "الوصول إلى أكثر من 15,000 منتج مع بيانات Google Trends في الوقت الفعلي"
+      },
+      {
+        "title": "تدريب كامل بالفيديو",
+        "description": "دورات شاملة تغطي مواضيع متنوعة"
+      },
+      {
+        "title": "مركز المؤثرين",
+        "description": "تواصل مع أكثر من مليون مؤثر لزيادة مبيعاتك"
+      },
+      {
+        "title": "دعم متميز",
+        "description": "مساعدة 7/7 ومجتمع من رواد الأعمال لدعمك"
+      }
+    ]
+  },
+  "landingPage": {
+    "header": {
+      "features": "الميزات",
+      "pricing": "الأسعار",
+      "about": "حول",
+      "login": "تسجيل الدخول",
+      "getStarted": "ابدأ مجانًا",
+      "dashboard": "لوحة التحكم"
+    },
+    "hero": {
+      "tagline": "منصة شاملة لبائعي التجارة الإلكترونية",
+      "title1": "الأداة التي تكشف",
+      "title2": "أسرار التجارة الإلكترونية!",
+      "subtitle": "تابع الاتجاهات في الوقت الفعلي، تدرب، وتواصل مع الخبراء.",
+      "ctaPrimary": "ابدأ مجانًا",
+      "ctaSecondary": "شاهد العرض التوضيحي",
+      "trial": "تجربة مجانية لمدة 14 يومًا",
+      "noCard": "لا حاجة لبطاقة ائتمان",
+      "cancelAnytime": "إلغاء في أي وقت"
+    },
+    "features": {
+      "sectionTitle": "الميزات",
+      "title": "كل ما تحتاجه",
+      "subtitle": "منصة كاملة للنجاح في التجارة الإلكترونية",
+      "list": [
+        {
+          "title": "بحث عن المنتجات",
+          "description": "اكتشف المنتجات الرائجة مع Google Trends، وابحث عن موردين موثوقين، وحلل الأسواق حسب البلد.",
+          "points": [
+            "بيانات Google Trends في الوقت الفعلي",
+            "قاعدة بيانات موردين موثقين",
+            "تحليل حسب البلد والمنطقة"
+          ],
+          "buttonText": "استكشف الاتجاهات"
+        },
+        {
+          "title": "تدريب بالفيديو",
+          "description": "تعلم من خلال تدريب شامل يقدمه محترفون.",
+          "points": [
+            "دورات كاملة",
+            "دروس تعليمية خطوة بخطوة",
+            "موارد قابلة للتنزيل"
+          ],
+          "buttonText": "ابدأ التدريب"
+        },
+        {
+          "title": "مركز المؤثرين",
+          "description": "ابحث عن أفضل المؤثرين وتواصل معهم للترويج لمنتجاتك وزيادة مبيعاتك.",
+          "points": [
+            "قاعدة بيانات المؤثرين",
+            "إحصاءات مفصلة",
+            "اتصال مباشر وتتبع"
+          ],
+          "buttonText": "ابحث عن المؤثرين"
+        }
+      ]
+    },
+    "stats": {
+      "list": [
+        {
+          "text": "منتجات رائجة"
+        },
+        {
+          "text": "ساعات من التدريب"
+        },
+        {
+          "text": "مؤثرون نشطون"
+        },
+        {
+          "text": "دول مغطاة"
+        }
+      ]
+    },
+    "cta": {
+      "title": "هل أنت مستعد لتنمية أعمالك؟",
+      "subtitle": "انضم إلى آلاف رواد الأعمال الذين يستخدمون أدواتنا للعثور على منتجات رابحة وتنمية متاجرهم عبر الإنترنت.",
+      "ctaPrimary": "ابدأ مجانًا",
+      "ctaSecondary": "شاهد العرض التوضيحي"
+    },
+    "footer": {
+      "tagline": "المنصة الشاملة لنجاح التجارة الإلكترونية.",
+      "productTitle": "المنتج",
+      "productLink1": "بحث عن المنتجات",
+      "productLink2": "تدريب بالفيديو",
+      "productLink3": "مركز المؤثرين",
+      "companyTitle": "الشركة",
+      "companyLink1": "حول",
+      "companyLink2": "الأسعار",
+      "companyLink3": "اتصل بنا",
+      "legalTitle": "قانوني",
+      "legalLink1": "الخصوصية",
+      "legalLink2": "شروط الاستخدام",
+      "copyright": "© 2025. جميع الحقوق محفوظة."
+    }
+  },
+  "pricingPage": {
+    "header": {
+      "features": "الميزات",
+      "pricing": "الأسعار",
+      "about": "حول",
+      "login": "تسجيل الدخول",
+      "getStarted": "ابدأ مجانًا",
+      "dashboard": "لوحة التحكم"
+    },
+    "hero": {
+      "tagline": "أسعار بسيطة وشفافة",
+      "title": "خطة واحدة. وصول كامل.",
+      "subtitle": "ركز على نموك. نحن نهتم بتزويدك بأفضل الأدوات، دون تعقيدات."
+    },
+    "plan": {
+      "monthly": "شهري",
+      "yearly": "سنوي",
+      "save": "وفر {{percent}}%",
+      "perMonth": "شهر",
+      "perYear": "سنة",
+      "manageSubscription": "إدارة الاشتراك",
+      "startFreeTrial": "ابدأ التجربة المجانية",
+      "loadingError": "تعذر تحميل خطط الاشتراك.",
+      "features": [
+        "الوصول إلى جميع المنتجات الرابحة",
+        "تحليل غير محدود للسوق",
+        "تدريب كامل بالفيديو",
+        "قاعدة بيانات المؤثرين",
+        "دعم ذو أولوية",
+        "الوصول إلى المجتمع الخاص"
+      ]
+    },
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "questions": [
+        {
+          "q": "هل هذا اشتراك؟",
+          "a": "نعم، هو اشتراك شهري أو سنوي يمنحك وصولاً كاملاً إلى جميع ميزاتنا. يمكنك الإلغاء في أي وقت."
+        },
+        {
+          "q": "ما هي طرق الدفع التي تقبلونها؟",
+          "a": "نحن نقبل جميع بطاقات الائتمان الرئيسية (Visa، Mastercard، American Express) من خلال شريك الدفع الآمن لدينا، Stripe."
+        },
+        {
+          "q": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
+          "a": "نعم، يمكنك إلغاء اشتراكك في أي وقت من منطقة الفواتير الخاصة بك. ستحتفظ بالوصول حتى نهاية فترة الفوترة الحالية."
+        },
+        {
+          "q": "هل سأحصل على التحديثات المستقبلية؟",
+          "a": "بالتأكيد. يتضمن اشتراكك جميع التحديثات المستقبلية والميزات الجديدة والوصول إلى جميع الدورات والمنتجات الجديدة المضافة إلى المنصة."
+        }
+      ]
+    },
+    "cta": {
+      "title": "هل أنت مستعد لتنمية أعمالك؟",
+      "subtitle": "انضم إلى آلاف رواد الأعمال الذين يستخدمون أدواتنا للعثور على منتجات رابحة وتنمية متاجرهم عبر الإنترنت.",
+      "ctaPrimary": "ابدأ مجانًا"
+    },
+    "footer": {
+      "tagline": "المنصة الشاملة لنجاح التجارة الإلكترونية.",
+      "productTitle": "المنتج",
+      "productLink1": "بحث عن المنتجات",
+      "productLink2": "تدريب بالفيديو",
+      "productLink3": "مركز المؤثرين",
+      "companyTitle": "الشركة",
+      "companyLink1": "حول",
+      "companyLink2": "الأسعار",
+      "companyLink3": "اتصل بنا",
+      "legalTitle": "قانوني",
+      "legalLink1": "الخصوصية",
+      "legalLink2": "شروط الاستخدام",
+      "copyright": "© 2025. جميع الحقوق محفوظة."
+    }
+  },
+  "trainingPage": {
+    "toasts": {
+      "purchaseSuccess": "تم الشراء بنجاح! لديك الآن حق الوصول إلى الدورة.",
+      "verificationTimeout": "استغرق التحقق وقتًا طويلاً. يرجى تحديث الصفحة.",
+      "paymentFailed": "فشل الدفع.",
+      "paymentStartFailed": "تعذر بدء الدفع."
+    },
+    "title": "التدريب بالفيديو",
+    "subtitle": "أتقن مهارات جديدة مع دورات الفيديو المتخصصة لدينا",
+    "allCourses": "كل الدورات",
+    "loading": "جاري التحميل...",
+    "error": "خطأ.",
+    "courseCard": {
+      "free": "مشمول",
+      "lessons_one": "درس واحد",
+      "lessons_other": "{{count}} دروس",
+      "byAuthor": "بواسطة {{author}}",
+      "priceLabel": "السعر",
+      "buyButton": "اشتر الآن"
+    },
+    "detailView": {
+      "backButton": "العودة إلى جميع الدورات",
+      "loading": "جاري تحميل الدورة...",
+      "error": "خطأ في تحميل الدورة."
+    },
+    "courseDisplay": {
+      "noVideos": "لا تحتوي هذه الدورة على أي مقاطع فيديو حتى الآن.",
+      "lessonsTitle": "الدروس ({{completed}} / {{total}})",
+      "minutes": "دقائق"
+    },
+    "purchaseModal": {
+      "title": "تأكيد عملية الشراء",
+      "buying": "شراء:",
+      "processingButton": "جاري المعالجة...",
+      "payButton": "ادفع {{price}}",
+      "applyDiscount": "استخدام الخصم الخاص بي ({{count}} متاح)",
+      "originalPrice": "السعر الأصلي",
+      "discount": "الخصم٪",
+      "total": "الإجمالي",
+      "verifying": {
+        "title": "جاري التحقق من الدفع...",
+        "subtitle": "يرجى الانتظار بينما نؤكد وصولك."
+      }
+    }
+  },
+  "winningProductsPage": {
+    "title": "بحث عن المنتجات الرائجة",
+    "subtitle": "اكتشف المنتجات الرائجة مع بيانات Google Trends في الوقت الفعلي",
+    "filters": {
+      "keywordPlaceholder": "ابحث بالكلمة الرئيسية...",
+      "minPricePlaceholder": "الحد الأدنى",
+      "maxPricePlaceholder": "الحد الأقصى",
+      "sortBy": {
+        "sales": "الترتيب حسب المبيعات",
+        "newest": "الترتيب حسب الأحدث",
+        "priceAsc": "السعر تصاعديًا",
+        "priceDesc": "السعر تنازليًا"
+      },
+      "refreshingButton": "جاري التحميل...",
+      "refreshButton": "تحديث",
+      "loadingCategories": "جاري تحميل الفئات..."
+    },
+    "stats": {
+      "totalProducts": "إجمالي المنتجات",
+      "categories": "الفئات"
+    },
+    "loadingProducts": "جاري تحميل المنتجات...",
+    "errorLoadingProducts": "خطأ في تحميل المنتجات.",
+    "pagination": {
+      "previous": "السابق",
+      "pageInfo": "صفحة {{page}} من {{totalPages}}",
+      "next": "التالي"
+    },
+    "productCard": {
+      "category": "الفئة",
+      "price": "السعر",
+      "sales": "المبيعات"
+    }
+  },
+  "suppliersPage": {
+    "title": "مركز الموردين",
+    "subtitle": "اكتشف منتجات من أفضل الموردين تقييمًا",
+    "viewSupplierStore": "عرض المتجر",
+    "productsInCatalog": "المنتجات في الكتالوج",
+    "highestSales": "أعلى المبيعات",
+    "filters": {
+      "keywordPlaceholder": "البحث باسم المورد...",
+      "sortBy": {
+        "products": "الترتيب حسب عدد المنتجات",
+        "rating": "الترتيب حسب التقييم",
+        "sales": "الترتيب حسب أعلى المبيعات"
+      }
+    },
+    "exportButton": "استخراج كملف CSV"
+  },
+  "searchPage": {
+    "viewProfile": "عرض الملف الشخصي"
+  },
+  "creatorProfile": {
+    "backToSearch": "العودة للبحث",
+    "visitTikTok": "زيارة ملف تيك توك",
+    "followers": "المتابعين",
+    "totalLikes": "إجمالي الإعجابات",
+    "totalPosts": "إجمالي المنشورات",
+    "locationAndDetails": "الموقع والتفاصيل",
+    "country": "البلد",
+    "niche": "التخصص",
+    "general": "عام",
+    "socialChannels": "قنوات التواصل الاجتماعي",
+    "instagram": "انستغرام",
+    "instagramNotLinked": "انستغرام غير مرتبط",
+    "youtube": "يوتيوب",
+    "youtubeNotLinked": "يوتيوب غير مرتبط",
+    "emailCopied": "تم نسخ البريد الإلكتروني!",
+    "notFound": "لم يتم العثور على المنشئ أو حدث خطأ."
+  },
+  "membershipPricing": {
+    "header": {
+      "getStarted": "ابدأ الآن",
+      "dashboard": "لوحة التحكم"
+    },
+    "hero": {
+      "tagline": "استثمار لمرة واحدة",
+      "title": "كن خبيراً في التجارة الإلكترونية",
+      "subtitle": "اختر المرونة. ادفع مرة واحدة للحصول على أفضل سعر، أو قسم استثمارك."
+    },
+    "card": {
+      "oneTime": "دفع لمرة واحدة",
+      "installments": "{{count}} أقساط شهرية",
+      "lifetime": "وصول مدى الحياة",
+      "bestValue": "أفضل قيمة",
+      "perMonth": "/شهر",
+      "totalCost": "الإجمالي: {{amount}}",
+      "startNow": "ابدأ الآن"
+    },
+    "faq": {
+      "title": "أسئلة شائعة"
+    }
+  },
+  "membershipBilling": {
+    "form": {
+      "title": "استثمر في مستقبلك",
+      "subtitle": "اختر خيار الدفع الذي يناسبك. الوصول متطابق في جميع الحالات.",
+      "payFull": "ادفع المبلغ بالكامل",
+      "payInstallment": "ادفع القسط الأول",
+      "processing": "جاري المعالجة...",
+      "secure": "دفع آمن عبر Stripe",
+      "errors": {
+        "plansUnavailable": "خطط الاشتراك غير متاحة حالياً.",
+        "cardValidation": "خطأ في التحقق من البطاقة.",
+        "3dsFailed": "فشل التحقق الآمن (3D Secure).",
+        "generic": "حدث خطأ ما."
+      }
+    },
+    "manage": {
+      "title": "إدارة الوصول",
+      "subtitle": "تتبع تقدم مدفوعاتك.",
+      "lifetimeTitle": "أنت تمتلك وصولاً مدى الحياة!",
+      "lifetimeDesc": "تهانينا! لقد دفعت تكلفة تدريبك بالكامل. لن يتم خصم أي مبالغ أخرى.",
+      "fullyPaidBadge": "الحساب مدفوع بالكامل",
+      "progressTitle": "تقدم الأقساط",
+      "started": "بدأ",
+      "remaining": "باقي {{count}} مدفوعات",
+      "statusActive": "عضوية نشطة",
+      "nextPayment": "الخصم القادم في {{date}}",
+      "cancellationNotice": "الإلغاء مجدول في {{date}}",
+      "reactivateButton": "استئناف الدفع",
+      "reactivating": "جاري التفعيل...",
+      "cancelButton": "إيقاف الدفعات",
+      "cancelling": "جاري الإلغاء...",
+      "warning": "تحذير: الإلغاء قبل اكتمال الدفعات سيؤدي إلى فقدان الوصول فور انتهاء الفترة الحالية ولن تحصل على وصول مدى الحياة."
+    },
+    "verifying": {
+      "title": "جاري التحقق...",
+      "subtitle": "يرجى الانتظار بينما نؤكد وصولك."
+    }
+  },
+  "adminMembership": {
+    "title": "التسعير العالمي",
+    "subtitle": "حدد الأسعار لجميع العملات. يتولى النظام إنشاء منتجات Stripe تلقائيًا.",
+    "saveButton": "حفظ الأسعار",
+    "saving": "جاري المزامنة...",
+    "loading": "جاري تحميل الأسعار...",
+    "table": {
+      "planType": "نوع الخطة",
+      "lifetime": "وصول مدى الحياة",
+      "lifetimeSub": "دفعة واحدة",
+      "split2": "تقسيط على شهرين",
+      "split2Sub": "2 أقساط شهرية",
+      "split3": "تقسيط على 3 أشهر",
+      "split3Sub": "3 أقساط شهرية"
+    }
+  }
+}

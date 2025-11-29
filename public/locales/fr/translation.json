@@ -1,0 +1,786 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "category": "Catégorie",
+    "viewAll": "Voir tout"
+  },
+  "timeAgo": {
+    "years": "Il y a {{count}} an(s)",
+    "months": "Il y a {{count}} mois",
+    "days": "Il y a {{count}} jour(s)",
+    "hours": "Il y a {{count}} heure(s)",
+    "minutes": "Il y a {{count}} minute(s)",
+    "seconds": "Il y a quelques secondes"
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "products": "Produits tendance",
+      "training": "Formation vidéo",
+      "suppliers": "Fournisseurs",
+      "influencers": "Influenceurs",
+      "billing": "Facturation",
+      "settings": "Paramètres",
+      "affiliate": "Affiliation",
+      "admin": "Admin"
+    },
+    "logout": "Déconnexion"
+  },
+  "dashboard": {
+    "loadingWorkspace": "Chargement de votre espace de travail...",
+    "welcome": "Bienvenue, {{name}} !",
+    "welcomeSubtitle": "Voici un aperçu de votre activité aujourd'hui",
+    "stats": {
+      "trendingProducts": "Produits tendance",
+      "availableCourses": "Cours disponibles",
+      "activeInfluencers": "Influenceurs actifs",
+      "countriesCovered": "Pays couverts"
+    },
+    "productsOfTheDay": "Produits du jour",
+    "viewAllProducts": "Voir tous les produits",
+    "salesPerMonth": "{{count}} ventes",
+    "soldBy": "Vendu par",
+    "from": "De",
+    "promo": {
+      "discoverTrends": {
+        "title": "Découvrez les tendances",
+        "description": "Explorez les derniers produits tendance avec les données Google Trends en temps réel.",
+        "link": "Voir les tendances"
+      },
+      "startTraining": {
+        "title": "Commencez la formation",
+        "description": "Cours complets couvrant divers sujets",
+        "link": "Voir les cours"
+      },
+      "findInfluencers": {
+        "title": "Trouvez des influenceurs",
+        "description": "Connectez-vous avec des influenceurs pour amplifier vos campagnes marketing.",
+        "link": "Parcourir les influenceurs"
+      }
+    },
+    "recentActivity": "Activité récente",
+    "loadingActivity": "Chargement de l'activité...",
+    "noRecentActivity": "Aucune activité récente à afficher."
+  },
+  "comingSoon": {
+    "subtitle": "Cette section est en cours de construction.",
+    "title": "Bientôt disponible",
+    "description": "Nous travaillons dur pour vous apporter cette fonctionnalité !"
+  },
+  "toasts": {
+    "linkCopiedSuccess": "Lien copié dans le presse-papiers !",
+    "linkCopiedError": "Impossible de copier le lien."
+  },
+  "settingsPage": {
+    "title": "Paramètres",
+    "subtitle": "Gérez les paramètres et les préférences de votre compte",
+    "profile": {
+      "title": "Informations du profil",
+      "changeAvatar": "Changer d'avatar",
+      "avatarHint": "JPG, PNG ou GIF. Taille max : 2Mo.",
+      "lastNameLabel": "Nom",
+      "firstNameLabel": "Prénom",
+      "emailLabel": "Adresse e-mail",
+      "savingButton": "Enregistrement...",
+      "saveButton": "Enregistrer les modifications"
+    },
+    "affiliate": {
+      "title": "Programme d'affiliation",
+      "subtitle": "Partagez votre lien pour gagner des commissions sur chaque nouvel abonné.",
+      "premiumAccess": "Devenez membre premium pour accéder au programme d'affiliation.",
+      "loading": "Chargement des données d'affiliation...",
+      "stats": {
+        "totalReferrals": "Personnes parrainées",
+        "activeSubscribers": "Abonnés actifs",
+        "pendingCommissions": "Commissions en attente"
+      },
+      "yourLink": "Votre lien d'affiliation",
+      "copy": "Copier",
+      "how": "Partagez ce lien avec vos amis. Chaque inscription vous donne une ",
+      "how2": " réduction sur un cours",
+      "referrals": {
+        "title": "Personnes que vous avez parrainées",
+        "table": {
+          "name": "Nom",
+          "signupDate": "Date d'inscription",
+          "paymentStatus": "Statut du paiement"
+        },
+        "status": {
+          "paid": "Payé",
+          "pending": "En attente"
+        },
+        "noReferrals": "Vous n'avez encore parrainé personne."
+      }
+    },
+    "billing": {
+      "title": "Facturation et abonnement",
+      "loading": "Chargement des informations sur l'abonnement...",
+      "noActiveSubscription": "Vous n'avez pas d'abonnement actif.",
+      "statusActive": "actif",
+      "perMonth": "/mois",
+      "perYear": "/an",
+      "cancellationNotice": "Abonnement annulé le : {{date}}",
+      "nextBillingDate": "Prochaine date de facturation : {{date}}",
+      "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre abonnement ? Votre accès restera actif jusqu'à la fin de votre période de facturation.",
+      "reactivatingButton": "Réactivation...",
+      "reactivateButton": "Réactiver mon abonnement",
+      "cancellingButton": "Annulation...",
+      "cancelButton": "Annuler l'abonnement"
+    }
+  },
+  "adminPage": {
+    "title": "Tableau de bord administrateur",
+    "subtitle": "Aperçu complet de votre plateforme",
+    "toasts": {
+      "courseCreateSuccess": "Cours créé avec succès !",
+      "courseCreateError": "Erreur lors de la création du cours.",
+      "imageUploadError": "Échec du téléchargement de l'image.",
+      "cloudinaryError": "Échec du téléchargement sur Cloudinary.",
+      "titleAndImageRequired": "Le titre et l'image de couverture sont requis.",
+      "sectionAdded": "Section ajoutée !",
+      "videoAdded": "Vidéo ajoutée !",
+      "genericError": "Erreur.",
+      "dndError": "Le déplacement de vidéos entre les sections n'est pas encore implémenté.",
+      "invalidSettings": "Veuillez saisir des nombres valides. La commission doit être comprise entre 1 et 100."
+    },
+    "confirm": {
+      "deleteCourse": "Supprimer ce cours ?",
+      "deleteSection": "Supprimer cette section ?",
+      "deleteVideo": "Supprimer cette vidéo ?"
+    },
+    "stats": {
+      "activeSubscribers": "Abonnés actifs",
+      "totalUsers": "Total des utilisateurs inscrits",
+      "monthlyRevenue": "Revenu mensuel",
+      "publishedVideos": "Vidéos publiées",
+      "availableCourses": "Cours disponibles",
+      "activeInfluencers": "Influenceurs actifs",
+      "trendingProducts": "Produits tendance"
+    },
+    "courseManagement": {
+      "title": "Gestion des cours",
+      "description": "Accédez à des cours vidéo d'experts pour améliorer vos compétences.",
+      "uploadButton": "Télécharger un cours",
+      "noDescription": "Pas de description",
+      "lessons": "{{count}} leçons",
+      "table": {
+        "course": "Cours",
+        "lessons": "Leçons",
+        "priceEur": "Prix (EUR)",
+        "priceUsd": "Prix (USD)",
+        "actions": "Actions"
+      },
+      "price": {
+        "notApplicable": "N/A",
+        "included": "Inclus"
+      }
+    },
+    "monthlyRevenue": {
+      "title": "Revenu mensuel",
+      "subtitle": "Tendance des revenus sur les 6 derniers mois",
+      "noData": "Pas de données de revenus."
+    },
+    "platformSettings": {
+      "title": "Paramètres de la plateforme",
+      "loading": "Chargement des paramètres...",
+      "payoutThresholdLabel": "Seuil minimum de paiement d'affiliation (€)",
+      "payoutThresholdPlaceholder": "ex : 100",
+      "commissionRateLabel": "Taux de commission d'affiliation (%)",
+      "commissionRatePlaceholder": "ex : 20",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer les paramètres"
+    },
+    "topAffiliates": {
+      "title": "Top Affiliés ",
+      "viewAll": "Voir tout",
+      "subscribers": "{{count}} abonnés",
+      "tier": {
+        "platinum": "Platine",
+        "gold": "Or",
+        "silver": "Argent"
+      },
+      "noAffiliates": "Aucun affilié trouvé."
+    },
+    "payouts": {
+      "title": "Demandes de paiement",
+      "subtitle": "Gérez les demandes de commission des affiliés.",
+      "tabs": {
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "paid": "Payées",
+        "rejected": "Rejetées"
+      },
+      "requestedOn": "Demandé le {{date}}",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "markAsPaid": "Marquer comme payé",
+      "noRequests": "Aucune demande de paiement dans cette catégorie."
+    },
+    "courseDetail": {
+      "back": "Retour",
+      "addSection": "Section",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "noSections": "Aucune section.",
+      "noVideos": "Aucune vidéo."
+    },
+    "modals": {
+      "common": {
+        "title": "Titre",
+        "description": "Description",
+        "priceEur": "Prix (€ EUR)",
+        "priceUsd": "Prix ($ USD)",
+        "vimeoId": "ID Vimeo",
+        "cancel": "Annuler",
+        "add": "Ajouter",
+        "create": "Créer",
+        "update": "Mettre à jour",
+        "saving": "Enregistrement...",
+        "loading": "Chargement...",
+        "duration": "Durée (min)"
+      },
+      "uploadCourse": {
+        "title": "Télécharger un cours",
+        "priceHint": "laisser vide si inclus dans l'abonnement",
+        "pricePlaceholder": "ex : 49.99",
+        "coverImage": "Image de couverture",
+        "uploadFile": "Télécharger un fichier",
+        "dragAndDrop": "ou glisser-déposer",
+        "imageHint": "PNG, JPG, GIF jusqu'à 2Mo"
+      },
+      "addSection": {
+        "title": "Ajouter une section"
+      },
+      "addVideo": {
+        "title": "Ajouter une vidéo"
+      },
+      "editSection": {
+        "title": "Modifier la section"
+      },
+      "editVideo": {
+        "title": "Modifier la vidéo"
+      },
+      "editCourse": {
+        "title": "Modifier le cours",
+        "priceHint": "laisser vide si gratuit/inclus"
+      }
+    },
+    "common": {
+      "loading": "Chargement...",
+      "error": "Erreur."
+    }
+  },
+  "billingPage": {
+    "features": [
+      "Accès à tous les produits gagnants",
+      "Analyse de marché illimitée",
+      "Formations vidéo complètes",
+      "Base de données d'influenceurs",
+      "Support prioritaire"
+    ],
+    "form": {
+      "title": "Choisissez votre plan",
+      "subtitle": "Débloquez l'accès complet à la plateforme.",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "save": "(Économisez {{percent}}%)",
+      "perMonth": "/mois",
+      "perYear": "/an",
+      "subscribeButton": "S'abonner maintenant",
+      "processingButton": "Traitement...",
+      "errors": {
+        "plansUnavailable": "Les plans d'abonnement ne sont pas disponibles pour le moment.",
+        "cardValidation": "Erreur de validation de la carte.",
+        "3dsFailed": "La vérification 3D Secure a échoué.",
+        "generic": "Une erreur est survenue.",
+        "loadPlansFailed": "Impossible de charger les plans d'abonnement."
+      }
+    },
+    "manage": {
+      "title": "Gérer l'abonnement",
+      "subtitle": "Vous avez un accès complet à la plateforme.",
+      "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre abonnement ? Votre accès restera actif jusqu'à la fin de votre période de facturation.",
+      "cancellationNotice": "Votre abonnement sera annulé le {{date}}.",
+      "nextBillingDate": "Prochaine facturation le {{date}}.",
+      "reactivatingButton": "Réactivation...",
+      "reactivateButton": "Réactiver mon abonnement",
+      "cancellingButton": "Annulation...",
+      "cancelButton": "Annuler l'abonnement"
+    },
+    "verifying": {
+      "title": "Vérification du paiement...",
+      "subtitle": "Veuillez patienter, nous confirmons votre abonnement."
+    }
+  },
+  "affiliatePage": {
+    "loading": "Chargement de votre espace affilié...",
+    "error": {
+      "title": "Accès Affilié",
+      "generic": "Une erreur est survenue."
+    },
+    "title": "Espace Affilié",
+    "subtitle": "Suivez vos parrainages et vos commissions.",
+    "stats": {
+      "signups": "Inscriptions via votre lien",
+      "activeSubscribers": "Abonnés actifs",
+      "pendingCommissions": "Commissions en attente",
+      "commissionRate": "Taux de commission"
+    },
+    "referralLink": {
+      "title": "Votre lien d'affiliation",
+      "copyButton": "Copier"
+    },
+    "payout": {
+      "title": "Commissions non payées",
+      "minimumRequired": "Minimum de {{amount}} € requis pour un paiement.",
+      "requestingButton": "Envoi de la demande...",
+      "requestButton": "Demander un paiement"
+    },
+    "history": {
+      "title": "Historique des demandes de paiement",
+      "table": {
+        "requestDate": "Date de la demande",
+        "amount": "Montant",
+        "status": "Statut",
+        "processingDate": "Date de traitement"
+      },
+      "noRequests": "Aucune demande de paiement pour le moment."
+    },
+    "referrals": {
+      "title": "Personnes que vous avez parrainées",
+      "table": {
+        "name": "Nom",
+        "signupDate": "Date d'inscription",
+        "paymentStatus": "Statut du paiement",
+        "commission": "Commission"
+      },
+      "status": {
+        "paid": "Payé",
+        "pending": "En attente"
+      },
+      "noReferrals": "Vous n'avez encore parrainé personne."
+    },
+    "status": {
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "paid": "Payé",
+      "rejected": "Rejeté"
+    }
+  },
+  "loginPage": {
+    "backToHome": "Retour à l'accueil",
+    "title": "Connexion",
+    "subtitle": "Accédez à votre espace de travail",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "lorem@ipsum.com",
+    "passwordLabel": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "passwordPlaceholder": "Lorem ipsum",
+    "invalidCredentials": "Identifiants invalides. Veuillez réessayer.",
+    "loggingInButton": "Connexion en cours...",
+    "loginButton": "Se connecter",
+    "noAccount": "Vous n'avez pas encore de compte ?",
+    "createAccount": "Créer un compte"
+  },
+  "signupPage": {
+    "toasts": {
+      "affiliateSuccess": "Lien d'affiliation appliqué !",
+      "signupSuccess": "Compte créé avec succès ! Redirection...",
+      "signupError": "L'inscription a échoué. Veuillez réessayer.",
+      "unknownError": "Une erreur inconnue est survenue."
+    },
+    "backToHome": "Retour à l'accueil",
+    "title": "Créez votre compte",
+    "firstNameLabel": "Prénom",
+    "lastNameLabel": "Nom",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "lorem@ipsum.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Lorem ipsum",
+    "creatingButton": "Création du compte...",
+    "createButton": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "loginLink": "Se connecter",
+    "featuresHeader": "Tout pour réussir en e-commerce",
+    "features": [
+      {
+        "title": "Recherche de produits tendance",
+        "description": "Accédez à plus de 15 000 produits avec des données Google Trends en temps réel"
+      },
+      {
+        "title": "Formation vidéo complète",
+        "subtitle": "Téléchargez et gérez vos vidéos de formation"
+      },
+      {
+        "title": "Hub d'influenceurs",
+        "description": "Connectez-vous avec plus de 1M d'influenceurs pour booster vos ventes"
+      },
+      {
+        "title": "Support Premium",
+        "description": "Une assistance 7j/7 et une communauté d'entrepreneurs pour vous soutenir"
+      }
+    ]
+  },
+  "landingPage": {
+    "header": {
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "about": "À propos",
+      "login": "Connexion",
+      "getStarted": "Commencer gratuitement",
+      "dashboard": "Tableau de bord"
+    },
+    "hero": {
+      "tagline": "Plateforme tout-en-un pour les vendeurs e-commerce",
+      "title1": "L'outil qui révèle",
+      "title2": "les secrets de l'e-commerce !",
+      "subtitle": "Suivez les tendances en temps réel, formez-vous et connectez-vous avec des experts.",
+      "ctaPrimary": "Commencer gratuitement",
+      "ctaSecondary": "Voir la démo",
+      "trial": "14 jours d'essai gratuit",
+      "noCard": "Aucune carte de crédit requise",
+      "cancelAnytime": "Annulez à tout moment"
+    },
+    "features": {
+      "sectionTitle": "Fonctionnalités",
+      "title": "Tout ce dont vous avez besoin",
+      "subtitle": "Une plateforme complète pour réussir en e-commerce",
+      "list": [
+        {
+          "title": "Recherche de produits",
+          "description": "Découvrez les produits tendance avec Google Trends, trouvez des fournisseurs fiables et analysez les marchés par pays.",
+          "points": [
+            "Données Google Trends en temps réel",
+            "Base de données de fournisseurs vérifiés",
+            "Analyse par pays et région"
+          ],
+          "buttonText": "Explorer les tendances"
+        },
+        {
+          "title": "Formation vidéo",
+          "description": "Apprenez grâce à une formation complète dispensée par des professionnels.",
+          "points": [
+            "Cours complets",
+            "Tutoriels étape par étape",
+            "Ressources téléchargeables"
+          ],
+          "buttonText": "Commencer la formation"
+        },
+        {
+          "title": "Hub d'influenceurs",
+          "description": "Trouvez et contactez les meilleurs influenceurs pour promouvoir vos produits et booster vos ventes.",
+          "points": [
+            "Base de données d'influenceurs",
+            "Statistiques détaillées",
+            "Contact direct et suivi"
+          ],
+          "buttonText": "Trouver des influenceurs"
+        }
+      ]
+    },
+    "stats": {
+      "list": [
+        {
+          "text": "Produits tendance"
+        },
+        {
+          "text": "Heures de formation"
+        },
+        {
+          "text": "Influenceurs actifs"
+        },
+        {
+          "text": "Pays couverts"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Prêt à développer votre entreprise ?",
+      "subtitle": "Rejoignez des milliers d'entrepreneurs qui utilisent nos outils pour trouver des produits gagnants et développer leur boutique en ligne.",
+      "ctaPrimary": "Commencer gratuitement",
+      "ctaSecondary": "Voir la démo"
+    },
+    "footer": {
+      "tagline": "La plateforme tout-en-un pour le succès en e-commerce.",
+      "productTitle": "Produit",
+      "productLink1": "Recherche de produits",
+      "productLink2": "Formation vidéo",
+      "productLink3": "Hub d'influenceurs",
+      "companyTitle": "Entreprise",
+      "companyLink1": "À propos",
+      "companyLink2": "Tarifs",
+      "companyLink3": "Contact",
+      "legalTitle": "Légal",
+      "legalLink1": "Confidentialité",
+      "legalLink2": "Conditions d'utilisation",
+      "copyright": "© 2025. Tous droits réservés."
+    }
+  },
+  "pricingPage": {
+    "header": {
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "about": "À propos",
+      "login": "Connexion",
+      "getStarted": "Commencer gratuitement",
+      "dashboard": "Tableau de bord"
+    },
+    "hero": {
+      "tagline": "Une tarification simple et transparente",
+      "title": "Un seul plan. Accès complet.",
+      "subtitle": "Concentrez-vous sur votre croissance. Nous nous occupons de vous fournir les meilleurs outils, sans complication."
+    },
+    "plan": {
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "save": "Économisez {{percent}}%",
+      "perMonth": "mois",
+      "perYear": "an",
+      "manageSubscription": "Gérer l'abonnement",
+      "startFreeTrial": "Commencer l'essai gratuit",
+      "loadingError": "Impossible de charger les plans d'abonnement.",
+      "features": [
+        "Accès à tous les produits gagnants",
+        "Analyse de marché illimitée",
+        "Formation vidéo complète",
+        "Base de données d'influenceurs",
+        "Support prioritaire",
+        "Accès à la communauté privée"
+      ]
+    },
+    "faq": {
+      "title": "Foire aux questions",
+      "questions": [
+        {
+          "q": "Est-ce un abonnement ?",
+          "a": "Oui, c'est un abonnement mensuel ou annuel qui vous donne un accès complet à toutes nos fonctionnalités. Vous pouvez annuler à tout moment."
+        },
+        {
+          "q": "Quels moyens de paiement acceptez-vous ?",
+          "a": "Nous acceptons toutes les principales cartes de crédit (Visa, Mastercard, American Express) via notre partenaire de paiement sécurisé, Stripe."
+        },
+        {
+          "q": "Puis-je annuler mon abonnement à tout moment ?",
+          "a": "Oui, vous pouvez annuler votre abonnement à tout moment depuis votre espace de facturation. Vous conserverez l'accès jusqu'à la fin de votre période de facturation en cours."
+        },
+        {
+          "q": "Recevrai-je les futures mises à jour ?",
+          "a": "Absolument. Votre abonnement inclut toutes les futures mises à jour, les nouvelles fonctionnalités et l'accès à tous les nouveaux cours et produits ajoutés à la plateforme."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Prêt à développer votre entreprise ?",
+      "subtitle": "Rejoignez des milliers d'entrepreneurs qui utilisent nos outils pour trouver des produits gagnants et développer leur boutique en ligne.",
+      "ctaPrimary": "Commencer gratuitement"
+    },
+    "footer": {
+      "tagline": "La plateforme tout-en-un pour le succès en e-commerce.",
+      "productTitle": "Produit",
+      "productLink1": "Recherche de produits",
+      "productLink2": "Formation vidéo",
+      "productLink3": "Hub d'influenceurs",
+      "companyTitle": "Entreprise",
+      "companyLink1": "À propos",
+      "companyLink2": "Tarifs",
+      "companyLink3": "Contact",
+      "legalTitle": "Légal",
+      "legalLink1": "Confidentialité",
+      "legalLink2": "Conditions d'utilisation",
+      "copyright": "© 2025. Tous droits réservés."
+    }
+  },
+  "trainingPage": {
+    "toasts": {
+      "purchaseSuccess": "Achat réussi ! Vous avez maintenant accès au cours.",
+      "verificationTimeout": "La vérification a pris trop de temps. Veuillez rafraîchir la page.",
+      "paymentFailed": "Le paiement a échoué.",
+      "paymentStartFailed": "Impossible d'initier le paiement."
+    },
+    "title": "Formation Vidéo",
+    "subtitle": "Maîtrisez de nouvelles compétences avec nos cours vidéo d'experts",
+    "allCourses": "Tous les cours",
+    "loading": "Chargement...",
+    "error": "Erreur.",
+    "courseCard": {
+      "free": "Inclus",
+      "lessons_one": "{{count}} leçon",
+      "lessons_other": "{{count}} leçons",
+      "byAuthor": "par {{author}}",
+      "priceLabel": "Prix",
+      "buyButton": "Acheter maintenant"
+    },
+    "detailView": {
+      "backButton": "Retour à tous les cours",
+      "loading": "Chargement du cours...",
+      "error": "Erreur lors du chargement du cours."
+    },
+    "courseDisplay": {
+      "noVideos": "Ce cours ne contient pas encore de vidéos.",
+      "lessonsTitle": "Leçons ({{completed}} / {{total}})",
+      "minutes": "minutes"
+    },
+    "purchaseModal": {
+      "title": "Confirmez votre achat",
+      "buying": "Achat de :",
+      "processingButton": "Traitement...",
+      "payButton": "Payer {{price}}",
+      "applyDiscount": "Appliquer ma réduction d'affiliation ({{count}} disponible)",
+      "originalPrice": "Prix d’origine",
+      "discount": "Réduction %)",
+      "total": "Total",
+      "verifying": {
+        "title": "Vérification du paiement...",
+        "subtitle": "Veuillez patienter pendant que nous confirmons votre accès."
+      }
+    }
+  },
+  "winningProductsPage": {
+    "title": "Recherche de produits tendance",
+    "subtitle": "Découvrez les produits tendance avec les données Google Trends en temps réel",
+    "filters": {
+      "keywordPlaceholder": "Rechercher par mot-clé...",
+      "minPricePlaceholder": "Min",
+      "maxPricePlaceholder": "Max",
+      "sortBy": {
+        "sales": "Trier par Ventes",
+        "newest": "Trier par Nouveauté",
+        "priceAsc": "Prix Croissant",
+        "priceDesc": "Prix Décroissant"
+      },
+      "refreshingButton": "Chargement...",
+      "refreshButton": "Actualiser",
+      "loadingCategories": "Chargement des catégories..."
+    },
+    "stats": {
+      "totalProducts": "Total des produits",
+      "categories": "Catégories"
+    },
+    "loadingProducts": "Chargement des produits...",
+    "errorLoadingProducts": "Erreur lors du chargement des produits.",
+    "pagination": {
+      "previous": "Précédent",
+      "pageInfo": "Page {{page}} sur {{totalPages}}",
+      "next": "Suivant"
+    },
+    "productCard": {
+      "category": "Catégorie",
+      "price": "Prix",
+      "sales": "Ventes"
+    }
+  },
+  "suppliersPage": {
+    "title": "Hub Fournisseurs",
+    "subtitle": "Découvrez les produits des fournisseurs les mieux notés",
+    "viewSupplierStore": "Voir la boutique",
+    "productsInCatalog": "Produits au catalogue",
+    "highestSales": "Meilleures ventes",
+    "filters": {
+      "keywordPlaceholder": "Rechercher par nom de fournisseur...",
+      "sortBy": {
+        "products": "Trier par Nb de Produits",
+        "rating": "Trier par Évaluation",
+        "sales": "Trier par Ventes Max"
+      }
+    },
+    "exportButton": "Exporter en CSV"
+  },
+  "searchPage": {
+    "viewProfile": "Voir le profil"
+  },
+  "creatorProfile": {
+    "backToSearch": "Retour à la recherche",
+    "visitTikTok": "Voir le profil TikTok",
+    "followers": "Abonnés",
+    "totalLikes": "J'aime total",
+    "totalPosts": "Publications",
+    "locationAndDetails": "Localisation & Détails",
+    "country": "Pays",
+    "niche": "Niche",
+    "general": "Général",
+    "socialChannels": "Réseaux Sociaux",
+    "instagram": "Instagram",
+    "instagramNotLinked": "Instagram non lié",
+    "youtube": "YouTube",
+    "youtubeNotLinked": "YouTube non lié",
+    "emailCopied": "Email copié dans le presse-papier !",
+    "notFound": "Créateur introuvable ou une erreur est survenue."
+  },
+  "membershipPricing": {
+    "header": {
+      "getStarted": "Commencer",
+      "dashboard": "Tableau de bord"
+    },
+    "hero": {
+      "tagline": "Investissement Unique",
+      "title": "Devenez un Expert E-commerce",
+      "subtitle": "Choisissez la flexibilité. Payez en une fois pour le meilleur prix, ou étalez votre investissement."
+    },
+    "card": {
+      "oneTime": "Paiement Unique",
+      "installments": "{{count}} Mensualités",
+      "lifetime": "Accès à Vie",
+      "bestValue": "Meilleure Offre",
+      "perMonth": "/mois",
+      "totalCost": "Total : {{amount}}",
+      "startNow": "Commencer maintenant"
+    },
+    "faq": {
+      "title": "Questions Fréquentes"
+    }
+  },
+  "membershipBilling": {
+    "form": {
+      "title": "Investissez dans votre avenir",
+      "subtitle": "Choisissez l'option de paiement qui vous convient. L'accès est identique.",
+      "payFull": "Payer en une fois",
+      "payInstallment": "Payer la 1ère mensualité",
+      "processing": "Traitement...",
+      "secure": "Paiement sécurisé par Stripe",
+      "errors": {
+        "plansUnavailable": "Les plans d'abonnement ne sont pas disponibles.",
+        "cardValidation": "Erreur de validation de la carte.",
+        "3dsFailed": "Échec de l'authentification 3D Secure.",
+        "generic": "Une erreur est survenue."
+      }
+    },
+    "manage": {
+      "title": "Gérer votre accès",
+      "subtitle": "Suivez votre progression de paiement.",
+      "lifetimeTitle": "Vous possédez un Accès à Vie !",
+      "lifetimeDesc": "Félicitations ! Vous avez payé l'intégralité de votre formation. Aucun autre prélèvement ne sera effectué.",
+      "fullyPaidBadge": "Compte Soldé",
+      "progressTitle": "Progression du paiement échelonné",
+      "started": "Démarré",
+      "remaining": "{{count}} paiements restants",
+      "statusActive": "Abonnement Actif",
+      "nextPayment": "Prochain prélèvement le {{date}}",
+      "cancellationNotice": "Annulation prévue le {{date}}",
+      "reactivateButton": "Reprendre les paiements",
+      "reactivating": "Activation...",
+      "cancelButton": "Arrêter les paiements",
+      "cancelling": "Annulation...",
+      "warning": "Attention : En annulant avant la fin, vous perdrez l'accès immédiatement à la fin de la période et ne validerez pas l'accès à vie."
+    },
+    "verifying": {
+      "title": "Vérification...",
+      "subtitle": "Veuillez patienter, nous confirmons votre accès."
+    }
+  },
+  "adminMembership": {
+    "title": "Tarification Globale",
+    "subtitle": "Définissez les prix pour toutes les devises. Le système gère la création Stripe automatiquement.",
+    "saveButton": "Enregistrer les prix",
+    "saving": "Synchronisation...",
+    "loading": "Chargement des prix Stripe...",
+    "table": {
+      "planType": "Type de Plan",
+      "lifetime": "Accès à Vie",
+      "lifetimeSub": "Paiement en 1 fois (Unique)",
+      "split2": "Paiement en 2 fois",
+      "split2Sub": "2 Mensualités",
+      "split3": "Paiement en 3 fois",
+      "split3Sub": "3 Mensualités"
+    }
+  }
+}
