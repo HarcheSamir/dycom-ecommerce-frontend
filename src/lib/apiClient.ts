@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://makebrainers.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://dycom-club.com/api';
 
 
 const apiClient = axios.create({
