@@ -23,6 +23,8 @@ import { AffiliatePage } from './pages/AffiliatePage';
 import SettingsPage from './pages/SettingsPage';
 import { AdminFinancialsPage } from './pages/AdminFinancialPage';
 import { QuickPay } from './pages/QuickPay';
+import { AdminUsersPage } from './pages/AdminUsersPage'; // Import
+
 // Create a client
 const queryClient = new QueryClient();
 
@@ -57,7 +59,7 @@ function App() {
               <Route path="billing" element={<BillingPage />} />
               <Route path="admin" element={<AdminPage />} />
               <Route path="admin/financials" element={<AdminFinancialsPage />} />
-
+              <Route path="admin/users" element={<AdminUsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 

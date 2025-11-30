@@ -15,7 +15,8 @@
   "sidebar": {
     "nav": {
       "dashboard": "Tableau de bord",
-      "financials": "Finances", 
+      "users": "Gestion Utilisateurs",
+      "financials": "Finances",
       "products": "Produits tendance",
       "training": "Formation vidéo",
       "suppliers": "Fournisseurs",
@@ -824,5 +825,41 @@
       "prospect": "Prospect",
       "oneTime": "Ponctuel"
     }
+  },
+  "adminUsers": {
+    "title": "Gestion des Utilisateurs",
+    "subtitle": "Contrôle total sur les utilisateurs, les abonnements et les accès.",
+    "searchPlaceholder": "Rechercher par nom ou email...",
+    "filters": {
+      "statusAll": "Tous les statuts",
+      "statusActive": "Actif",
+      "statusPastDue": "En Retard (Échec)",
+      "statusLifetime": "À Vie",
+      "statusCanceled": "Annulé",
+      "statusIncomplete": "Incomplet",
+      "planAll": "Tous les plans",
+      "planLifetime": "À Vie (1x)",
+      "plan2": "2 Mensualités",
+      "plan3": "3 Mensualités"
+    },
+    "table": {
+      "identity": "Identité",
+      "status": "Statut",
+      "progress": "Progression Paiement",
+      "joined": "Rejoint le",
+      "actions": "Actions",
+      "loading": "Chargement des utilisateurs...",
+      "empty": "Aucun utilisateur trouvé.",
+      "paid": "Payé",
+      "lifetimeBadge": "Accès à Vie",
+      "paymentFailed": "Paiement Échoué"
+    },
+    "actions": {
+      "menuTitle": "Actions",
+      "grantLifetime": "Accorder l'accès à Vie",
+      "editDetails": "Modifier les détails",
+      "grantConfirm": "Êtes-vous sûr de vouloir accorder l'accès À VIE à {{email}} ? Cela annulera toute facturation active."
+    },
+    "pagination": "Page {{page}} sur {{total}}"
   }
 }

@@ -15,6 +15,7 @@
   "sidebar": {
     "nav": {
       "dashboard": "Dashboard",
+      "users": "User Management",
       "financials": "Financials", 
       "products": "Trending Products",
       "training": "Video Training",
@@ -824,5 +825,41 @@
       "prospect": "Prospect",
       "oneTime": "One-time"
     }
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "Full control over database users, subscriptions, and access.",
+    "searchPlaceholder": "Search by name or email...",
+    "filters": {
+      "statusAll": "All Statuses",
+      "statusActive": "Active",
+      "statusPastDue": "Past Due (Failed)",
+      "statusLifetime": "Lifetime",
+      "statusCanceled": "Canceled",
+      "statusIncomplete": "Incomplete",
+      "planAll": "All Plans",
+      "planLifetime": "Lifetime (1x)",
+      "plan2": "2 Installments",
+      "plan3": "3 Installments"
+    },
+    "table": {
+      "identity": "User Identity",
+      "status": "Status",
+      "progress": "Installment Progress",
+      "joined": "Joined",
+      "actions": "Actions",
+      "loading": "Loading users...",
+      "empty": "No users found.",
+      "paid": "Paid",
+      "lifetimeBadge": "Lifetime Access",
+      "paymentFailed": "Payment Failed"
+    },
+    "actions": {
+      "menuTitle": "Actions",
+      "grantLifetime": "Grant Lifetime",
+      "editDetails": "Edit Details",
+      "grantConfirm": "Are you sure you want to grant LIFETIME access to {{email}}? This will cancel any active billing."
+    },
+    "pagination": "Page {{page}} of {{total}}"
   }
 }

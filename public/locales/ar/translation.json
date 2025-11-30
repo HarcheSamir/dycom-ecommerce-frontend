@@ -15,7 +15,8 @@
   "sidebar": {
     "nav": {
       "dashboard": "لوحة التحكم",
-      "financials": "المالية", 
+      "users": "إدارة المستخدمين",
+      "financials": "المالية",
       "products": "المنتجات الرائجة",
       "training": "التدريب بالفيديو",
       "suppliers": "الموردون",
@@ -824,5 +825,41 @@
       "prospect": "محتمل",
       "oneTime": "مرة واحدة"
     }
+  },
+  "adminUsers": {
+    "title": "إدارة المستخدمين",
+    "subtitle": "تحكم كامل في قاعدة بيانات المستخدمين والاشتراكات والوصول.",
+    "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+    "filters": {
+      "statusAll": "جميع الحالات",
+      "statusActive": "نشط",
+      "statusPastDue": "متأخر (فشل)",
+      "statusLifetime": "مدى الحياة",
+      "statusCanceled": "ملغى",
+      "statusIncomplete": "غير مكتمل",
+      "planAll": "جميع الخطط",
+      "planLifetime": "مدى الحياة (دفعة واحدة)",
+      "plan2": "قسطين",
+      "plan3": "3 أقساط"
+    },
+    "table": {
+      "identity": "هوية المستخدم",
+      "status": "الحالة",
+      "progress": "تقدم الدفع",
+      "joined": "تاريخ الانضمام",
+      "actions": "إجراءات",
+      "loading": "جاري تحميل المستخدمين...",
+      "empty": "لم يتم العثور على مستخدمين.",
+      "paid": "مدفوع",
+      "lifetimeBadge": "وصول مدى الحياة",
+      "paymentFailed": "فشل الدفع"
+    },
+    "actions": {
+      "menuTitle": "إجراءات",
+      "grantLifetime": "منح وصول مدى الحياة",
+      "editDetails": "تعديل التفاصيل",
+      "grantConfirm": "هل أنت متأكد أنك تريد منح وصول مدى الحياة لـ {{email}}؟ سيؤدي هذا إلى إلغاء أي فواتير نشطة."
+    },
+    "pagination": "صفحة {{page}} من {{total}}"
   }
 }

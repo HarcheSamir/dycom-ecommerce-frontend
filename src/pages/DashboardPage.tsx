@@ -251,6 +251,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
 
     if (user && user.accountType === 'ADMIN') {
         baseNavLinks.unshift({ nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
+            { nameKey: 'users', icon: <FaUsers />, path: '/dashboard/admin/users' },
             { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' }
         );
     }
