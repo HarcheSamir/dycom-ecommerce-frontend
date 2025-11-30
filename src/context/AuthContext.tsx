@@ -1,8 +1,7 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import type { ReactNode } from 'react'; // Use type-only import for ReactNode
+import type { ReactNode } from 'react'; 
 import apiClient from '../lib/apiClient';
 
-// Define the shape of your user object
 interface User {
   id: string;
   email: string;
@@ -12,7 +11,8 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (token: string) => void;
+  // UPDATE: Accept an optional redirect path
+  login: (token: string, redirectPath?: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -41,16 +41,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     checkUser();
   }, []);
 
-  const login = (token: string) => {
+  // UPDATE: Use the redirectPath if provided
+  const login = (token: string, redirectPath: string = '/dashboard') => {
     localStorage.setItem('authToken', token);
-    // You could fetch the user profile here immediately or let the app do it
-    window.location.href = '/dashboard'; // Redirect to a protected page
+    window.location.href = redirectPath; 
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
     setUser(null);
-    window.location.href = '/login'; // Redirect to login
+    window.location.href = '/login'; 
   };
 
   return (

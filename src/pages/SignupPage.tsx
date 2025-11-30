@@ -7,8 +7,11 @@ import { FaArrowLeft, FaEnvelope, FaLock, FaUser, FaCheck } from 'react-icons/fa
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-
+import { useSearchParams } from 'react-router-dom';
 const SignupPage = (): JSX.Element => {
+    const [searchParams] = useSearchParams();
+    const currentParams = searchParams.toString();
+    const loginLink = currentParams ? `/login?${currentParams}` : '/login';
     const { t } = useTranslation();
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
@@ -17,20 +20,20 @@ const SignupPage = (): JSX.Element => {
     const [refCode, setRefCode] = useState<string | null>(null);
     const { mutate: signupUser, isPending } = useSignup();
     const { login } = useAuth();
-
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const ref = urlParams.get('ref');
+        const ref = searchParams.get('ref'); // Use searchParams here too for consistency
         if (ref) {
             setRefCode(ref);
             toast.success(t('signupPage.toasts.affiliateSuccess'));
         }
-    }, [t]);
+    }, [searchParams, t]);
+
 
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const signupData = { firstName, lastName, email, password, refCode: refCode || undefined };
+        const offer = searchParams.get('offer');
 
         signupUser(
             signupData,
@@ -107,7 +110,7 @@ const SignupPage = (): JSX.Element => {
                                 </form>
                                 <p className="text-center text-sm text-neutral-400 mt-6">
                                     {t('signupPage.alreadyHaveAccount')}{' '}
-                                    <a href="/login" className="font-semibold text-white hover:underline">{t('signupPage.loginLink')}</a>
+                                    <a href={loginLink} className="font-semibold text-white hover:underline">{t('signupPage.loginLink')}</a>
                                 </p>
                                 <div className="mt-8 flex justify-center">
                                     <LanguageSwitcher />

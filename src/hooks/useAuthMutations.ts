@@ -1,66 +1,52 @@
-// File: ./src/hooks/useAuthMutations.ts
-// CORRECTED VERSION
-
 import { useMutation } from '@tanstack/react-query';
 import { type AxiosResponse, AxiosError } from 'axios';
 import apiClient from '../lib/apiClient';
 import { useAuth } from '../context/AuthContext';
 
-// Define types for the function arguments
-interface AuthCredentials {
-  email: string;
-  password: string;
-}
+interface AuthCredentials { email: string; password: string; }
+interface SignupData extends AuthCredentials { firstName: string; lastName: string; refCode?: string; }
+interface AuthResponse { token: string; user: any; }
 
-interface SignupData extends AuthCredentials {
-  firstName: string;
-  lastName: string;
-  refCode?: string;
-}
+// Helper to determine redirect path
+const getRedirectPath = () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    const offer = params.get('offer');
 
-// Define the expected API response
-interface AuthResponse {
-  token: string;
-  user: any; // User object
-}
+    if (redirect) {
+        return decodeURIComponent(redirect);
+    } 
+    if (offer) {
+        return `/dashboard/billing?offer=${offer}`;
+    }
+    return '/dashboard';
+};
 
-// ... useLogin hook remains unchanged ...
 export const useLogin = () => {
   const { login } = useAuth();
+  
   return useMutation({
     mutationFn: (credentials: AuthCredentials) =>
       apiClient.post<AuthResponse>('/auth/login', credentials),
     onSuccess: (data: AxiosResponse<AuthResponse>) => {
       if (data.data.token) {
-        login(data.data.token);
+        login(data.data.token, getRedirectPath());
       }
     },
-    onError: (error: AxiosError) => {
-      console.error('Login failed:', error);
-    },
+    onError: (error: AxiosError) => { console.error('Login failed:', error); },
   });
 };
 
-
-/**
- * Hook for handling user signup mutation.
- */
 export const useSignup = () => {
-  // --- CORRECTION START ---
-  // We need the login function again
   const { login } = useAuth();
 
   return useMutation({
     mutationFn: (userData: SignupData) =>
-      // The backend now returns AuthResponse on signup
       apiClient.post<AuthResponse>('/auth/signup', userData),
     onSuccess: (data: AxiosResponse<AuthResponse>) => {
-      // Log the user in immediately after successful signup using the token from the response
       if (data.data.token) {
-        login(data.data.token);
+        login(data.data.token, getRedirectPath());
       }
     },
-    // onError is now handled in the component for better user feedback
-    // --- CORRECTION END ---
   });
 };

@@ -3,12 +3,17 @@ import { useLogin } from '../hooks/useAuthMutations';
 import { FaArrowLeft, FaEnvelope, FaLock } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { useSearchParams } from 'react-router-dom'; // Add this
 
 const LoginPage = (): JSX.Element => {
     const { t } = useTranslation();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const { mutate: loginUser, isPending, error } = useLogin();
+
+    const [searchParams] = useSearchParams();
+    const currentParams = searchParams.toString();
+    const signupLink = currentParams ? `/signup?${currentParams}` : '/signup';
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,7 +61,7 @@ const LoginPage = (): JSX.Element => {
                         </form>
                         <p className="text-center text-sm text-neutral-400 mt-6">
                             {t('loginPage.noAccount')}{' '}
-                            <a href="/signup" className="font-semibold text-white hover:underline">{t('loginPage.createAccount')}</a>
+                            <a href={signupLink} className="font-semibold text-white hover:underline">{t('loginPage.createAccount')}</a>
                         </p>
 
                         <div className="mt-8 flex justify-center">

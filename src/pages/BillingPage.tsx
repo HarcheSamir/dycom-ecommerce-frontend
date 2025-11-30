@@ -34,10 +34,10 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
     const stripe = useStripe();
     const elements = useElements();
     const { mutate: createSubscription, isPending } = useCreateSubscription();
-    const [searchParams] = useSearchParams();
     
-    // --- ADDED: Check for secret offer param ---
-    const showInstallments = searchParams.get('offer') === 'flex';
+    // --- FIXED: Capture specific offer string ---
+    const [searchParams] = useSearchParams();
+    const offer = searchParams.get('offer'); // "2x", "3x", "flex"
 
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -56,32 +56,27 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
         }
     };
 
-    // Pre-select plan from URL if available, otherwise default to 1x
-    useEffect(() => {
-        if (!plans || plans.length === 0) return;
-
-        const planFromUrl = searchParams.get('plan');
-        const defaultPlan = plans.find(p => p.metadata?.installments === '1') || plans[0];
-
-        if (planFromUrl && plans.some(p => p.id === planFromUrl)) {
-            setSelectedPlanId(planFromUrl);
-        } else if (!selectedPlanId) {
-            setSelectedPlanId(defaultPlan.id);
-        }
-    }, [plans, searchParams]);
-
-    // Sort plans: 1x -> 2x -> 3x
+    // Filter Logic
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
-        
-        // --- MODIFIED: Filter Logic ---
         let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
 
-        // If 'offer=flex' is NOT present, only show 1x (Lifetime)
-        // Unless a specific plan ID is already in the URL (allowing direct links to specific plans to still work)
-        const planFromUrl = searchParams.get('plan');
-        if (!showInstallments && !planFromUrl) {
-             availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
+        // === FILTERING LOGIC ===
+        if (offer === '2x') {
+            // Show ONLY 2 installments plan
+            availablePlans = availablePlans.filter(p => p.metadata?.installments === '2');
+        } else if (offer === '3x') {
+            // Show ONLY 3 installments plan
+            availablePlans = availablePlans.filter(p => p.metadata?.installments === '3');
+        } else if (offer === 'flex') {
+             // Show ALL plans (1, 2, 3)
+        } else {
+            // Default behavior: Show Lifetime (1x) only
+            // But check if a specific ?plan=ID is set manually (legacy support)
+            const planFromUrl = searchParams.get('plan');
+            if (!planFromUrl) {
+                 availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
+            }
         }
 
         return availablePlans.sort((a, b) => {
@@ -89,7 +84,19 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             const instB = parseInt(b.metadata?.installments || '1');
             return instA - instB;
         });
-    }, [plans, showInstallments, searchParams]); // Added dependencies
+    }, [plans, offer, searchParams]);
+
+    // Auto-select the first available plan when list changes
+    useEffect(() => {
+        // If we filtered down to 1 specific plan (like 2x), auto-select it.
+        // Or if the previously selected plan is no longer visible.
+        if (sortedPlans.length > 0) {
+            const currentSelectedVisible = sortedPlans.some(p => p.id === selectedPlanId);
+            if (!selectedPlanId || !currentSelectedVisible) {
+                setSelectedPlanId(sortedPlans[0].id);
+            }
+        }
+    }, [sortedPlans, selectedPlanId]);
 
     const selectedPlan = plans?.find(p => p.id === selectedPlanId);
 
