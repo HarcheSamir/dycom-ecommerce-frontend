@@ -63,6 +63,24 @@ interface UpdateCourseData {
         language?: string;
     }
 }
+export interface AdminUserDetail {
+    user: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        createdAt: string;
+        subscriptionStatus: string;
+        installmentsPaid: number;
+        installmentsRequired: number;
+        stripeCustomerId: string | null;
+        stripeSubscriptionId: string | null;
+        transactions: any[];
+        coursePurchases: any[];
+        videoProgress: any[];
+    };
+    stripeData: any;
+}
 
 // --- HOOKS ---
 export const useAdminDashboardStats = () => useQuery({ queryKey: ['adminDashboardStats'], queryFn: async (): Promise<AdminStats> => { const response: AxiosResponse<AdminStats> = await apiClient.get('/admin/stats'); return response.data; }, staleTime: 1000 * 60 * 5 });
@@ -170,5 +188,30 @@ export const useUpdateSectionOrder = () => {
             // Silently update the cache or show a small toast if you prefer
             queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] });
         }
+    });
+};
+
+
+export const useAdminUserDetails = (userId: string | undefined) => {
+    return useQuery<AdminUserDetail, Error>({
+        queryKey: ['adminUser', userId],
+        queryFn: async () => {
+            if (!userId) throw new Error("No User ID");
+            const response = await apiClient.get(`/admin/users/${userId}`);
+            return response.data;
+        },
+        enabled: !!userId
+    });
+};
+
+export const useGrantLifetime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => apiClient.post(`/admin/users/${userId}/grant-lifetime`),
+        onSuccess: (_, userId) => {
+            queryClient.invalidateQueries({ queryKey: ['adminUser', userId] });
+            toast.success("Lifetime access granted!");
+        },
+        onError: () => toast.error("Failed to grant access.")
     });
 };

@@ -22,6 +22,7 @@ import { AdminPage } from './pages/AdminPage';
 import { AffiliatePage } from './pages/AffiliatePage';
 import SettingsPage from './pages/SettingsPage';
 import { AdminFinancialsPage } from './pages/AdminFinancialPage';
+import { QuickPay } from './pages/QuickPay';
 // Create a client
 const queryClient = new QueryClient();
 
@@ -43,7 +44,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/pricing" element={<PricingPage />} />
-
+            <Route path="/pay/:plan" element={<QuickPay />} />
             {/* Protected Routes with Nested Layout */}
             <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>}>
               <Route index element={<DashboardContent />} />
