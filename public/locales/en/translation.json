@@ -605,12 +605,13 @@
     "loading": "Loading...",
     "error": "Error.",
     "courseCard": {
-      "free": "Included",
+      "free": "Free",
       "lessons_one": "{{count}} lesson",
       "lessons_other": "{{count}} lessons",
       "byAuthor": "by {{author}}",
       "priceLabel": "Price",
-      "buyButton": "Buy Now"
+      "buyButton": "Buy Now",
+      "getFreeButton": "Get for Free"
     },
     "detailView": {
       "backButton": "Back to all courses",

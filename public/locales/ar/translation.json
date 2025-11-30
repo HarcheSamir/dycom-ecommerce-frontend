@@ -605,12 +605,13 @@
     "loading": "جاري التحميل...",
     "error": "خطأ.",
     "courseCard": {
-      "free": "مشمول",
+      "free": "مجاني",
       "lessons_one": "درس واحد",
       "lessons_other": "{{count}} دروس",
       "byAuthor": "بواسطة {{author}}",
       "priceLabel": "السعر",
-      "buyButton": "اشتر الآن"
+      "buyButton": "اشتر الآن",
+      "getFreeButton": "احصل عليه مجاناً"
     },
     "detailView": {
       "backButton": "العودة إلى جميع الدورات",

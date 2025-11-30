@@ -1,6 +1,6 @@
 // src/pages/TrainingPage.tsx
 
-import React, { useState, useMemo, useEffect,useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 import { useCourses, useCourse, useUpdateVideoProgress } from '../hooks/useTraining';
 import type { VideoCourse, Video, Section } from '../hooks/useTraining';
@@ -8,7 +8,7 @@ import type { VideoCourse, Video, Section } from '../hooks/useTraining';
 import { useUserProfile, useCreateCoursePaymentIntent } from '../hooks/useUser';
 import { useAffiliateDashboard } from '../hooks/useAffiliate'; // <-- IMPORT THIS
 // ==================== SURGICAL MODIFICATION END ====================
-import { FaPlayCircle,FaSort,FaBookReader, FaChevronLeft, FaChevronDown, FaChevronRight, FaGlobe, FaClock, FaStar, FaVideo, FaSearch, FaFilter, FaUsers, FaBookOpen, FaCheckCircle, FaBook, FaShoppingCart, FaTimes } from 'react-icons/fa';
+import { FaPlayCircle, FaSort, FaBookReader, FaChevronLeft, FaChevronDown, FaChevronRight, FaGlobe, FaClock, FaStar, FaVideo, FaSearch, FaFilter, FaUsers, FaBookOpen, FaCheckCircle, FaBook, FaShoppingCart, FaTimes } from 'react-icons/fa';
 import VimeoPlayer from '../components/VimeoPlayer';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -157,7 +157,12 @@ const PurchaseCourseModal: FC<{ course: VideoCourse | null; onClose: () => void;
 
                             {error && <p className="text-sm text-red-500 text-center mb-4">{error}</p>}
                             <button onClick={handlePurchase} disabled={isCreatingPI || isProcessing || !stripe || isLoadingAffiliate} className="w-full h-12 rounded-lg bg-white text-black cursor-pointer font-semibold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50">
-                                {isProcessing ? t('trainingPage.purchaseModal.processingButton') : (finalPrice > 0 ? t('trainingPage.purchaseModal.payButton', { price: formattedFinalPrice }) : "Obtenir Gratuitement")}
+                                {isProcessing
+                                    ? t('trainingPage.purchaseModal.processingButton')
+                                    : (finalPrice > 0
+                                        ? t('trainingPage.purchaseModal.payButton', { price: formattedFinalPrice })
+                                        : t('trainingPage.courseCard.getFreeButton'))
+                                }
                             </button>
                         </>
                     )}
@@ -180,8 +185,9 @@ const CourseCard: FC<{ course: VideoCourse; onClick: () => void; hasAccess: bool
     } else {
         locale = 'en-US';
     }
-    const formattedPrice = course.price != null && course.currency
-        ? new Intl.NumberFormat(locale, { style: 'currency', currency: course.currency }).format(course.price)
+    const isFree = course.price === 0 || course.price === null;
+    const formattedPrice = !isFree && course.currency
+        ? new Intl.NumberFormat(locale, { style: 'currency', currency: course.currency }).format(course.price!)
         : t('trainingPage.courseCard.free');
 
     return (
@@ -216,8 +222,9 @@ const CourseCard: FC<{ course: VideoCourse; onClick: () => void; hasAccess: bool
                                 <p className="text-neutral-500 text-sm">{t('trainingPage.courseCard.priceLabel')}</p>
                                 <p className="text-white font-bold text-3xl">{formattedPrice}</p>
                             </div>
-                            <button onClick={onBuy} className="h-12 cursor-pointer px-6 rounded-lg bg-white text-black font-semibold flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
-                                {t('trainingPage.courseCard.buyButton')} <FaChevronRight size={12} />
+                            <button onClick={onBuy} className={`h-12 cursor-pointer px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${isFree ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-white text-black hover:bg-gray-200'}`}>
+                                {isFree ? t('trainingPage.courseCard.getFreeButton') : t('trainingPage.courseCard.buyButton')}
+                                <FaChevronRight size={12} />
                             </button>
                         </div>
                     )}
@@ -393,11 +400,10 @@ const FilterButton: FC<{
 }> = ({ icon, label, onClick, isActive }) => (
     <button
         onClick={onClick}
-        className={`w-full h-12 flex items-center justify-center gap-3 px-4 rounded-lg text-sm font-semibold transition-colors ${
-            isActive
-                ? 'bg-gray-200 text-black'
-                : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800'
-        }`}
+        className={`w-full h-12 flex items-center justify-center gap-3 px-4 rounded-lg text-sm font-semibold transition-colors ${isActive
+            ? 'bg-gray-200 text-black'
+            : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800'
+            }`}
     >
         {icon}
         <span>{label}</span>
@@ -456,8 +462,8 @@ export const TrainingPage: FC = () => {
         }, 30000);
     };
 
-    const sortOptions = [{ value: 'createdAt', label: 'Sort by Recency' },{ value: 'title', label: 'Sort by Name (A-Z)' }];
-    const languageOptions = [{ value: '', label: 'Default Language' },{ value: 'ALL', label: 'All Languages' },{ value: 'EN', label: 'English' },{ value: 'FR', label: 'Français' },{ value: 'AR', label: 'Arabic' }];
+    const sortOptions = [{ value: 'createdAt', label: 'Sort by Recency' }, { value: 'title', label: 'Sort by Name (A-Z)' }];
+    const languageOptions = [{ value: '', label: 'Default Language' }, { value: 'ALL', label: 'All Languages' }, { value: 'EN', label: 'English' }, { value: 'FR', label: 'Français' }, { value: 'AR', label: 'Arabic' }];
 
     if (selectedCourseId) { return <CourseDetailView courseId={selectedCourseId} onBack={() => setSelectedCourseId(null)} />; }
 
@@ -487,7 +493,7 @@ export const TrainingPage: FC = () => {
                         <FilterDropdown icon={<FaGlobe />} options={languageOptions} value={languageFilter} onChange={setLanguageFilter} />
                     </div>
                     <div className="flex-grow w-full sm:w-auto">
-                         <FilterButton icon={<FaBookReader />} label="My Courses" onClick={() => setShowOwnedOnly(!showOwnedOnly)} isActive={showOwnedOnly} />
+                        <FilterButton icon={<FaBookReader />} label="My Courses" onClick={() => setShowOwnedOnly(!showOwnedOnly)} isActive={showOwnedOnly} />
                     </div>
                 </div>
 
@@ -501,7 +507,7 @@ export const TrainingPage: FC = () => {
                             return <CourseCard key={course.id} course={course} hasAccess={hasAccess} onClick={() => setSelectedCourseId(course.id)} onBuy={() => setCourseToBuy(course)} />;
                         })}
                     </div>
-                     {filteredCourses && filteredCourses.length === 0 && !isLoading && (
+                    {filteredCourses && filteredCourses.length === 0 && !isLoading && (
                         <div className="col-span-full text-center py-10">
                             <p className="text-neutral-500">No courses match your current filters.</p>
                         </div>
