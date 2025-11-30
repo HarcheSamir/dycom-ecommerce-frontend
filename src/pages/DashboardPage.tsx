@@ -253,7 +253,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
             nameKey: 'visuelsAds', 
             label: 'Visuels Ads', 
             icon: <FaCrown className="text-yellow-500" />, 
-            path: 'https://opalolabs.com/', 
+            path: 'https://opalolabs.com/?via=Dycom', 
             isExternal: true 
         },
         { 
