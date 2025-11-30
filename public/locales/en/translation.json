@@ -782,5 +782,46 @@
       "split3": "3-Month Split",
       "split3Sub": "3 Monthly Payments"
     }
+  },
+  "adminFinancials": {
+    "title": "Live Financials",
+    "subtitle": "Real-time data directly from Stripe (Source of Truth).",
+    "stats": {
+      "available": "Available Balance",
+      "availableSub": "Ready for payout",
+      "pending": "Pending Balance",
+      "pendingSub": "Processing...",
+      "active": "Active Subscribers",
+      "activeSub": "Generating MRR",
+      "risk": "Past Due (Risk)",
+      "riskSub": "Failed payments requiring attention"
+    },
+    "explorer": {
+      "title": "Client Explorer",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "table": {
+      "customer": "Customer",
+      "status": "Status",
+      "plan": "Plan / Amount",
+      "card": "Card Info",
+      "billing": "Next Billing",
+      "created": "Created",
+      "loading": "Loading live data from Stripe...",
+      "unknown": "Unknown",
+      "noCard": "No Card",
+      "paidFull": "Paid in Full"
+    },
+    "status": {
+      "active": "Active",
+      "trialing": "Trialing",
+      "past_due": "Past Due",
+      "canceled": "Canceled",
+      "unpaid": "Unpaid",
+      "lifetime": "LIFETIME",
+      "prospect": "Prospect",
+      "oneTime": "One-time"
+    }
   }
 }

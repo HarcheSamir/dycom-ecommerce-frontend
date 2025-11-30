@@ -21,7 +21,7 @@ import { CreatorProfilePage } from './pages/CreatorProfilePage';
 import { AdminPage } from './pages/AdminPage';
 import { AffiliatePage } from './pages/AffiliatePage';
 import SettingsPage from './pages/SettingsPage';
-
+import { AdminFinancialsPage } from './pages/AdminFinancialPage';
 // Create a client
 const queryClient = new QueryClient();
 
@@ -55,6 +55,8 @@ function App() {
               <Route path="affiliate" element={<AffiliatePage />} />
               <Route path="billing" element={<BillingPage />} />
               <Route path="admin" element={<AdminPage />} />
+              <Route path="admin/financials" element={<AdminFinancialsPage />} />
+
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 

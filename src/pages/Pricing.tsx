@@ -1,5 +1,7 @@
+// src/pages/Pricing.tsx
+
 import React, { useState, useMemo, type FC, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom'; // Added useSearchParams
 import { useGetSubscriptionPlans, type SubscriptionPlan } from '../hooks/useUser';
 import { useAuth } from '../context/AuthContext';
 import { FaCheckCircle, FaGem, FaChevronDown } from 'react-icons/fa';
@@ -109,7 +111,7 @@ const Header: FC = () => {
                                 <a className="w-full text-center rounded-lg bg-gray-200 text-black px-5 py-3 text-lg font-semibold" href="/signup">{t('membershipPricing.header.getStarted')}</a>
                             </>
                         )}
-                        {!isLoading && isAuthenticated && (<a className="w-full text-center rounded-lg bg-gray-200 text-black px-5 py-3 text-lg font-semibold" href="/dashboard">{t('membershipPricing.header.dashboard')}</a>)}
+                        {!isLoading && isAuthenticated && (<a className="w-full text-center rounded-lg bg-gray-200 text-black px-5 py-3 text-lgfont-semibold" href="/dashboard">{t('membershipPricing.header.dashboard')}</a>)}
                     </div>
                     <div className="absolute bottom-10">
                         <LanguageSwitcher />
@@ -134,10 +136,8 @@ const FaqItem: FC<{ question: string; children: React.ReactNode }> = ({ question
 
 const FaqSection: FC = () => {
     const { t } = useTranslation();
-    // Assuming you updated translation.json to have specific FAQs or reusing general ones
     const faqs = t('membershipPricing.faq.questions', { returnObjects: true }) as { q: string, a: string }[] || [];
-    
-    // Fallback if the new translation block is empty or malformed during dev
+
     if (!Array.isArray(faqs) || faqs.length === 0) return null;
 
     return (
@@ -162,7 +162,6 @@ const Footer: FC = () => {
                         <div className="flex items-center gap-3 mb-4"><img className='w-40' src='/logo2.png' alt='logo' /></div>
                         <p className="text-neutral-400">{t('membershipPricing.footer.tagline')}</p>
                     </div>
-                    {/* Simplified Footer links based on previous design */}
                     <div>
                         <h4 className="font-semibold text-white mb-4">{t('landingPage.footer.productTitle')}</h4>
                         <ul className="space-y-3">
@@ -204,11 +203,11 @@ interface PricingCardProps {
 const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features }) => {
     const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
-    
+
     // Extract metadata
     const installments = plan.metadata?.installments ? parseInt(plan.metadata.installments) : 1;
     const isOneTime = installments === 1;
-    
+
     // Format prices
     const priceFormatted = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(plan.price / 100);
     const totalCost = isOneTime ? plan.price : (plan.price * installments);
@@ -221,17 +220,19 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
                     {t('membershipPricing.card.bestValue')}
                 </div>
             )}
-            
+
             <div className="mb-4">
                 <h3 className="text-2xl font-bold text-white mb-2">
                     {isOneTime ? t('membershipPricing.card.oneTime') : t('membershipPricing.card.installments', { count: installments })}
                 </h3>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
-                    <FaGem className="text-green-400 text-xs" />
-                    <span className="text-green-400 text-xs font-bold uppercase tracking-wider">{t('membershipPricing.card.lifetime')}</span>
-                </div>
+                {isOneTime && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
+                        <FaGem className="text-green-400 text-xs" />
+                        <span className="text-green-400 text-xs font-bold uppercase tracking-wider">{t('membershipPricing.card.lifetime')}</span>
+                    </div>
+                )}
             </div>
-            
+
             <div className="mb-8 border-b border-neutral-800 pb-8">
                 <div className="flex items-baseline gap-1">
                     <span className="text-5xl font-bold text-white tracking-tight">{priceFormatted}</span>
@@ -253,7 +254,7 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
                 ))}
             </ul>
 
-            <Link 
+            <Link
                 to={isAuthenticated ? `/dashboard/billing?plan=${plan.id}` : `/signup?plan=${plan.id}`}
                 className={`w-full block py-4 rounded-xl text-center font-bold text-lg transition-all ${isBestValue ? 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10' : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800'}`}
             >
@@ -267,38 +268,50 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
 
 const PricingPage: FC = () => {
     const { t, i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
     
-    // Determine currency based on language
+    // Logic: Only show 2x/3x plans if ?offer=flex is in the URL
+    const showInstallments = searchParams.get('offer') === 'flex';
+
     let currency: 'eur' | 'usd' | 'aed' = 'usd';
     if (i18n.language === 'fr') currency = 'eur';
     if (i18n.language === 'ar') currency = 'aed';
 
     const { data: plans, isLoading } = useGetSubscriptionPlans(currency);
     const locale = currency === 'eur' ? 'fr-FR' : (currency === 'aed' ? 'ar-AE' : 'en-US');
-    
-    // Use existing billingPage features for the list
+
     const features = t('billingPage.features', { returnObjects: true }) as string[];
 
-    // Sort plans: 1x (Best Value) -> 2x -> 3x
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
-        return plans
-            .filter(p => p.metadata?.type === 'membership_tier') // SAFETY FILTER
-            .sort((a, b) => {
-                const instA = parseInt(a.metadata?.installments || '1');
-                const instB = parseInt(b.metadata?.installments || '1');
-                return instA - instB;
-            });
-    }, [plans]);
+        
+        let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
+
+        // IF NOT using the secret link, filter out installments (keep only '1')
+        if (!showInstallments) {
+            availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
+        }
+
+        return availablePlans.sort((a, b) => {
+            const instA = parseInt(a.metadata?.installments || '1');
+            const instB = parseInt(b.metadata?.installments || '1');
+            return instA - instB;
+        });
+    }, [plans, showInstallments]);
+
+    // Dynamic grid classes to handle single item centering nicely
+    const gridClasses = showInstallments 
+        ? "grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl w-full items-stretch"
+        : "flex flex-col items-center justify-center w-full max-w-md"; // Single item style
 
     return (
-        <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col"style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
+        <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
             <div className="absolute top-[-20rem] left-[-25rem] w-[50rem] h-[50rem] rounded-full animate-[float-A_15s_ease-in-out_infinite]" style={{ background: 'radial-gradient(circle, rgba(40, 58, 114, 0.2), transparent 60%)', filter: 'blur(128px)' }} />
             <div className="absolute top-[30rem] right-[-30rem] w-[60rem] h-[60rem] rounded-full animate-[float-B_20s_ease-in-out_infinite]" style={{ background: 'radial-gradient(circle, rgba(40, 58, 114, 0.15), transparent 70%)', filter: 'blur(128px)' }} />
 
             <div className="relative flex flex-col flex-1 z-10">
                 <Header />
-                
+
                 <main className="flex-1 flex flex-col items-center justify-center px-6 pt-32 pb-20">
                     <div className="text-center mb-16">
                         <div className="inline-flex items-center gap-2 bg-[#1C1E22] border border-neutral-800 rounded-full px-4 py-2 mb-6 animate-[fadeIn-up_1s_ease-out]">
@@ -320,19 +333,20 @@ const PricingPage: FC = () => {
                             {t('membershipPricing.plan.loadingError')}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl w-full items-stretch animate-[fadeIn-up_1s_ease-out_0.6s] [animation-fill-mode:forwards] opacity-0">
+                        <div className={`${gridClasses} animate-[fadeIn-up_1s_ease-out_0.6s] [animation-fill-mode:forwards] opacity-0`}>
                             {sortedPlans.map((plan) => (
-                                <PricingCard 
-                                    key={plan.id} 
-                                    plan={plan} 
-                                    locale={locale} 
-                                    features={features}
-                                    isBestValue={plan.metadata?.installments === '1'} 
-                                />
+                                <div key={plan.id} className="w-full h-full">
+                                    <PricingCard
+                                        plan={plan}
+                                        locale={locale}
+                                        features={features}
+                                        isBestValue={plan.metadata?.installments === '1'}
+                                    />
+                                </div>
                             ))}
                         </div>
                     )}
-                    
+
                     <div className="max-w-3xl w-full mt-24 animate-[fadeIn-up_1s_ease-out_0.8s] [animation-fill-mode:forwards] opacity-0">
                         <FaqSection />
                     </div>

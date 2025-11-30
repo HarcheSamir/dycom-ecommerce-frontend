@@ -1,3 +1,5 @@
+// src/pages/BillingPage.tsx
+
 import React, { useState, useEffect, useMemo, type FC } from 'react';
 import { useCreateSubscription, useUserProfile, useGetSubscriptionPlans, useCancelSubscription, useReactivateSubscription, type SubscriptionPlan } from '../hooks/useUser';
 import { loadStripe } from '@stripe/stripe-js';
@@ -33,6 +35,10 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
     const elements = useElements();
     const { mutate: createSubscription, isPending } = useCreateSubscription();
     const [searchParams] = useSearchParams();
+    
+    // --- ADDED: Check for secret offer param ---
+    const showInstallments = searchParams.get('offer') === 'flex';
+
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -67,14 +73,23 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
     // Sort plans: 1x -> 2x -> 3x
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
-        return plans
-            .filter(p => p.metadata?.type === 'membership_tier')
-            .sort((a, b) => {
-                const instA = parseInt(a.metadata?.installments || '1');
-                const instB = parseInt(b.metadata?.installments || '1');
-                return instA - instB;
-            });
-    }, [plans]);
+        
+        // --- MODIFIED: Filter Logic ---
+        let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
+
+        // If 'offer=flex' is NOT present, only show 1x (Lifetime)
+        // Unless a specific plan ID is already in the URL (allowing direct links to specific plans to still work)
+        const planFromUrl = searchParams.get('plan');
+        if (!showInstallments && !planFromUrl) {
+             availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
+        }
+
+        return availablePlans.sort((a, b) => {
+            const instA = parseInt(a.metadata?.installments || '1');
+            const instB = parseInt(b.metadata?.installments || '1');
+            return instA - instB;
+        });
+    }, [plans, showInstallments, searchParams]); // Added dependencies
 
     const selectedPlan = plans?.find(p => p.id === selectedPlanId);
 
@@ -127,7 +142,8 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             </div>
 
             {/* Plan Selector Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Dynamic Columns based on visible plans */}
+            <div className={`grid grid-cols-1 ${sortedPlans.length > 1 ? 'md:grid-cols-3' : 'md:grid-cols-1 max-w-sm mx-auto'} gap-4`}>
                 {sortedPlans.map(plan => {
                     const installments = parseInt(plan.metadata?.installments || '1');
                     const isOneTime = installments === 1;

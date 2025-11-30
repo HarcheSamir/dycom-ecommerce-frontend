@@ -782,5 +782,46 @@
       "split3": "Paiement en 3 fois",
       "split3Sub": "3 Mensualités"
     }
+  },
+  "adminFinancials": {
+    "title": "Finances en Direct",
+    "subtitle": "Données en temps réel directement de Stripe (Source de Vérité).",
+    "stats": {
+      "available": "Solde Disponible",
+      "availableSub": "Prêt pour virement",
+      "pending": "Solde en Attente",
+      "pendingSub": "En cours de traitement...",
+      "active": "Abonnés Actifs",
+      "activeSub": "Génère du MRR",
+      "risk": "Impayés (Risque)",
+      "riskSub": "Paiements échoués nécessitant attention"
+    },
+    "explorer": {
+      "title": "Explorateur de Clients",
+      "prev": "Préc.",
+      "next": "Suiv."
+    },
+    "table": {
+      "customer": "Client",
+      "status": "Statut",
+      "plan": "Plan / Montant",
+      "card": "Infos Carte",
+      "billing": "Prochaine Facture",
+      "created": "Créé le",
+      "loading": "Chargement des données Stripe...",
+      "unknown": "Inconnu",
+      "noCard": "Aucune Carte",
+      "paidFull": "Payé intégralement"
+    },
+    "status": {
+      "active": "Actif",
+      "trialing": "Essai",
+      "past_due": "En Retard",
+      "canceled": "Annulé",
+      "unpaid": "Impayé",
+      "lifetime": "À VIE",
+      "prospect": "Prospect",
+      "oneTime": "Ponctuel"
+    }
   }
 }

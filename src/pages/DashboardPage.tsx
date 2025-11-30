@@ -250,7 +250,9 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
     ];
 
     if (user && user.accountType === 'ADMIN') {
-        baseNavLinks.unshift({ nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' });
+        baseNavLinks.unshift({ nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
+            { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' }
+        );
     }
 
     const navLinks: NavLink[] = baseNavLinks.map(link => ({
@@ -331,7 +333,7 @@ const DashboardPage: FC = () => {
         const isAdmin = userProfile?.accountType === 'ADMIN';
         const isOnBillingPage = location.pathname === '/dashboard/billing';
 
-          if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && !isOnBillingPage) {
+        if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && !isOnBillingPage) {
             navigate('/dashboard/billing', { replace: true });
         }
     }, [isProfileLoading, userProfile, location.pathname, navigate]);
