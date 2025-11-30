@@ -297,7 +297,7 @@ const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }> = ({ c
     const { mutate: deleteSection } = useDeleteSection();
     const { mutate: deleteVideo } = useDeleteVideo();
     const { mutate: updateVideoOrder } = useUpdateVideoOrder();
-    const { mutate: updateSectionOrder } = useUpdateSectionOrder(); 
+    const { mutate: updateSectionOrder } = useUpdateSectionOrder();
 
     const [modal, setModal] = useState<{ type: 'addSection' | 'addVideo' | 'editSection' | 'editVideo' | 'editCourse', data?: any } | null>(null);
 
@@ -317,8 +317,11 @@ const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }> = ({ c
 
             const updatedOrder = newSections.map((sec, index) => ({ id: sec.id, order: index }));
             
-            // Optimistic update (optional, relying on refetch here for simplicity)
-            updateSectionOrder({ courseId, sections: updatedOrder });
+            // Optimistic update
+            updateSectionOrder({ courseId, sections: updatedOrder }, {
+                // --- FIX 1: ADD TOAST ON SUCCESS ---
+                onSuccess: () => toast.success("Section order updated successfully!")
+            });
             return;
         }
 
@@ -340,7 +343,6 @@ const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }> = ({ c
                 
                 updateVideoOrder({ sectionId: sourceSectionId, courseId, videos: updatedOrder });
             } else {
-                // Moving between sections (Optional: Add logic here if you want to support moving videos across sections)
                 toast.error(t('adminPage.toasts.dndError'));
             }
         }
@@ -426,7 +428,18 @@ const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }> = ({ c
                                                                                     <FaDragHandle />
                                                                                 </div>
                                                                                 <FaFilm className="text-neutral-500 flex-shrink-0" />
-                                                                                <span className="text-white flex-1 truncate">{video.title}</span>
+                                                                                
+                                                                                {/* --- FIX 2: CLICKABLE VIDEO LINK --- */}
+                                                                                <a 
+                                                                                    href={`https://vimeo.com/${video.vimeoId}`} 
+                                                                                    target="_blank" 
+                                                                                    rel="noopener noreferrer" 
+                                                                                    className="text-white flex-1 truncate hover:text-purple-400 hover:underline cursor-pointer transition-colors"
+                                                                                    title="Open video on Vimeo"
+                                                                                >
+                                                                                    {video.title}
+                                                                                </a>
+
                                                                                 <span className="text-xs text-neutral-400">ID: {video.vimeoId}</span>
                                                                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                                     <button onClick={() => setModal({ type: 'editVideo', data: video })} className="p-1 text-neutral-400 hover:text-white"><FaEdit size={12} /></button>
