@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, type FC } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FaStar, FaCheck, FaChartLine, FaPlayCircle, FaUsers, FaRocket, FaChevronRight } from 'react-icons/fa';
+import { FaStar, FaCheck, FaChartLine, FaPlayCircle, FaUsers, FaRocket, FaChevronRight,  FaLock, FaBolt  } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
@@ -177,9 +177,10 @@ const Hero: FC = () => {
                     </a>
                 </div>
                 <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-x-8 gap-y-4 text-sm text-neutral-500 animate-[fadeIn-up_1s_ease-out_1s] opacity-0 [animation-fill-mode:forwards]">
-                    <div className="flex items-center gap-2"> <FaCheck /> <span>{t('landingPage.hero.trial')}</span> </div>
-                    <div className="flex items-center gap-2"> <FaCheck /> <span>{t('landingPage.hero.noCard')}</span> </div>
-                    <div className="flex items-center gap-2"> <FaCheck /> <span>{t('landingPage.hero.cancelAnytime')}</span> </div>
+                    {/* Updated Icons and Keys */}
+                    <div className="flex items-center gap-2"> <FaBolt className="text-yellow-500" /> <span>{t('landingPage.hero.benefit1')}</span> </div>
+                    <div className="flex items-center gap-2"> <FaLock className="text-green-500" /> <span>{t('landingPage.hero.benefit2')}</span> </div>
+                    <div className="flex items-center gap-2"> <FaCheck className="text-blue-500" /> <span>{t('landingPage.hero.benefit3')}</span> </div>
                 </div>
             </div>
         </section>

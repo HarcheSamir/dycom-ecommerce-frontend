@@ -16,7 +16,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "users": "User Management",
-      "financials": "Financials", 
+      "financials": "Financials",
       "products": "Trending Products",
       "training": "Video Training",
       "suppliers": "Suppliers",
@@ -437,11 +437,11 @@
       "title1": "The tool that reveals",
       "title2": "the secrets of e-commerce!",
       "subtitle": "Access real-time trends, get trained, and connect with top experts.",
-      "ctaPrimary": "Get started free",
-      "ctaSecondary": "View demo",
-      "trial": "14-day free trial",
-      "noCard": "No credit card required",
-      "cancelAnytime": "Cancel anytime"
+      "ctaPrimary": "Get Started",
+      "ctaSecondary": "Learn More",
+      "benefit1": "Instant Access",
+      "benefit2": "Secure Payment",
+      "benefit3": "Premium Support"
     },
     "features": {
       "sectionTitle": "Features",
