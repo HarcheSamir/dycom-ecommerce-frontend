@@ -45,6 +45,10 @@ export interface AffiliateLeaderboardEntry {
     totalReferrals: number;
     payingReferrals: number;
 }
+interface UpdateSectionOrderData {
+    courseId: string;
+    sections: { id: string; order: number }[];
+}
 
 // --- THIS IS THE SINGLE, CORRECT DEFINITION ---
 interface UpdateCourseData {
@@ -153,6 +157,18 @@ export const useUpdateMembershipPrices = () => {
         },
         onError: () => {
             toast.error("Failed to update prices.");
+        }
+    });
+};
+
+export const useUpdateSectionOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ courseId, sections }: UpdateSectionOrderData) => 
+            apiClient.put(`/admin/courses/${courseId}/sections/order`, { sections }),
+        onSuccess: (_, variables) => {
+            // Silently update the cache or show a small toast if you prefer
+            queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] });
         }
     });
 };
