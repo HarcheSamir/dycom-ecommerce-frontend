@@ -8,14 +8,19 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 
 import {
-    FaTachometerAlt, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard
+    FaTachometerAlt, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 
 // --- Type Definitions ---
-type NavLink = { name: string; icon: React.ReactNode; path: string };
+type NavLink = { 
+    name: string; 
+    icon: React.ReactNode; 
+    path: string; 
+    isExternal?: boolean; // Added for external links
+};
 
 // --- HELPER: Time Ago Function ---
 const timeAgo = (date: string, t: TFunction) => {
@@ -243,10 +248,25 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         { nameKey: 'suppliers', icon: <FaStore />, path: '/dashboard/suppliers' },
         { nameKey: 'training', icon: <FaVideo />, path: '/dashboard/training' },
         { nameKey: 'influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
+        // --- NEW LINKS ADDED HERE ---
+        { 
+            nameKey: 'visuelsAds', 
+            label: 'Visuels Ads', 
+            icon: <FaCrown className="text-yellow-500" />, 
+            path: 'https://opalolabs.com/', 
+            isExternal: true 
+        },
+        { 
+            nameKey: 'trendtrack', 
+            label: 'TrendTrack', 
+            icon: <FaStar className="text-yellow-400" />, 
+            path: 'https://dev.trendtrack.io/promoter/dydy20', 
+            isExternal: true 
+        },
+        // ----------------------------
         { nameKey: 'billing', icon: <FaCreditCard />, path: '/dashboard/billing' },
         { nameKey: 'settings', icon: <FaCog />, path: '/dashboard/settings' },
         { nameKey: 'affiliate', icon: <FaGift />, path: '/dashboard/affiliate' },
-
     ];
 
     if (user && user.accountType === 'ADMIN') {
@@ -257,9 +277,11 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
     }
 
     const navLinks: NavLink[] = baseNavLinks.map(link => ({
-        name: t(`sidebar.nav.${link.nameKey}`),
+        // Use provided label if available, otherwise try translation
+        name: (link as any).label || t(`sidebar.nav.${link.nameKey}`),
         icon: link.icon,
         path: link.path,
+        isExternal: (link as any).isExternal
     }));
 
     // MODIFICATION: Conditionally apply positioning and transform classes
@@ -275,14 +297,33 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         <aside className={sidebarClasses}>
             {/* ... rest of the component is unchanged ... */}
             <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
-            <nav className="flex flex-col gap-2 overflow-y-scroll">{navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
-                return (
-                    <Link key={link.name} to={link.path} onClick={onNavigate} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-left ${isActive ? 'bg-gray-200 text-black font-semibold' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}>
-                        {link.icon} <span>{link.name}</span>
-                    </Link>
-                );
-            })}</nav>
+            <nav className="flex flex-col gap-2 overflow-y-scroll">
+                {navLinks.map((link) => {
+                    // Check if it's an external link
+                    if (link.isExternal) {
+                        return (
+                            <a 
+                                key={link.path}
+                                href={link.path}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={onNavigate}
+                                className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-left text-neutral-400 hover:bg-[#1C1E22] hover:text-white"
+                            >
+                                {link.icon} <span>{link.name}</span>
+                            </a>
+                        );
+                    }
+
+                    // Standard internal link
+                    const isActive = location.pathname === link.path;
+                    return (
+                        <Link key={link.name} to={link.path} onClick={onNavigate} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-left ${isActive ? 'bg-gray-200 text-black font-semibold' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}>
+                            {link.icon} <span>{link.name}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
 
 
             <div className="mt-auto flex flex-col gap-4 ">
