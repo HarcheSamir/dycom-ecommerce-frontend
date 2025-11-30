@@ -15,6 +15,7 @@
   "sidebar": {
     "nav": {
       "dashboard": "Tableau de bord",
+      "financials": "Finances", 
       "products": "Produits tendance",
       "training": "Formation vidéo",
       "suppliers": "Fournisseurs",

@@ -15,6 +15,7 @@
   "sidebar": {
     "nav": {
       "dashboard": "لوحة التحكم",
+      "financials": "المالية", 
       "products": "المنتجات الرائجة",
       "training": "التدريب بالفيديو",
       "suppliers": "الموردون",

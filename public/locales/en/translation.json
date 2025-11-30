@@ -15,6 +15,7 @@
   "sidebar": {
     "nav": {
       "dashboard": "Dashboard",
+      "financials": "Financials", 
       "products": "Trending Products",
       "training": "Video Training",
       "suppliers": "Suppliers",
