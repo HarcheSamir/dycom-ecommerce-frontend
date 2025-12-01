@@ -260,7 +260,7 @@ const CourseDisplay: FC<{ course: VideoCourse }> = ({ course }) => {
     return (
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             <div className="lg:col-span-2">
-                <div className="aspect-video w-full bg-black rounded-2xl overflow-hidden shadow-2xl shadow-black/30 mb-6">
+                <div className=" w-full bg-black rounded-2xl overflow-hidden shadow-2xl shadow-black/30 mb-6">
                     <VimeoPlayer key={currentVideo.id} vimeoId={currentVideo.vimeoId} onEnded={handleVideoEnded} />
                 </div>
                 <GlassCard>
