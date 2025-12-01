@@ -24,7 +24,8 @@ import SettingsPage from './pages/SettingsPage';
 import { AdminFinancialsPage } from './pages/AdminFinancialPage';
 import { QuickPay } from './pages/QuickPay';
 import { AdminUsersPage } from './pages/AdminUsersPage'; // Import
-
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 // Create a client
 const queryClient = new QueryClient();
 
@@ -62,7 +63,8 @@ function App() {
               <Route path="admin/users" element={<AdminUsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
-
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             {/* Add a default route */}
             <Route path="/" element={<LandingPage />} />
           </Routes>
