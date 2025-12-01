@@ -1,58 +1,29 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import type { AxiosResponse } from 'axios';
 import apiClient from '../lib/apiClient';
 
-// --- Type Definitions ---
 export interface VideoProgress {
-  id: string;
-  completed: boolean;
-  completedAt: string | null;
+    id?: string;
+    completed: boolean;
+    completedAt: string | null;
+    lastPosition: number;
+    percentage: number;
 }
 
 export interface Video {
-  id: string;
-  title: string;
-  description: string | null;
-  vimeoId: string;
-  duration: number | null;
-  order: number;
-  progress: VideoProgress[];
+    id: string;
+    title: string;
+    description: string | null;
+    vimeoId: string;
+    duration: number | null;
+    order: number;
+    progress: VideoProgress[];
 }
 
-export interface Section {
-  id: string;
-  title: string;
-  order: number;
-  videos: Video[];
-}
+export interface Section { id: string; title: string; order: number; videos: Video[]; }
+export interface VideoCourse { id: string; title: string; description: string | null; coverImageUrl: string | null; order: number; sections: Section[]; totalVideos?: number; completedVideos?: number; price?: number | null; currency?: string; level?: string; rating?: number; duration?: string; author?: string; language?: 'FR' | 'EN' | 'AR'; }
+export interface CourseFilters { lang: string; search?: string; sortBy?: string; language?: string; }
 
-export interface VideoCourse {
-  id: string;
-  title: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  order: number;
-  sections: Section[];
-  totalVideos?: number;
-  completedVideos?: number;
-  price?: number | null;
-  currency?: string;
-  level?: string;
-  rating?: number;
-  duration?: string;
-  author?: string;
-  language?: 'FR' | 'EN' | 'AR';
-}
-
-// --- Filter Type Definition ---
-export interface CourseFilters {
-  lang: string;
-  search?: string;
-  sortBy?: string;
-  language?: string;
-}
-
-// --- Hook to fetch all courses (list view) ---
 export const useCourses = (filters: CourseFilters) => {
   return useQuery({
     queryKey: ['courses', filters],
@@ -64,10 +35,11 @@ export const useCourses = (filters: CourseFilters) => {
       });
       return response.data;
     },
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 };
 
-// --- Hook to fetch a single course with details ---
 export const useCourse = (courseId: string | null) => {
   return useQuery({
     queryKey: ['course', courseId],
@@ -77,21 +49,24 @@ export const useCourse = (courseId: string | null) => {
       return response.data;
     },
     enabled: !!courseId,
+    refetchOnWindowFocus: false,
   });
 };
 
-// --- Mutation to update video progress ---
 export const useUpdateVideoProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ videoId, completed }: { videoId: string, completed: boolean }) =>
-      apiClient.post(`/training/videos/${videoId}/progress`, { completed }),
-
-    onSuccess: (_, variables) => {
-      // Invalidate both queries to ensure all parts of the UI are updated.
-      queryClient.invalidateQueries({ queryKey: ['course'] });
-      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    mutationFn: (data: { videoId: string, lastPosition: number, percentage: number, completed?: boolean }) => {
+      // The only log left, as requested.
+      console.log(`%c[API] SAVING: ${data.percentage}%`, 'color: blue; font-weight: bold;');
+      return apiClient.post(`/training/videos/${data.videoId}/progress`, data);
+    },
+    onSuccess: (data, variables) => {
+        // Only refresh UI if completed (to show checkmark)
+        if (variables.completed || variables.percentage >= 100) {
+             queryClient.invalidateQueries({ queryKey: ['course'] });
+        }
     },
   });
 };
