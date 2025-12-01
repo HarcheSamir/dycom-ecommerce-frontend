@@ -1,7 +1,7 @@
 // src/pages/Pricing.tsx
 
 import React, { useState, useMemo, type FC, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom'; // Added useSearchParams
+import { Link, useSearchParams } from 'react-router-dom';
 import { useGetSubscriptionPlans, type SubscriptionPlan } from '../hooks/useUser';
 import { useAuth } from '../context/AuthContext';
 import { FaCheckCircle, FaGem, FaChevronDown } from 'react-icons/fa';
@@ -213,6 +213,9 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
     const totalCost = isOneTime ? plan.price : (plan.price * installments);
     const totalFormatted = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(totalCost / 100);
 
+    // --- NEW: Generate offer string (1x, 2x, 3x) ---
+    const offerQuery = `&offer=${installments}x`;
+
     return (
         <GlassCard className={`flex-1 flex flex-col h-full ${isBestValue ? 'border-primary/50 shadow-2xl shadow-primary/10 relative transform scale-105 z-10 bg-neutral-900/40' : ''}`}>
             {isBestValue && (
@@ -255,7 +258,8 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
             </ul>
 
             <Link
-                to={isAuthenticated ? `/dashboard/billing?plan=${plan.id}` : `/signup?plan=${plan.id}`}
+                // --- CHANGED: Append offerQuery to the URL ---
+                to={isAuthenticated ? `/dashboard/billing?plan=${plan.id}${offerQuery}` : `/signup?plan=${plan.id}${offerQuery}`}
                 className={`w-full block py-4 rounded-xl text-center font-bold text-lg transition-all ${isBestValue ? 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10' : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800'}`}
             >
                 {t('membershipPricing.card.startNow')}
@@ -270,8 +274,8 @@ const PricingPage: FC = () => {
     const { t, i18n } = useTranslation();
     const [searchParams] = useSearchParams();
     
-    // Logic: Only show 2x/3x plans if ?offer=flex is in the URL
-    const showInstallments = searchParams.get('offer') === 'flex';
+    // --- CHANGED: Always show all plans (Installments included) ---
+    const showInstallments = true; // Was: searchParams.get('offer') === 'flex';
 
     let currency: 'eur' | 'usd' | 'aed' = 'usd';
     if (i18n.language === 'fr') currency = 'eur';
@@ -287,7 +291,7 @@ const PricingPage: FC = () => {
         
         let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
 
-        // IF NOT using the secret link, filter out installments (keep only '1')
+        // Logic handled by 'showInstallments' which is now true
         if (!showInstallments) {
             availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
         }
@@ -299,10 +303,10 @@ const PricingPage: FC = () => {
         });
     }, [plans, showInstallments]);
 
-    // Dynamic grid classes to handle single item centering nicely
+    // Dynamic grid classes
     const gridClasses = showInstallments 
         ? "grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl w-full items-stretch"
-        : "flex flex-col items-center justify-center w-full max-w-md"; // Single item style
+        : "flex flex-col items-center justify-center w-full max-w-md";
 
     return (
         <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>

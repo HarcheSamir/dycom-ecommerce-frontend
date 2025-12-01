@@ -11,7 +11,6 @@ import {
     CardExpiryElement,
     CardCvcElement
 } from '@stripe/react-stripe-js';
-import toast from 'react-hot-toast';
 import { FaCheckCircle, FaExclamationTriangle, FaLock, FaCreditCard, FaCrown, FaShieldAlt, FaCalendarAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -35,9 +34,9 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
     const elements = useElements();
     const { mutate: createSubscription, isPending } = useCreateSubscription();
     
-    // --- FIXED: Capture specific offer string ---
+    // --- Capture offer string ---
     const [searchParams] = useSearchParams();
-    const offer = searchParams.get('offer'); // "2x", "3x", "flex"
+    const offer = searchParams.get('offer'); // "1x", "2x", "3x" or null
 
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -56,40 +55,33 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
         }
     };
 
-    // Filter Logic
+    // --- UPDATED FILTER LOGIC HERE ---
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
         let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
 
-        // === FILTERING LOGIC ===
-        if (offer === '2x') {
-            // Show ONLY 2 installments plan
+        // Logic:
+        // 1. If 1x, 2x, or 3x is specified, filter to ONLY that plan.
+        // 2. If no offer is specified (null), return ALL plans.
+        
+        if (offer === '1x') {
+            availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
+        } else if (offer === '2x') {
             availablePlans = availablePlans.filter(p => p.metadata?.installments === '2');
         } else if (offer === '3x') {
-            // Show ONLY 3 installments plan
             availablePlans = availablePlans.filter(p => p.metadata?.installments === '3');
-        } else if (offer === 'flex') {
-             // Show ALL plans (1, 2, 3)
-        } else {
-            // Default behavior: Show Lifetime (1x) only
-            // But check if a specific ?plan=ID is set manually (legacy support)
-            const planFromUrl = searchParams.get('plan');
-            if (!planFromUrl) {
-                 availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
-            }
-        }
+        } 
+        // else: No offer specified? We return everything (do not filter).
 
         return availablePlans.sort((a, b) => {
             const instA = parseInt(a.metadata?.installments || '1');
             const instB = parseInt(b.metadata?.installments || '1');
             return instA - instB;
         });
-    }, [plans, offer, searchParams]);
+    }, [plans, offer]);
 
     // Auto-select the first available plan when list changes
     useEffect(() => {
-        // If we filtered down to 1 specific plan (like 2x), auto-select it.
-        // Or if the previously selected plan is no longer visible.
         if (sortedPlans.length > 0) {
             const currentSelectedVisible = sortedPlans.some(p => p.id === selectedPlanId);
             if (!selectedPlanId || !currentSelectedVisible) {
@@ -112,7 +104,6 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             return;
         }
 
-        // --- CHANGED: Get CardNumberElement instead of CardElement ---
         const cardElement = elements.getElement(CardNumberElement);
         if (!cardElement) return;
 
@@ -149,7 +140,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
             </div>
 
             {/* Plan Selector Grid */}
-            {/* Dynamic Columns based on visible plans */}
+            {/* Dynamic Columns: 1 col if specific offer, 3 cols if showing all */}
             <div className={`grid grid-cols-1 ${sortedPlans.length > 1 ? 'md:grid-cols-3' : 'md:grid-cols-1 max-w-sm mx-auto'} gap-4`}>
                 {sortedPlans.map(plan => {
                     const installments = parseInt(plan.metadata?.installments || '1');
@@ -204,7 +195,7 @@ const PaymentForm: FC<{ onPaymentSuccess: () => void; plans: SubscriptionPlan[] 
                 </div>
             )}
 
-            {/* --- SPLIT CARD INPUTS (Fixed Layout) --- */}
+            {/* --- SPLIT CARD INPUTS --- */}
             <div className="bg-[#111317] border border-neutral-700 rounded-xl p-5 space-y-4">
                 <div className="flex items-center gap-2 text-white font-medium text-sm mb-2">
                     <FaCreditCard className="text-primary" /> {t('membershipBilling.form.secure')}
