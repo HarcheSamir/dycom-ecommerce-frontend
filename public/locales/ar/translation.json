@@ -621,6 +621,8 @@
     "lessonCounter": "الدرس {{current}} / {{total}}",
     "completedCount": "تم إكمال {{completed}} / {{total}}",
     "courseCard": {
+       "continue": "متابعة",
+      "begin": "ابدأ",
       "free": "مجاني",
       "lessons_one": "درس واحد",
       "lessons_other": "{{count}} دروس",

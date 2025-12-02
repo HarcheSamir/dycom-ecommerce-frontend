@@ -621,6 +621,8 @@
     "lessonCounter": "Leçon {{current}} / {{total}}",
     "completedCount": "{{completed}} / {{total}} terminés",
     "courseCard": {
+      "continue": "Continuer",
+      "begin": "Commencer",
       "free": "Gratuit",
       "lessons_one": "{{count}} leçon",
       "lessons_other": "{{count}} leçons",

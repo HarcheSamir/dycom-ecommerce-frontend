@@ -128,7 +128,7 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
             <div className="fixed top-0 left-0 right-0 z-50 bg-[#111317] shadow-xl lg:static lg:bg-transparent lg:shadow-none lg:col-span-2 lg:block">
 
                 {/* THE VIDEO PLAYER */}
-                <div className="w-full aspect-video bg-black relative lg:rounded-2xl lg:overflow-hidden lg:shadow-2xl lg:shadow-black/30">
+                <div className="w-full  bg-black relative lg:rounded-2xl lg:overflow-hidden lg:shadow-2xl lg:shadow-black/30">
                     <VimeoPlayer
                         key={activeVideo.id}
                         vimeoId={activeVideo.vimeoId}

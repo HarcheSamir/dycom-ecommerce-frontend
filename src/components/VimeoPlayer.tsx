@@ -79,7 +79,7 @@ const Player: FC<VimeoPlayerProps> = ({ vimeoId, initialTime = 0, onProgress, on
     };
   }, [vimeoId]);
 
-  return <div ref={containerRef} className="w-full aspect-video bg-black" />;
+  return <div ref={containerRef} className="w-full  bg-black" />;
 };
 
 export default Player;

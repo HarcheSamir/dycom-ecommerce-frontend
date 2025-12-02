@@ -27,8 +27,12 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
 
     return (
         <GlassCard className="flex flex-col h-full" padding="p-0">
-            <div className={`flex flex-col h-full ${hasAccess ? 'cursor-pointer' : ''}`}>
-                <div onClick={hasAccess ? onClick : undefined} className="relative w-full h-48 bg-[#1C1E22] rounded-t-3xl overflow-hidden group">
+            <div 
+                // Apply onClick to the entire container if the user has access
+                onClick={hasAccess ? onClick : undefined}
+                className={`flex flex-col h-full ${hasAccess ? 'cursor-pointer' : ''}`}
+            >
+                <div className="relative w-full h-48 bg-[#1C1E22] rounded-t-3xl overflow-hidden group">
                     <img src={course.coverImageUrl || ''} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
 
                     {/* Overlay Play Icon on Hover */}
@@ -59,8 +63,11 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
 
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-800">
                         {hasAccess ? (
-                            <button onClick={onClick} className="w-full h-10 rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-medium hover:bg-neutral-800 transition-colors">
-                                {progressPercent > 0 ? "Continuer" : "Commencer"}
+                            <button 
+                                // Removed onClick here, relies on container bubble
+                                className="w-full h-10 cursor-pointer rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-medium hover:bg-neutral-800 transition-colors"
+                            >
+                                {progressPercent > 0 ? t('trainingPage.courseCard.continue') : t('trainingPage.courseCard.begin')}
                             </button>
                         ) : (
                             <>
@@ -68,7 +75,13 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
                                     <p className="text-neutral-500 text-xs uppercase font-bold">{t('trainingPage.courseCard.priceLabel')}</p>
                                     <p className="text-white font-bold text-2xl">{formattedPrice}</p>
                                 </div>
-                                <button onClick={onBuy} className={`px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors ${isFree ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-white text-black hover:bg-gray-200'}`}>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Good practice even if container click is undefined
+                                        onBuy();
+                                    }} 
+                                    className={`px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors ${isFree ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-white text-black hover:bg-gray-200'}`}
+                                >
                                     {isFree ? t('trainingPage.courseCard.getFreeButton') : t('trainingPage.courseCard.buyButton')}
                                 </button>
                             </>
