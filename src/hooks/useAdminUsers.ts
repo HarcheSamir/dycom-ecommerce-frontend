@@ -47,6 +47,7 @@ export const useAdminUsers = (page: number, filters: UserFilters) => {
                     installments: filters.installments
                 }
             });
+            console.log(response.data)
             return response.data;
         },
     });
