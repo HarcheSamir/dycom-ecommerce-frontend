@@ -1,5 +1,3 @@
-// src/hooks/useAdminUsers.ts
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import toast from 'react-hot-toast';
@@ -13,10 +11,31 @@ export interface AdminUser {
     installmentsPaid: number;
     installmentsRequired: number;
     createdAt: string;
+    currentPeriodEnd: string | null;
     stripeCustomerId: string | null;
+    
+    // New Rich Data
+    ltv: number;
+    // --- UPDATED: Array of payments instead of single string ---
+    paymentHistory: {
+        date: string;
+        amount: number;
+        currency: string;
+    }[]; 
+    // -----------------------------------------------------------
+    referrer?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    } | null;
+    stats: {
+        referrals: number;
+        purchases: number;
+        searches: number;
+    };
 }
 
-// NEW: Filter Interface
 export interface UserFilters {
     search: string;
     status: string;
@@ -33,23 +52,22 @@ interface UsersResponse {
     };
 }
 
-// MODIFIED: Accept object instead of just search string
 export const useAdminUsers = (page: number, filters: UserFilters) => {
     return useQuery<UsersResponse>({
-        queryKey: ['adminUsers', page, filters], // Include filters in key to trigger refetch
+        queryKey: ['adminUsers', page, filters], 
         queryFn: async () => {
             const response = await apiClient.get('/admin/users', {
-                params: { 
-                    page, 
-                    limit: 20, 
+                params: {
+                    page,
+                    limit: 20,
                     search: filters.search,
                     status: filters.status,
                     installments: filters.installments
                 }
             });
-            console.log(response.data)
             return response.data;
         },
+        staleTime: 1000 * 60, // Cache for 1 min
     });
 };
 
