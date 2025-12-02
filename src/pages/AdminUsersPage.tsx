@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAdminUsers, useGrantLifetime, type AdminUser } from '../hooks/useAdminUsers';
-import { 
-    FaUser, FaSearch, FaChevronLeft, FaChevronRight, FaCrown, FaEllipsisV, 
-    FaFilter, FaLayerGroup, FaChevronDown, FaExclamationTriangle, 
-    FaDollarSign, FaHistory, FaClock, FaCheckCircle, FaTimesCircle, FaFileCsv 
+import {
+    FaUser, FaSearch, FaChevronLeft, FaChevronRight, FaCrown, FaEllipsisV,
+    FaFilter, FaLayerGroup, FaChevronDown, FaExclamationTriangle,
+    FaDollarSign, FaHistory, FaClock, FaCheckCircle, FaTimesCircle, FaFileCsv
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../lib/apiClient';
 import toast, { Toaster } from 'react-hot-toast';
-
+import { useNavigate } from 'react-router-dom';
 // --- Reusable Components ---
 
 const GlassCard: React.FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = 'p-6' }) => (
@@ -47,33 +47,33 @@ const UserStatusBadge = ({ status }: { status: string }) => {
 
     const config: { [key: string]: [string, string, React.ReactNode] } = {
         ACTIVE: [
-            'bg-green-500/20 border-green-500/40', 
-            'text-green-200', 
+            'bg-green-500/20 border-green-500/40',
+            'text-green-200',
             <FaCheckCircle className="mr-1.5 text-green-400" size={10} />
         ],
         LIFETIME_ACCESS: [
-            'bg-purple-500/20 border-purple-500/40', 
-            'text-purple-200', 
+            'bg-purple-500/20 border-purple-500/40',
+            'text-purple-200',
             <FaCrown className="mr-1.5 text-purple-400" size={10} />
         ],
         TRIALING: [
-            'bg-blue-500/20 border-blue-500/40', 
-            'text-blue-200', 
+            'bg-blue-500/20 border-blue-500/40',
+            'text-blue-200',
             <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2" />
         ],
         PAST_DUE: [
-            'bg-red-500/20 border-red-500/40', 
-            'text-red-200', 
+            'bg-red-500/20 border-red-500/40',
+            'text-red-200',
             <FaExclamationTriangle className="mr-1.5 text-red-400" size={10} />
         ],
         CANCELED: [
-            'bg-neutral-600/40 border-neutral-500', 
-            'text-neutral-200', 
+            'bg-neutral-600/40 border-neutral-500',
+            'text-neutral-200',
             <FaTimesCircle className="mr-1.5 text-neutral-400" size={10} />
         ],
         INCOMPLETE: [
-            'bg-yellow-500/20 border-yellow-500/40', 
-            'text-yellow-200', 
+            'bg-yellow-500/20 border-yellow-500/40',
+            'text-yellow-200',
             <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 mr-2" />
         ],
     };
@@ -102,7 +102,7 @@ const ActionMenu: React.FC<{ user: AdminUser }> = ({ user }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { mutate: grantLifetime, isPending } = useGrantLifetime();
     const { t } = useTranslation();
-
+    const navigate = useNavigate();
     const handleGrant = () => {
         if (window.confirm(t('adminUsers.actions.grantConfirm', { email: user.email }))) {
             grantLifetime(user.id);
@@ -134,6 +134,12 @@ const ActionMenu: React.FC<{ user: AdminUser }> = ({ user }) => {
                         <button className="w-full text-left px-4 py-3 text-sm font-medium text-neutral-300 hover:bg-neutral-700 flex items-center gap-2 cursor-not-allowed opacity-50">
                             <FaUser size={12} /> {t('adminUsers.actions.editDetails')}
                         </button>
+                        <button
+                            onClick={() => navigate(`/dashboard/admin/users/${user.id}`)} // Updated Navigation
+                            className="w-full text-left px-4 py-3 text-sm font-medium text-neutral-300 hover:bg-neutral-700 flex items-center gap-2"
+                        >
+                            <FaUser size={12} /> View User Details
+                        </button>
                     </div>
                 </>
             )}
@@ -155,7 +161,7 @@ export const AdminUsersPage: React.FC = () => {
     const [planFilter, setPlanFilter] = useState('ALL');
 
     const [tempSearch, setTempSearch] = useState('');
-    
+    const navigate = useNavigate();
     // Debounce search input
     useEffect(() => {
         const timer = setTimeout(() => { setSearch(tempSearch); setPage(1); }, 500);
@@ -194,7 +200,7 @@ export const AdminUsersPage: React.FC = () => {
             document.body.appendChild(link);
             link.click();
             link.remove();
-            
+
             toast.success('Export successful!', { id: toastId });
         } catch (error) {
             console.error("Export failed", error);
@@ -208,11 +214,11 @@ export const AdminUsersPage: React.FC = () => {
     const formatDateTime = (dateString: string | null) => {
         if (!dateString) return null;
         const date = new Date(dateString);
-        
-        const dayDate = date.toLocaleDateString(currentLocale, { 
-            day: '2-digit', month: '2-digit', year: 'numeric' 
+
+        const dayDate = date.toLocaleDateString(currentLocale, {
+            day: '2-digit', month: '2-digit', year: 'numeric'
         });
-        const time = date.toLocaleTimeString(currentLocale, { 
+        const time = date.toLocaleTimeString(currentLocale, {
             hour: '2-digit', minute: '2-digit', hour12: false // Force 24h format
         });
 
@@ -226,7 +232,7 @@ export const AdminUsersPage: React.FC = () => {
     return (
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-[#111317] min-h-screen text-white space-y-8">
             <Toaster position="bottom-right" />
-            
+
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1">
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
@@ -235,7 +241,7 @@ export const AdminUsersPage: React.FC = () => {
                     <p className="text-neutral-300">{t('adminUsers.subtitle')}</p>
                 </div>
 
-                <button 
+                <button
                     onClick={handleExport}
                     disabled={isExporting}
                     className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-xl text-white font-medium transition-colors disabled:opacity-50 shadow-lg"
@@ -307,8 +313,8 @@ export const AdminUsersPage: React.FC = () => {
                             ) : data?.data.length === 0 ? (
                                 <tr><td colSpan={6} className="p-12 text-center text-neutral-300">{t('adminUsers.table.empty')}</td></tr>
                             ) : data?.data.map((user) => (
-                                <tr key={user.id} className="group hover:bg-[#23262b] transition-colors">
-                                    
+                                <tr key={user.id} className="group cursor-pointer hover:bg-[#23262b] transition-colors" onClick={() => navigate(`/dashboard/admin/users/${user.id}`)}>
+
                                     {/* --- 1. IDENTITY COLUMN --- */}
                                     <td className="p-5 align-top">
                                         <div className="flex items-center gap-3">
@@ -322,7 +328,7 @@ export const AdminUsersPage: React.FC = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    
+
                                     {/* --- 2. STATUS COLUMN --- */}
                                     <td className="p-5 align-top">
                                         <UserStatusBadge status={user.subscriptionStatus} />
@@ -369,7 +375,7 @@ export const AdminUsersPage: React.FC = () => {
                                     </td>
 
                                     {/* --- 5. ACTIVITY / DATES COLUMN (Accurate Format + Full History) --- */}
-                                     <td className="p-5 align-top ">
+                                    <td className="p-5 align-top ">
                                         <div className="space-y-4">
                                             {/* Joined Date */}
                                             <div className="flex items-start gap-3">
@@ -388,7 +394,7 @@ export const AdminUsersPage: React.FC = () => {
                                                 <div className="w-5 flex justify-center pt-0.5"><FaHistory className="text-green-400" size={13} /></div>
                                                 <div className="flex-1">
                                                     <span className="text-[10px] text-green-300 font-bold uppercase tracking-wider block leading-none mb-1">Payment History</span>
-                                                    
+
                                                     {user.paymentHistory && user.paymentHistory.length > 0 ? (
                                                         <div className="max-h-24  pr-2 space-y-2 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900">
                                                             {user.paymentHistory.map((payment, idx) => (
@@ -411,7 +417,9 @@ export const AdminUsersPage: React.FC = () => {
                                     </td>
                                     {/* --- 6. ACTIONS COLUMN --- */}
                                     <td className="p-5 text-right align-top">
-                                        <ActionMenu user={user} />
+                                        <div onClick={(e) => e.stopPropagation()}>
+                                            <ActionMenu user={user} />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -421,7 +429,7 @@ export const AdminUsersPage: React.FC = () => {
 
                 {/* Pagination */}
                 {data && data.meta.totalPages > 1 && (
-                    <div className="p-4 border-t border-neutral-700 flex justify-end gap-2 bg-[#1C1E22]">
+                    <div className="p-4  border-t border-neutral-700 flex justify-end gap-2 bg-[#1C1E22]">
                         <button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1}

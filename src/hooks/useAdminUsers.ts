@@ -36,6 +36,33 @@ export interface AdminUser {
     };
 }
 
+export interface DetailedAdminUser {
+    user: AdminUser; // Reusing the existing type
+    financials: {
+        ltv: number;
+        transactions: {
+            id: string;
+            amount: number;
+            currency: string;
+            status: string;
+            createdAt: string;
+        }[];
+    };
+    courses: {
+        id: string;
+        title: string;
+        coverImageUrl: string;
+        totalVideos: number;
+        completedVideos: number;
+        percentage: number;
+        status: 'COMPLETED' | 'IN_PROGRESS' | 'NOT_STARTED';
+    }[];
+    affiliate: {
+        referredBy: string | null;
+        referralsCount: number;
+    }
+}
+
 export interface UserFilters {
     search: string;
     status: string;
@@ -82,5 +109,17 @@ export const useGrantLifetime = () => {
         onError: () => {
             toast.error('Failed to update user.');
         }
+    });
+};
+
+export const useAdminUserDetails = (userId: string | undefined) => {
+    return useQuery<DetailedAdminUser, Error>({
+        queryKey: ['adminUserDetails', userId],
+        queryFn: async () => {
+            if (!userId) throw new Error("No User ID");
+            const response = await apiClient.get(`/admin/users/${userId}/details`);
+            return response.data;
+        },
+        enabled: !!userId
     });
 };

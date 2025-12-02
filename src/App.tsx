@@ -23,7 +23,9 @@ import { QuickPay } from './pages/QuickPay';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import { CoursePlayerPage } from './pages/CoursePlayerPage'; // <-- IMPORT NEW PAGE
+import { CoursePlayerPage } from './pages/CoursePlayerPage'; 
+import AdminUserDetailsPage from './pages/AdminUserDetailsPage';
+
 
 const queryClient = new QueryClient();
 
@@ -61,6 +63,7 @@ function App() {
               <Route path="admin" element={<AdminPage />} />
               <Route path="admin/financials" element={<AdminFinancialsPage />} />
               <Route path="admin/users" element={<AdminUsersPage />} />
+              <Route path="admin/users/:userId" element={<AdminUserDetailsPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
             
