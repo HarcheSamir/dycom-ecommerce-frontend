@@ -143,7 +143,10 @@
       "videoAdded": "Vidéo ajoutée !",
       "genericError": "Erreur.",
       "dndError": "Le déplacement de vidéos entre les sections n'est pas encore implémenté.",
-      "invalidSettings": "Veuillez saisir des nombres valides. La commission doit être comprise entre 1 et 100."
+      "invalidSettings": "Veuillez saisir des nombres valides. La commission doit être comprise entre 1 et 100.",
+      "sectionOrderUpdated": "Ordre des sections mis à jour !",
+      "uploadingImage": "Téléchargement de l'image...",
+      "creatingCourse": "Création du cours..."
     },
     "confirm": {
       "deleteCourse": "Supprimer ce cours ?",
@@ -239,7 +242,9 @@
         "update": "Mettre à jour",
         "saving": "Enregistrement...",
         "loading": "Chargement...",
-        "duration": "Durée (min)"
+        "duration": "Durée (min)",
+        "language": "Langue",
+        "priceAed": "Prix (AED)"
       },
       "uploadCourse": {
         "title": "Télécharger un cours",
@@ -248,7 +253,8 @@
         "coverImage": "Image de couverture",
         "uploadFile": "Télécharger un fichier",
         "dragAndDrop": "ou glisser-déposer",
-        "imageHint": "PNG, JPG, GIF jusqu'à 2Mo"
+        "imageHint": "PNG, JPG, GIF jusqu'à 2Mo",
+        "isFreeLabel": "Ce cours est gratuit (Visible par tous)"
       },
       "addSection": {
         "title": "Ajouter une section"
@@ -597,13 +603,23 @@
       "purchaseSuccess": "Achat réussi ! Vous avez maintenant accès au cours.",
       "verificationTimeout": "La vérification a pris trop de temps. Veuillez rafraîchir la page.",
       "paymentFailed": "Le paiement a échoué.",
-      "paymentStartFailed": "Impossible d'initier le paiement."
+      "paymentStartFailed": "Impossible d'initier le paiement.",
+      "lessonFinished": "Leçon terminée ! Lecture de la suivante...",
+      "courseFinished": "Félicitations ! Cours terminé."
     },
     "title": "Formation Vidéo",
     "subtitle": "Maîtrisez de nouvelles compétences avec nos cours vidéo d'experts",
     "allCourses": "Tous les cours",
     "loading": "Chargement...",
     "error": "Erreur.",
+    "markAsCompleted": "Marquer comme terminé",
+    "next": "Suivant",
+    "hideDetails": "Masquer détails",
+    "showDetails": "Afficher détails",
+    "aboutLesson": "À propos de cette leçon",
+    "courseContent": "Contenu du cours",
+    "lessonCounter": "Leçon {{current}} / {{total}}",
+    "completedCount": "{{completed}} / {{total}} terminés",
     "courseCard": {
       "free": "Gratuit",
       "lessons_one": "{{count}} leçon",

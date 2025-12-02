@@ -12,6 +12,7 @@ import {
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+
 export const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }> = ({ courseId, onBack }) => {
     const { t } = useTranslation();
     const { data: course, isLoading, isError } = useAdminCourseDetails(courseId);
@@ -37,7 +38,8 @@ export const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }>
             newSections.splice(destination.index, 0, movedSection);
             const updatedOrder = newSections.map((sec, index) => ({ id: sec.id, order: index }));
             updateSectionOrder({ courseId, sections: updatedOrder }, {
-                onSuccess: () => toast.success("Section order updated successfully!")
+                // TRANSLATION APPLIED
+                onSuccess: () => toast.success(t('adminPage.toasts.sectionOrderUpdated'))
             });
             return;
         }
@@ -120,7 +122,7 @@ export const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }>
                                                             </h3>
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            <button onClick={() => setModal({ type: 'addVideo', data: { sectionId: section.id } })} className="text-xs rounded-lg bg-[#111317] border border-neutral-700 text-neutral-300 font-semibold hover:bg-neutral-800 p-2"><FaPlus /></button>
+                                                            <button onClick={() => setModal({ type: 'addVideo', data: { sectionId: section.id }})} className="text-xs rounded-lg bg-[#111317] border border-neutral-700 text-neutral-300 font-semibold hover:bg-neutral-800 p-2"><FaPlus /></button>
                                                             <button onClick={() => setModal({ type: 'editSection', data: section })} className="text-xs rounded-lg bg-[#111317] border border-neutral-700 text-neutral-300 font-semibold hover:bg-neutral-800 p-2"><FaEdit /></button>
                                                             <button onClick={() => handleDeleteSection(section.id)} className="text-xs rounded-lg bg-[#111317] border border-neutral-700 text-red-400 font-semibold hover:bg-neutral-800 p-2"><FaTrash /></button>
                                                         </div>
@@ -138,11 +140,11 @@ export const AdminCourseDetailView: FC<{ courseId: string, onBack: () => void }>
                                                                                     to={`/dashboard/training/${courseId}?video=${video.id}`}
                                                                                     target="_blank"
                                                                                     rel="noopener noreferrer"
-                                                                                    className="text-white flex-1 truncate hover:text-purple-400 hover:underline cursor-pointer transition-colors"
+                                                                                    className="text-white flex-1 truncate hover:text-purple-400hover:underline cursor-pointer transition-colors"
                                                                                     title="Preview this course as a user"
                                                                                 >
                                                                                     {video.title}
-                                                                                </Link>                                                                                <span className="text-xs text-neutral-400">ID: {video.vimeoId}</span>
+                                                                                </Link>                       <span className="text-xs text-neutral-400">ID: {video.vimeoId}</span>
                                                                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                                                     <button onClick={() => setModal({ type: 'editVideo', data: video })} className="p-1 text-neutral-400 hover:text-white"><FaEdit size={12} /></button>
                                                                                     <button onClick={() => handleDeleteVideo(video.id)} className="p-1 text-neutral-400 hover:text-red-400"><FaTrash size={12} /></button>

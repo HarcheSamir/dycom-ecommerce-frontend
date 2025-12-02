@@ -143,7 +143,10 @@
       "videoAdded": "تمت إضافة الفيديو!",
       "genericError": "خطأ.",
       "dndError": "نقل مقاطع الفيديو بين الأقسام لم يتم تنفيذه بعد.",
-      "invalidSettings": "الرجاء إدخال أرقام صالحة. يجب أن تكون العمولة بين 1 و 100."
+      "invalidSettings": "الرجاء إدخال أرقام صالحة. يجب أن تكون العمولة بين 1 و 100.",
+      "sectionOrderUpdated": "تم تحديث ترتيب الأقسام بنجاح!",
+      "uploadingImage": "جاري تحميل الصورة...",
+      "creatingCourse": "جاري إنشاء الدورة..."
     },
     "confirm": {
       "deleteCourse": "هل تريد حذف هذه الدورة؟",
@@ -239,9 +242,12 @@
         "update": "تحديث",
         "saving": "جاري الحفظ...",
         "loading": "جاري التحميل...",
-        "duration": "المدة (بالدقائق)"
+        "duration": "المدة (بالدقائق)",
+        "language": "اللغة",
+        "priceAed": "السعر (درهم إماراتي)"
       },
       "uploadCourse": {
+        "isFreeLabel": "هذه الدورة مجانية (مرئية للجميع)",
         "title": "تحميل دورة",
         "priceHint": "اتركه فارغًا إذا كان مدرجًا في الاشتراك",
         "pricePlaceholder": "على سبيل المثال، 49.99",
@@ -597,13 +603,23 @@
       "purchaseSuccess": "تم الشراء بنجاح! لديك الآن حق الوصول إلى الدورة.",
       "verificationTimeout": "استغرق التحقق وقتًا طويلاً. يرجى تحديث الصفحة.",
       "paymentFailed": "فشل الدفع.",
-      "paymentStartFailed": "تعذر بدء الدفع."
+      "paymentStartFailed": "تعذر بدء الدفع.",
+      "lessonFinished": "انتهى الدرس! تشغيل التالي...",
+      "courseFinished": "تهانينا! اكتملت الدورة."
     },
     "title": "التدريب بالفيديو",
     "subtitle": "أتقن مهارات جديدة مع دورات الفيديو المتخصصة لدينا",
     "allCourses": "كل الدورات",
     "loading": "جاري التحميل...",
     "error": "خطأ.",
+    "markAsCompleted": "تحديد كمكتمل",
+    "next": "التالي",
+    "hideDetails": "إخفاء التفاصيل",
+    "showDetails": "عرض التفاصيل",
+    "aboutLesson": "حول هذا الدرس",
+    "courseContent": "محتوى الدورة",
+    "lessonCounter": "الدرس {{current}} / {{total}}",
+    "completedCount": "تم إكمال {{completed}} / {{total}}",
     "courseCard": {
       "free": "مجاني",
       "lessons_one": "درس واحد",

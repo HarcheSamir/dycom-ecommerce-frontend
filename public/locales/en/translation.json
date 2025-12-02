@@ -143,7 +143,10 @@
       "videoAdded": "Video added!",
       "genericError": "Error.",
       "dndError": "Moving videos between sections is not yet implemented.",
-      "invalidSettings": "Please enter valid numbers. The commission must be between 1 and 100."
+      "invalidSettings": "Please enter valid numbers. The commission must be between 1 and 100.",
+      "sectionOrderUpdated": "Section order updated successfully!",
+      "uploadingImage": "Uploading image...",
+      "creatingCourse": "Creating course..."
     },
     "confirm": {
       "deleteCourse": "Delete this course?",
@@ -239,9 +242,12 @@
         "update": "Update",
         "saving": "Saving...",
         "loading": "Loading...",
-        "duration": "Duration (min)"
+        "duration": "Duration (min)",
+        "language": "Language",
+        "priceAed": "Price (AED)"
       },
       "uploadCourse": {
+        "isFreeLabel": "This course is Free (Visible to everyone)",
         "title": "Upload a Course",
         "priceHint": "leave empty if included in subscription",
         "pricePlaceholder": "e.g., 49.99",
@@ -597,13 +603,23 @@
       "purchaseSuccess": "Purchase successful! You now have access to the course.",
       "verificationTimeout": "Verification took too long. Please refresh the page.",
       "paymentFailed": "Payment failed.",
-      "paymentStartFailed": "Could not initiate payment."
+      "paymentStartFailed": "Could not initiate payment.",
+      "lessonFinished": "Lesson finished! Playing next...",
+      "courseFinished": "Congratulations! Course completed."
     },
     "title": "Video Training",
     "subtitle": "Master new skills with our expert video courses",
     "allCourses": "All Courses",
     "loading": "Loading...",
     "error": "Error.",
+    "markAsCompleted": "Mark as completed",
+    "next": "Next",
+    "hideDetails": "Hide details",
+    "showDetails": "Show details",
+    "aboutLesson": "About this lesson",
+    "courseContent": "Course Content",
+    "lessonCounter": "Lesson {{current}} / {{total}}",
+    "completedCount": "{{completed}} / {{total}} completed",
     "courseCard": {
       "free": "Free",
       "lessons_one": "{{count}} lesson",

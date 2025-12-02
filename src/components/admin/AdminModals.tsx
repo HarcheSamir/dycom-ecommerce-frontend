@@ -25,7 +25,8 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
         e.preventDefault();
         if (!title || !coverImageFile) { toast.error(t('adminPage.toasts.titleAndImageRequired')); return; }
         setIsUploading(true);
-        const uploadToast = toast.loading('Uploading image...');
+        // TRANSLATION APPLIED
+        const uploadToast = toast.loading(t('adminPage.toasts.uploadingImage'));
         const formData = new FormData();
         formData.append('file', coverImageFile);
         formData.append('upload_preset', 'test2test');
@@ -34,7 +35,8 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
             const data = await response.json();
             if (data.secure_url) {
                 toast.dismiss(uploadToast);
-                const createToast = toast.loading('Creating course...');
+                // TRANSLATION APPLIED
+                const createToast = toast.loading(t('adminPage.toasts.creatingCourse'));
 
                 createCourse({
                     title,
@@ -84,8 +86,9 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
                                 onChange={(e) => setIsFree(e.target.checked)}
                                 className="w-5 h-5 rounded border-neutral-600 bg-neutral-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-neutral-900"
                             />
+                            {/* TRANSLATION APPLIED */}
                             <label htmlFor="isFree" className="text-white font-medium cursor-pointer select-none">
-                                This course is Free (Visible to everyone)
+                                {t('adminPage.modals.uploadCourse.isFreeLabel')}
                             </label>
                         </div>
                         {!isFree && (
@@ -99,14 +102,16 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
                                     <input type="number" step="0.01" value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="55.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
                                 <div>
-                                    <label className="text-sm text-neutral-400 mb-2 block">Price (AED)</label>
+                                    {/* TRANSLATION APPLIED */}
+                                    <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.priceAed')}</label>
                                     <input type="number" step="0.01" value={priceAed} onChange={e => setPriceAed(e.target.value)} placeholder="199.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
                             </div>
                         )}
                         <div className="grid grid-cols-1 gap-6">
                             <div>
-                                <label className="text-sm text-neutral-400 mb-2 block">Language</label>
+                                {/* TRANSLATION APPLIED */}
+                                <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.language')}</label>
                                 <select value={language} onChange={e => setLanguage(e.target.value)} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white">
                                     <option value="EN">English</option>
                                     <option value="FR">Français</option>
@@ -209,8 +214,9 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                 onChange={(e) => setIsFree(e.target.checked)}
                                 className="w-5 h-5 rounded border-neutral-600 bg-neutral-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-neutral-900"
                             />
+                            {/* TRANSLATION APPLIED */}
                             <label htmlFor="isFreeEdit" className="text-white font-medium cursor-pointer select-none">
-                                This course is Free (Visible to everyone)
+                                {t('adminPage.modals.uploadCourse.isFreeLabel')}
                             </label>
                         </div>
                         {!isFree && (
@@ -224,7 +230,8 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                     <input type="number" step="0.01" value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="e.g., 55.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
                                 <div>
-                                    <label className="text-sm text-neutral-400 mb-2 block">Price (AED)</label>
+                                    {/* TRANSLATION APPLIED */}
+                                    <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.priceAed')}</label>
                                     <input type="number" step="0.01" value={priceAed} onChange={e => setPriceAed(e.target.value)} placeholder="e.g., 199.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
                             </div>
@@ -234,7 +241,8 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white" />
                         </div>
                         <div>
-                            <label className="text-sm text-neutral-400 mb-2 block">Language</label>
+                            {/* TRANSLATION APPLIED */}
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.language')}</label>
                             <select value={language} onChange={e => setLanguage(e.target.value)} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white">
                                 <option value="EN">English</option>
                                 <option value="FR">Français</option>
@@ -254,7 +262,7 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
     );
 };
 
-// --- ADD SECTION MODAL ---
+// ... Rest of the file (AddSection, AddVideo, EditSection, EditVideo) remains unchanged as they use existing translations ...
 export const AddSectionModal: FC<{ show: boolean; onClose: () => void; courseId: string; }> = ({ show, onClose, courseId }) => {
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
@@ -279,7 +287,6 @@ export const AddSectionModal: FC<{ show: boolean; onClose: () => void; courseId:
     );
 };
 
-// --- ADD VIDEO MODAL ---
 export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: string; courseId: string; }> = ({ show, onClose, sectionId, courseId }) => {
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
@@ -310,7 +317,6 @@ export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: 
     );
 };
 
-// --- EDIT SECTION MODAL ---
 export const EditSectionModal: FC<{ show: boolean; onClose: () => void; section: any; courseId: string; }> = ({ show, onClose, section, courseId }) => {
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
@@ -336,7 +342,6 @@ export const EditSectionModal: FC<{ show: boolean; onClose: () => void; section:
     );
 };
 
-// --- EDIT VIDEO MODAL ---
 export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any; courseId: string; }> = ({ show, onClose, video, courseId }) => {
     const { t } = useTranslation();
     const [title, setTitle] = useState('');

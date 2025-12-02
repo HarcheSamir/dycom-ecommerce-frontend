@@ -6,7 +6,7 @@ import { CourseDisplay } from './CourseDisplay';
 
 interface CourseDetailViewProps {
     courseId: string;
-    initialVideoId?: string | null; // New Prop
+    initialVideoId?: string | null;
     onBack: () => void;
 }
 
@@ -23,20 +23,29 @@ export const CourseDetailView: FC<CourseDetailViewProps> = ({ courseId, initialV
     }
 
     return (
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors">
-                <FaChevronLeft />
-                <span>{t('trainingPage.detailView.backButton')}</span>
-            </button>
+        <main className="flex-1 p-0 md:p-8">
+            {/* Desktop Navigation & Header (Hidden on Mobile) */}
+            <div className="hidden md:block mb-6">
+                <button onClick={onBack} className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors">
+                    <FaChevronLeft />
+                    <span>{t('trainingPage.detailView.backButton')}</span>
+                </button>
+            </div>
 
-            {course ? (
-                <div>
+            {course && (
+                <div className="hidden md:block mb-8">
                     <h1 className="text-4xl font-bold text-white mb-2">{course.title}</h1>
-                    <p className="text-neutral-400 mt-1 mb-8">{course.description}</p>
-                    {/* Pass the prop here */}
-                    <CourseDisplay course={course} initialVideoId={initialVideoId} />
+                    <p className="text-neutral-400">{course.description}</p>
                 </div>
-            ) : null}
+            )}
+
+            {course && (
+                <CourseDisplay 
+                    course={course} 
+                    initialVideoId={initialVideoId} 
+                    onBack={onBack} // Passed for the mobile overlay back button
+                />
+            )}
         </main>
     );
 };
