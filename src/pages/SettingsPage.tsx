@@ -184,7 +184,7 @@ const SettingsPage: FC = () => {
                 </div>
 
                 {/* --- ACTION BUTTONS --- */}
-                <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex flex-col sm:flex-row hidden items-center gap-4">
                     {user?.isCancellationScheduled ? (
                         <button onClick={() => reactivateSubscription()} disabled={isReactivating} className="w-full sm:w-auto px-6 cursor-pointer h-12 rounded-lg bg-neutral-700 text-white font-medium transition-colors hover:bg-neutral-600 disabled:opacity-50 flex items-center justify-center gap-2">
                             {isReactivating ? t('membershipBilling.manage.reactivating') : t('membershipBilling.manage.reactivateButton')}
