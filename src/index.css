@@ -195,3 +195,40 @@ body {
 .font-emoji {
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
+
+
+/* src/index.css */
+
+/* Override Phone Input Styles for Dark Theme */
+.PhoneInput {
+  display: flex;
+  align-items: center;
+}
+
+.PhoneInputCountry {
+  margin-right: 0.5rem;
+}
+
+.PhoneInputCountrySelect {
+  background-color: #1C1E22;
+  color: white;
+}
+
+.PhoneInputInput {
+  background-color: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  height: 100%;
+  width: 100%;
+}
+
+.PhoneInputInput::placeholder {
+  color: #6B7280; /* neutral-500 */
+}
+
+/* Custom Flag Dropdown (if needed, usually native select is fine, but this helps) */
+option {
+  background-color: #1C1E22;
+  color: white;
+}

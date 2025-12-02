@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAdminUserDetails } from '../hooks/useAdminUsers';
 import {
     FaArrowLeft, FaUser, FaEnvelope, FaCalendarAlt, FaCreditCard,
-    FaCheckCircle, FaClock, FaUniversity, FaUserFriends, FaGem, FaTimesCircle
+    FaCheckCircle, FaClock, FaUniversity, FaUserFriends, FaGem, FaTimesCircle, FaPhone
 } from 'react-icons/fa';
 import { GlassCard } from '../components/admin/AdminUI';
 
@@ -68,7 +68,15 @@ const AdminUserDetailsPage = () => {
                             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 border-4 border-[#1C1E22] shadow-xl flex items-center justify-center text-3xl font-bold text-white mb-4">
                                 {user.firstName[0]}{user.lastName[0]}
                             </div>
-                            <p className="text-neutral-300 font-medium">{user.email}</p>
+                            <div className="flex justify-between py-2 border-b border-neutral-800">
+                                <span className="text-neutral-400 mr-2 flex items-center gap-2"><FaEnvelope /> </span>
+                                <span>{user.email}</span>
+                            </div>
+                            {/* ADD PHONE DISPLAY HERE */}
+                            <div className="flex justify-between py-2 border-b border-neutral-800">
+                                <span className="text-neutral-400 mr-2  flex items-center gap-2"><FaPhone /> </span>
+                                <span className="text-white">{user.phone || 'N/A'}</span>
+                            </div>
                             <p className="text-xs text-neutral-500 mt-1">
                                 Created: {formatDateTime(user.createdAt).date} at {formatDateTime(user.createdAt).time}
                             </p>
@@ -81,7 +89,7 @@ const AdminUserDetailsPage = () => {
                                 </div>
                                 <span className="font-bold text-white">{user.installmentsPaid} / {user.installmentsRequired}</span>
                             </div>
-                            
+
                             <div className="flex justify-between items-center p-3 bg-neutral-900/50 rounded-lg border border-neutral-800">
                                 <div className="flex items-center gap-3 text-sm text-neutral-400">
                                     <FaUniversity /> Total LTV
@@ -103,7 +111,7 @@ const AdminUserDetailsPage = () => {
                                     )}
                                     <div className="flex justify-between text-sm">
                                         <span className="text-neutral-400">Referrals Made:</span>
-                                        <span className="text-white flex items-center gap-2"><FaUserFriends className="text-blue-400"/> {affiliate.referralsCount}</span>
+                                        <span className="text-white flex items-center gap-2"><FaUserFriends className="text-blue-400" /> {affiliate.referralsCount}</span>
                                     </div>
                                 </div>
                             )}
@@ -113,7 +121,7 @@ const AdminUserDetailsPage = () => {
 
                 {/* --- RIGHT COLUMN: Content & History (8 cols) --- */}
                 <div className="lg:col-span-8 space-y-8">
-                    
+
                     {/* 1. Courses Progress */}
                     <section>
                         <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -125,15 +133,15 @@ const AdminUserDetailsPage = () => {
                                     <img src={course.coverImageUrl || ''} alt="" className="w-16 h-16 rounded-lg object-cover bg-neutral-800 shadow-sm" />
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-bold text-white truncate text-sm mb-1">{course.title}</h3>
-                                        
+
                                         <div className="flex items-center justify-between text-xs text-neutral-400 mb-2">
                                             <span>{course.completedVideos} / {course.totalVideos} Lessons</span>
                                             <span className={course.percentage === 100 ? 'text-green-400' : 'text-white'}>{course.percentage}%</span>
                                         </div>
-                                        
+
                                         <div className="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
-                                            <div 
-                                                className={`h-full rounded-full transition-all duration-500 ${course.percentage === 100 ? 'bg-green-500' : 'bg-blue-600'}`} 
+                                            <div
+                                                className={`h-full rounded-full transition-all duration-500 ${course.percentage === 100 ? 'bg-green-500' : 'bg-blue-600'}`}
                                                 style={{ width: `${course.percentage}%` }}
                                             />
                                         </div>

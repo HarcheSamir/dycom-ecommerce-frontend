@@ -60,6 +60,7 @@ interface Transaction {
 interface UpdateProfileData {
   firstName: string;
   lastName: string;
+  phone?: string; // Add this
 }
 
 interface User {
@@ -67,6 +68,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone?: string | null;
   status: string;
   accountType: string;
   createdAt: string;

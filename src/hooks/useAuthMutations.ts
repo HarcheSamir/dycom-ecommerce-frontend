@@ -4,7 +4,7 @@ import apiClient from '../lib/apiClient';
 import { useAuth } from '../context/AuthContext';
 
 interface AuthCredentials { email: string; password: string; }
-interface SignupData extends AuthCredentials { firstName: string; lastName: string; refCode?: string; }
+interface SignupData extends AuthCredentials { firstName: string; lastName: string; refCode?: string; phone?: string; }
 
 // Updated Response Interface
 interface AuthResponse { 

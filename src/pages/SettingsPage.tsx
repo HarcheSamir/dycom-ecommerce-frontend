@@ -1,11 +1,15 @@
 import React, { useState, useEffect, type FC } from 'react';
 import { useUserProfile, useUpdateUserProfile, useCancelSubscription, useReactivateSubscription } from '../hooks/useUser';
 import { useAffiliateDashboard } from '../hooks/useAffiliate';
-import { FaUser,FaTicketAlt, FaEnvelope, FaGift, FaUsers, FaCheckCircle, FaEuroSign, FaCopy, FaLink, FaExclamationTriangle, FaDollarSign, FaCrown } from 'react-icons/fa'; // Added FaCrown
+import { FaUser, FaTicketAlt, FaEnvelope, FaGift, FaUsers, FaCheckCircle, FaCopy, FaLink, FaExclamationTriangle, FaCrown } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-// Reusable Glass Card Component for consistent styling
+// --- NEW IMPORTS FOR PHONE ---
+import 'react-phone-number-input/style.css';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+
+// Reusable Glass Card Component
 const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = 'p-8' }) => (
     <div className={`relative overflow-hidden border border-neutral-800 rounded-3xl transition-all duration-300 ${className}`} style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
         <div className={`relative ${padding}`} style={{ background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%,rgba(255, 255, 255, 0.05) 100%)' }}>
@@ -14,7 +18,7 @@ const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: s
     </div>
 );
 
-// Reusable Input component to match the design
+// Reusable Input component
 const InfoInput: FC<{ label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; icon: React.ReactNode; type?: string; disabled?: boolean; }> = ({ label, value, onChange, icon, type = 'text', disabled = false }) => (
     <div>
         <label className="text-sm text-neutral-400 mb-2 block">{label}</label>
@@ -31,7 +35,7 @@ const InfoInput: FC<{ label: string; value: string; onChange: (e: React.ChangeEv
     </div>
 );
 
-// Stat card for the affiliate section
+// Stat card for affiliate
 const AffiliateStatCard: FC<{ title: string; value: string | number; icon: React.ReactNode; }> = ({ title, value, icon }) => (
     <div className="flex-1 p-5 border border-neutral-800 rounded-2xl bg-[#111317] text-center">
         <div className="flex justify-center text-neutral-400 mb-2">{icon}</div>
@@ -39,7 +43,6 @@ const AffiliateStatCard: FC<{ title: string; value: string | number; icon: React
         <p className="text-4xl font-bold text-white my-1">{value}</p>
     </div>
 );
-
 
 const SettingsPage: FC = () => {
     const { t, i18n } = useTranslation();
@@ -55,6 +58,7 @@ const SettingsPage: FC = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState<string | undefined>(); // Updated for PhoneInput
 
     // Populate form with user data once it's loaded
     useEffect(() => {
@@ -62,16 +66,28 @@ const SettingsPage: FC = () => {
             setFirstName(user.firstName || '');
             setLastName(user.lastName || '');
             setEmail(user.email || '');
+            // Handle null vs undefined for the library
+            setPhone(user.phone || undefined);
         }
     }, [user]);
 
     // Function to handle profile updates
     const handleProfileUpdate = (e: React.FormEvent) => {
         e.preventDefault();
-        updateUser({ firstName, lastName });
+
+        // Validate Phone if it exists
+        if (phone && !isValidPhoneNumber(phone)) {
+            toast.error("Invalid phone number format.");
+            return;
+        }
+
+        updateUser({ 
+            firstName, 
+            lastName, 
+            phone: phone || '' // Send empty string if undefined to clear it, or the number
+        });
     };
 
-    // Function to copy the referral link to the clipboard
     const handleCopyLink = () => {
         if (!affiliateError && affiliateData?.referralLink) {
             navigator.clipboard.writeText(`${window.location.origin}/signup?ref=${affiliateData?.referralLink ?? ''}`);
@@ -87,13 +103,11 @@ const SettingsPage: FC = () => {
         }
     };
 
-
     const renderSubscriptionCard = () => {
         const plan = user?.planDetails;
         const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
         const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-GB';
 
-        // --- 1. LIFETIME ACCESS VIEW ---
         if (user?.subscriptionStatus === 'LIFETIME_ACCESS') {
             return (
                 <div className="relative rounded-2xl bg-gradient-to-br from-yellow-900/40 via-orange-900/20 to-neutral-900 border border-yellow-500/30 p-10 text-center shadow-xl">
@@ -111,7 +125,6 @@ const SettingsPage: FC = () => {
             );
         }
 
-        // --- PREPARE DATA FOR ACTIVE SUBSCRIPTION ---
         const formattedPrice = plan && plan.amount != null
             ? new Intl.NumberFormat(locale, {
                 style: 'currency',
@@ -122,7 +135,6 @@ const SettingsPage: FC = () => {
         const intervalText = plan?.interval === 'month' ? t('settingsPage.billing.perMonth') : t('settingsPage.billing.perYear');
         const formattedDate = user?.currentPeriodEnd ? new Date(user.currentPeriodEnd).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
 
-        // Logic for Installment Progress
         const paid = user?.installmentsPaid || 0;
         const required = user?.installmentsRequired || 1;
         const isInstallmentPlan = required > 1;
@@ -131,7 +143,6 @@ const SettingsPage: FC = () => {
         return (
             <div>
                 <div className="relative rounded-2xl bg-gradient-to-r from-[#2d4a6b] via-[#2d4a6b] to-[#1e6b3f] py-6 px-8 mb-6 shadow-lg overflow-hidden">
-                    {/* Background decoration */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
                     <div className="relative z-10">
@@ -147,7 +158,6 @@ const SettingsPage: FC = () => {
                             <span className="text-lg font-normal opacity-75">{plan?.interval ? intervalText : ''}</span>
                         </div>
 
-                        {/* --- PROGRESS BAR (Only for Tranche Plans) --- */}
                         {isInstallmentPlan && (
                             <div className="mb-6 bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10">
                                 <div className="flex justify-between items-center mb-2 text-sm">
@@ -155,8 +165,8 @@ const SettingsPage: FC = () => {
                                     <span className="font-bold text-white bg-white/20 px-2 py-0.5 rounded text-xs">{paid} / {required}</span>
                                 </div>
                                 <div className="w-full bg-white/10 rounded-full h-3 mb-2">
-                                    <div 
-                                        className="bg-white h-3 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,255,0.4)]" 
+                                    <div
+                                        className="bg-white h-3 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                                         style={{ width: `${progressPercent}%` }}
                                     ></div>
                                 </div>
@@ -183,8 +193,7 @@ const SettingsPage: FC = () => {
                     </div>
                 </div>
 
-                {/* --- ACTION BUTTONS --- */}
-                <div className="flex flex-col sm:flex-row hidden items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4">
                     {user?.isCancellationScheduled ? (
                         <button onClick={() => reactivateSubscription()} disabled={isReactivating} className="w-full sm:w-auto px-6 cursor-pointer h-12 rounded-lg bg-neutral-700 text-white font-medium transition-colors hover:bg-neutral-600 disabled:opacity-50 flex items-center justify-center gap-2">
                             {isReactivating ? t('membershipBilling.manage.reactivating') : t('membershipBilling.manage.reactivateButton')}
@@ -194,8 +203,6 @@ const SettingsPage: FC = () => {
                             {isCancelling ? t('membershipBilling.manage.cancelling') : t('membershipBilling.manage.cancelButton')}
                         </button>
                     )}
-                    
-                    {/* Ethical Warning for Installment Plans */}
                     {isInstallmentPlan && !user?.isCancellationScheduled && (
                         <p className="text-xs text-neutral-500 max-w-sm text-center sm:text-left">
                             {t('membershipBilling.manage.warning')}
@@ -235,6 +242,24 @@ const SettingsPage: FC = () => {
                             <InfoInput label={t('settingsPage.profile.lastNameLabel')} value={lastName} onChange={(e) => setLastName(e.target.value)} icon={<FaUser />} />
                             <InfoInput label={t('settingsPage.profile.firstNameLabel')} value={firstName} onChange={(e) => setFirstName(e.target.value)} icon={<FaUser />} />
                         </div>
+
+                        {/* --- NEW PHONE INPUT --- */}
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">Phone Number</label>
+                            <div className="relative w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 focus-within:ring-2 focus-within:ring-gray-400 focus-within:border-transparent transition-all">
+                                <PhoneInput
+                                    international
+                                    defaultCountry="US"
+                                    value={phone}
+                                    onChange={setPhone}
+                                    className="h-full w-full bg-transparent text-white placeholder:text-neutral-500 outline-none flex items-center"
+                                    numberInputProps={{
+                                        className: "bg-transparent text-white placeholder:text-neutral-500 outline-none w-full h-full ml-2",
+                                    }}
+                                />
+                            </div>
+                        </div>
+
                         <InfoInput label={t('settingsPage.profile.emailLabel')} value={email} onChange={(e) => setEmail(e.target.value)} icon={<FaEnvelope />} disabled />
 
                         <div>
@@ -267,12 +292,7 @@ const SettingsPage: FC = () => {
                             <div className="flex flex-col md:flex-row gap-6">
                                 <AffiliateStatCard title={t('settingsPage.affiliate.stats.totalReferrals')} value={affiliateData?.stats.totalReferrals ?? 0} icon={<FaUsers />} />
                                 <AffiliateStatCard title={t('settingsPage.affiliate.stats.activeSubscribers')} value={affiliateData?.stats.paidReferrals ?? 0} icon={<FaCheckCircle />} />
-                                {/* CORRECTED STAT CARD */}
-                                <AffiliateStatCard
-                                    title={t('affiliatePage.stats.availableDiscounts', 'Available Discounts')}
-                                    value={affiliateData?.stats.availableDiscounts ?? 0}
-                                    icon={<FaTicketAlt />}
-                                />
+                                <AffiliateStatCard title={t('affiliatePage.stats.availableDiscounts', 'Available Discounts')} value={affiliateData?.stats.availableDiscounts ?? 0} icon={<FaTicketAlt />} />
                             </div>
                             <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6">
                                 <p className="text-neutral-400 text-sm">{t('settingsPage.affiliate.yourLink')}</p>
@@ -292,7 +312,7 @@ const SettingsPage: FC = () => {
                                 </div>
                             </div>
 
-                            {/* Referred Users List - Replicated from AffiliatePage.tsx */}
+                            {/* Referred Users List */}
                             <div>
                                 <h3 className="text-lg font-bold text-white mb-4">{t('settingsPage.affiliate.referrals.title')}</h3>
                                 <div className="overflow-x-auto border border-neutral-800 rounded-2xl">

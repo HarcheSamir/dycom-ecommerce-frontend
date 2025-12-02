@@ -7,6 +7,7 @@ export interface AdminUser {
     firstName: string;
     lastName: string;
     email: string;
+    phone?: string | null; 
     subscriptionStatus: 'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'UNPAID' | 'INCOMPLETE' | 'LIFETIME_ACCESS';
     installmentsPaid: number;
     installmentsRequired: number;
