@@ -1,35 +1,57 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { FC } from 'react';
 import { FaChevronRight, FaBook, FaCheckCircle, FaPlayCircle, FaClock } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom'; // <--- IMPORT THIS
 import { GlassCard } from '../GlassCard';
 import VimeoPlayer from '../VimeoPlayer';
 import { useUpdateVideoProgress, type VideoCourse } from '../../hooks/useTraining';
 
 interface CourseDisplayProps {
     course: VideoCourse;
+    initialVideoId?: string | null;
 }
 
-export const CourseDisplay: FC<CourseDisplayProps> = ({ course }) => {
+export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId }) => {
     const { t } = useTranslation();
     const { mutate: updateProgress } = useUpdateVideoProgress();
+    
+    // --- HOOK FOR URL UPDATES ---
+    const [_, setSearchParams] = useSearchParams();
 
     const allVideos = useMemo(() => course.sections.flatMap(section => section.videos), [course.sections]);
 
-    const initialVideoId = useMemo(() => {
+    const startVideoId = useMemo(() => {
+        // 1. Priority: Specific video requested via URL
+        if (initialVideoId) {
+            const requested = allVideos.find(v => v.id === initialVideoId);
+            if (requested) return requested.id;
+        }
+
+        // 2. Fallback: Resume Logic (First uncompleted)
         const firstUncompleted = allVideos.find(v => {
             const prog = v.progress?.[0];
             return !prog?.completed;
         });
         return firstUncompleted?.id || allVideos[0]?.id || '';
-    }, [allVideos]);
+    }, [allVideos, initialVideoId]);
 
-    const [currentVideoId, setCurrentVideoId] = useState<string>(initialVideoId);
+    const [currentVideoId, setCurrentVideoId] = useState<string>(startVideoId);
 
     const activeVideo = useMemo(() =>
         allVideos.find(v => v.id === currentVideoId) || allVideos[0],
     [allVideos, currentVideoId]);
+
+    // --- NEW: SYNC URL WITH ACTIVE VIDEO ---
+    useEffect(() => {
+        if (activeVideo) {
+            // Update the URL query param without reloading the page
+            // replace: true ensures the back button works as expected (exits the course instead of rewinding video selection)
+            setSearchParams({ video: activeVideo.id }, { replace: true });
+        }
+    }, [activeVideo, setSearchParams]);
+    // ---------------------------------------
 
     const initialTime = useMemo(() => {
         if (!activeVideo?.progress || activeVideo.progress.length === 0) return 0;
@@ -39,6 +61,10 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course }) => {
 
     const handleProgressUpdate = useCallback((seconds: number, percent: number) => {
         if (!activeVideo) return;
+        
+        // Console log removed as per previous instructions to keep it clean
+        // console.log(`[UI] Update...`); 
+        
         updateProgress({
             videoId: activeVideo.id,
             lastPosition: seconds,
@@ -48,6 +74,7 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course }) => {
 
     const handleVideoEnded = useCallback(() => {
         if (!activeVideo) return;
+        
         updateProgress({
             videoId: activeVideo.id,
             lastPosition: 0,
@@ -77,7 +104,6 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course }) => {
 
     return (
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            {/* Left Column: Video & Details */}
             <div className="lg:col-span-2">
                 <div className="w-full bg-black rounded-2xl overflow-hidden shadow-2xl shadow-black/30 mb-6">
                     <VimeoPlayer
@@ -106,20 +132,14 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course }) => {
                 </GlassCard>
             </div>
 
-            {/* Right Column: Sidebar */}
-            {/* Added sticky positioning and fixed height constraint */}
             <div className="lg:col-span-1 mt-8 lg:mt-0 lg:h-[80vh] lg:sticky lg:top-4">
                 <GlassCard className="h-full" padding="p-5">
-                    {/* Inner flex container to manage scrolling properly */}
                     <div className="flex flex-col h-full">
-                        
-                        {/* Header (Fixed) */}
                         <div className="mb-4 px-2 flex-shrink-0">
                             <h3 className="text-lg font-bold text-white">Programme</h3>
                             <p className="text-sm text-neutral-400">{completedCount} / {totalCount} leçons terminées</p>
                         </div>
 
-                        {/* Scrollable List (Flex-1 to take remaining space) */}
                         <div className="overflow-y-auto pr-2 custom-scrollbar flex-1 space-y-6 min-h-0">
                             {course.sections.map((section) => (
                                 <div key={section.id}>

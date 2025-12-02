@@ -6,11 +6,10 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-// Imported Components
 import { CourseCard } from '../components/training/CourseCard';
 import { PurchaseCourseModal } from '../components/training/PurchaseCourseModal';
-import { CourseDetailView } from '../components/training/CourseDetailView';
 import { FilterDropdown } from '../components/training/FilterDropdown';
 import { FilterButton } from '../components/training/FilterButton';
 
@@ -18,7 +17,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY as strin
 
 export const TrainingPage: FC = () => {
     const { t, i18n } = useTranslation();
-    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+    const navigate = useNavigate(); // Hook for navigation
+
     const [courseToBuy, setCourseToBuy] = useState<VideoCourse | null>(null);
     const [isVerifyingPurchase, setIsVerifyingPurchase] = useState(false);
 
@@ -35,15 +35,21 @@ export const TrainingPage: FC = () => {
     });
     const { data: userProfile, refetch: refetchUser } = useUserProfile();
 
-    const isSubscriber = userProfile?.subscriptionStatus === 'ACTIVE';
-    const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.map(p => p.courseId) || []), [userProfile]);
+    // Updated Access Logic: Admins, Active Subs, Lifetime, Trialing
+    const isSubscriber = 
+        userProfile?.subscriptionStatus === 'ACTIVE' || 
+        userProfile?.subscriptionStatus === 'LIFETIME_ACCESS' || 
+        userProfile?.subscriptionStatus === 'TRIALING';
+        
     const isAdmin = userProfile?.accountType === 'ADMIN';
+    const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.map(p => p.courseId) || []), [userProfile]);
 
     const filteredCourses = useMemo(() => {
         if (!showOwnedOnly) return courses;
         return courses?.filter(course => {
             const isFreeCourse = course.price === null || course.price === 0;
-            return isAdmin || purchasedCourseIds.has(course.id) || (isSubscriber && isFreeCourse);
+            // Admins & Subscribers own everything
+            return isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
         });
     }, [courses, showOwnedOnly, isAdmin, isSubscriber, purchasedCourseIds]);
 
@@ -68,8 +74,6 @@ export const TrainingPage: FC = () => {
 
     const sortOptions = [{ value: 'createdAt', label: 'Sort by Recency' }, { value: 'title', label: 'Sort by Name (A-Z)' }];
     const languageOptions = [{ value: '', label: 'Default Language' }, { value: 'ALL', label: 'All Languages' }, { value: 'EN', label: 'English' }, { value: 'FR', label: 'Français' }, { value: 'AR', label: 'Arabic' }];
-
-    if (selectedCourseId) { return <CourseDetailView courseId={selectedCourseId} onBack={() => setSelectedCourseId(null)} />; }
 
     return (
         <>
@@ -107,8 +111,19 @@ export const TrainingPage: FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredCourses?.map((course) => {
                             const isFreeCourse = course.price === null || course.price === 0;
-                            const hasAccess = isAdmin || purchasedCourseIds.has(course.id) || (isSubscriber && isFreeCourse);
-                            return <CourseCard key={course.id} course={course} hasAccess={hasAccess} onClick={() => setSelectedCourseId(course.id)} onBuy={() => setCourseToBuy(course)} />;
+                            // Update HasAccess Logic for Card
+                            const hasAccess = isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
+                            
+                            return (
+                                <CourseCard 
+                                    key={course.id} 
+                                    course={course} 
+                                    hasAccess={hasAccess} 
+                                    // Change: Redirect to new player page
+                                    onClick={() => navigate(`/dashboard/training/${course.id}`)} 
+                                    onBuy={() => setCourseToBuy(course)} 
+                                />
+                            );
                         })}
                     </div>
                     {filteredCourses && filteredCourses.length === 0 && !isLoading && (

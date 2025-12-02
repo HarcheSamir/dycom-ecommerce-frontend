@@ -1,12 +1,9 @@
-// src/App.tsx
-
-import { useEffect, Suspense } from 'react'; // Import useEffect
+import { useEffect, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next';
 import { SuppliersPage } from './pages/SuppliersPage';
-// Components
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage, { DashboardContent } from './pages/DashboardPage';
@@ -23,16 +20,16 @@ import { AffiliatePage } from './pages/AffiliatePage';
 import SettingsPage from './pages/SettingsPage';
 import { AdminFinancialsPage } from './pages/AdminFinancialPage';
 import { QuickPay } from './pages/QuickPay';
-import { AdminUsersPage } from './pages/AdminUsersPage'; // Import
+import { AdminUsersPage } from './pages/AdminUsersPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-// Create a client
+import { CoursePlayerPage } from './pages/CoursePlayerPage'; // <-- IMPORT NEW PAGE
+
 const queryClient = new QueryClient();
 
 function App() {
   const { i18n } = useTranslation();
 
-  // This effect sets the document direction based on the current language
   useEffect(() => {
     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   }, [i18n.language]);
@@ -42,18 +39,21 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Public Routes */}
             <Route path="/home" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/pay/:plan" element={<QuickPay />} />
-            {/* Protected Routes with Nested Layout */}
+            
             <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>}>
               <Route index element={<DashboardContent />} />
               <Route path="products" element={<WinningProductsPage />} />
               <Route path="suppliers" element={<SuppliersPage />} />
               <Route path="training" element={<TrainingPage />} />
+              
+              {/* --- NEW ROUTE HERE --- */}
+              <Route path="training/:courseId" element={<CoursePlayerPage />} /> 
+              
               <Route path="influencers" element={<InfluencersPage />} />
               <Route path="influencers/:id" element={<CreatorProfilePage />} />
               <Route path="affiliate" element={<AffiliatePage />} />
@@ -63,9 +63,9 @@ function App() {
               <Route path="admin/users" element={<AdminUsersPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
+            
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            {/* Add a default route */}
             <Route path="/" element={<LandingPage />} />
           </Routes>
         </Router>
