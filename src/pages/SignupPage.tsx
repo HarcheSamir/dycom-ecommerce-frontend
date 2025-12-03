@@ -138,7 +138,7 @@ const SignupPage = (): JSX.Element => {
                                         <div className="relative w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 focus-within:ring-2 focus-within:ring-gray-400 focus-within:border-transparent transition-all">
                                             <PhoneInput
                                                 international
-                                                defaultCountry="US"
+                                                defaultCountry="FR"
                                                 value={phone}
                                                 onChange={setPhone}
                                                 className="h-full w-full bg-transparent text-white placeholder:text-neutral-500 outline-none flex items-center"
