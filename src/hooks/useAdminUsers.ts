@@ -47,6 +47,8 @@ export interface DetailedAdminUser {
             currency: string;
             status: string;
             createdAt: string;
+            stripePaymentId?: string | null;
+            stripeInvoiceId?: string | null;
         }[];
     };
     courses: {
@@ -122,5 +124,46 @@ export const useAdminUserDetails = (userId: string | undefined) => {
             return response.data;
         },
         enabled: !!userId
+    });
+};
+
+
+
+export const useUpdateUserSubscription = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { userId: string, subscriptionStatus: string, installmentsPaid: number, installmentsRequired: number }) =>
+            apiClient.put(`/admin/users/${data.userId}/subscription`, data),
+        onSuccess: (_, variables) => {
+            toast.success('User subscription details updated.');
+            queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
+        },
+        onError: () => toast.error('Failed to update subscription details.')
+    });
+};
+
+export const useSyncStripeSubscription = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { userId: string, stripeSubscriptionId: string }) =>
+            apiClient.post(`/admin/users/${data.userId}/sync-subscription`, { stripeSubscriptionId: data.stripeSubscriptionId }),
+        onSuccess: (_, variables) => {
+            toast.success('Synced with Stripe successfully!');
+            queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
+        },
+        onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to sync subscription.')
+    });
+};
+
+export const useAddStripePayment = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { userId: string, stripePaymentId: string }) =>
+            apiClient.post(`/admin/users/${data.userId}/sync-payment`, { stripePaymentId: data.stripePaymentId }),
+        onSuccess: (_, variables) => {
+            toast.success('Transaction record added!');
+            queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
+        },
+        onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to add payment.')
     });
 };
