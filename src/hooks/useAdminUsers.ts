@@ -14,7 +14,7 @@ export interface AdminUser {
     createdAt: string;
     currentPeriodEnd: string | null;
     stripeCustomerId: string | null;
-    
+    stripeSubscriptionId: string | null;
     // New Rich Data
     ltv: number;
     // --- UPDATED: Array of payments instead of single string ---
