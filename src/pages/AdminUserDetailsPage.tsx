@@ -157,13 +157,13 @@ const AdminUserDetailsPage = () => {
                                     <FaExclamationTriangle className="text-orange-400 text-xs" />
                                     <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Manual Override</span>
                                 </div>
-                                
+
                                 <div className="space-y-3 bg-black/20 p-4 rounded-xl border border-neutral-800">
                                     <div>
                                         <label className="text-[10px] text-neutral-500 block mb-1">Subscription Status</label>
-                                        <select 
-                                            value={status} 
-                                            onChange={e => setStatus(e.target.value)} 
+                                        <select
+                                            value={status}
+                                            onChange={e => setStatus(e.target.value)}
                                             className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
                                         >
                                             <option value="ACTIVE">ACTIVE</option>
@@ -174,34 +174,33 @@ const AdminUserDetailsPage = () => {
                                             <option value="INCOMPLETE">INCOMPLETE</option>
                                         </select>
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-2 gap-3">
                                         <div>
                                             <label className="text-[10px] text-neutral-500 block mb-1">Installments Paid</label>
-                                            <input 
-                                                type="number" 
-                                                value={instPaid} 
-                                                onChange={e => setInstPaid(Number(e.target.value))} 
-                                                className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none" 
+                                            <input
+                                                type="number"
+                                                value={instPaid}
+                                                onChange={e => setInstPaid(Number(e.target.value))}
+                                                className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-[10px] text-neutral-500 block mb-1">Required</label>
-                                            <select
-                                                value={instReq}
-                                                onChange={e => setInstReq(Number(e.target.value))}
-                                                className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
-                                            >
-                                                <option value={1}>1 (Lifetime/Full)</option>
-                                                <option value={2}>2 Installments</option>
-                                                <option value={3}>3 Installments</option>
-                                            </select>
+                                            <div>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Required (Total)</label>
+                                                <input
+                                                    type="number"
+                                                    value={instReq}
+                                                    onChange={e => setInstReq(Number(e.target.value))}
+                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <button 
-                                        onClick={handleManualUpdate} 
-                                        disabled={isUpdating} 
+
+                                    <button
+                                        onClick={handleManualUpdate}
+                                        disabled={isUpdating}
                                         className="w-full mt-2 bg-neutral-100 hover:bg-white text-black font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                                     >
                                         <FaSave /> Save Changes
@@ -228,9 +227,9 @@ const AdminUserDetailsPage = () => {
                                                 onChange={e => setStripeSubId(e.target.value)}
                                                 className="flex-1 bg-[#0f1115] border border-neutral-700 rounded-lg px-3 text-xs text-white font-mono focus:border-blue-500/50 focus:outline-none transition-all"
                                             />
-                                            <button 
-                                                onClick={handleSyncSubscription} 
-                                                disabled={isSyncing} 
+                                            <button
+                                                onClick={handleSyncSubscription}
+                                                disabled={isSyncing}
                                                 className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1"
                                             >
                                                 <FaSync className={isSyncing ? "animate-spin" : ""} /> Sync
@@ -249,9 +248,9 @@ const AdminUserDetailsPage = () => {
                                                 onChange={e => setStripePayId(e.target.value)}
                                                 className="flex-1 bg-[#0f1115] border border-neutral-700 rounded-lg px-3 text-xs text-white font-mono focus:border-green-500/50 focus:outline-none transition-all"
                                             />
-                                            <button 
-                                                onClick={handleAddPayment} 
-                                                disabled={isAddingPayment} 
+                                            <button
+                                                onClick={handleAddPayment}
+                                                disabled={isAddingPayment}
                                                 className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1"
                                             >
                                                 <FaPlus /> Add
@@ -311,7 +310,7 @@ const AdminUserDetailsPage = () => {
                                     {financials.transactions.map(tx => {
                                         const { date, time } = formatDateTime(tx.createdAt);
                                         const stripeId = tx.stripePaymentId || tx.stripeInvoiceId || tx.id; // --- DISPLAY CHANGE ---
-                                        
+
                                         return (
                                             <tr key={tx.id} className="hover:bg-white/5 transition-colors">
                                                 <td className="p-4">
