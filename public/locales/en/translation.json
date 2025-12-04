@@ -393,6 +393,7 @@
   "signupPage": {
     "toasts": {
       "affiliateSuccess": "Affiliate link applied!",
+       "emailExists": "This email address is already registered.", 
       "signupSuccess": "Account created successfully! Redirecting...",
       "signupError": "Signup failed. Please try again.",
       "unknownError": "An unknown error occurred."

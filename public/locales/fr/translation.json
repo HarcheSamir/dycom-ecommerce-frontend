@@ -393,6 +393,7 @@
   "signupPage": {
     "toasts": {
       "affiliateSuccess": "Lien d'affiliation appliqué !",
+      "emailExists": "Cette adresse e-mail est déjà utilisée.",
       "signupSuccess": "Compte créé avec succès ! Redirection...",
       "signupError": "L'inscription a échoué. Veuillez réessayer.",
       "unknownError": "Une erreur inconnue est survenue."

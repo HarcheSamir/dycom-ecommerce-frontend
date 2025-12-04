@@ -70,7 +70,18 @@ const SignupPage = (): JSX.Element => {
                 onError: (err: Error) => {
                     if (axios.isAxiosError(err)) {
                         const errorData = err.response?.data as { message?: string };
-                        toast.error(errorData?.message || t('signupPage.toasts.signupError'));
+                        let message = errorData?.message || t('signupPage.toasts.signupError');
+
+                        // --- FIX START: Intercept Prisma Error ---
+                        // Prisma unique constraint error usually contains "Unique constraint failed" or "P2002"
+                        if (
+                            message.includes('Unique constraint') || 
+                            message.includes('P2002') || 
+                            message.toLowerCase().includes('email') && message.includes('exist')
+                        ) {
+                            message = t('signupPage.toasts.emailExists');
+                        }
+                        toast.error(message);
                     } else {
                         toast.error(t('signupPage.toasts.unknownError'));
                     }
