@@ -896,5 +896,36 @@
       "reason": "Failure Reason"
     },
     "days": "Days"
+  },
+  "supportPage": {
+    "title": "Support Center",
+    "subtitle": "How can we help you today? Select an option below.",
+    "liveChat": {
+      "badge": "Online",
+      "title": "Live Chat & Tickets",
+      "description": "Talk to us directly. If we are online, we'll answer instantly. If we are away, this will automatically open a priority support ticket sent to our email.",
+      "button": "Start Conversation"
+    },
+    "knowledgeBase": {
+      "badge": "Coming Soon",
+      "title": "Knowledge Base",
+      "description": "Browse detailed tutorials, video guides, and frequently asked questions to find instant answers to common issues.",
+      "button": "Library Unavailable"
+    },
+    "quickTips": {
+      "title": "Quick Tips",
+      "billing": {
+        "title": "Billing Issues?",
+        "desc": "You can manage invoices and payment methods directly in the Settings page."
+      },
+      "video": {
+        "title": "Video Not Playing?",
+        "desc": "Try refreshing your browser or clearing your cache. Use Chrome for the best experience."
+      },
+      "response": {
+        "title": "Response Time",
+        "desc": "We typically respond to tickets within 24 hours. Check your email for replies."
+      }
+    }
   }
 }

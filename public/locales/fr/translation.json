@@ -896,5 +896,36 @@
       "reason": "Raison de l'échec"
     },
     "days": "Jours"
+  },
+  "supportPage": {
+    "title": "Centre de Support",
+    "subtitle": "Comment pouvons-nous vous aider aujourd'hui ? Sélectionnez une option ci-dessous.",
+    "liveChat": {
+      "badge": "En ligne",
+      "title": "Chat en direct & Tickets",
+      "description": "Parlez-nous directement. Si nous sommes en ligne, nous répondrons instantanément. Si nous sommes absents, cela ouvrira automatiquement un ticket de support prioritaire.",
+      "button": "Démarrer la conversation"
+    },
+    "knowledgeBase": {
+      "badge": "Bientôt disponible",
+      "title": "Base de Connaissances",
+      "description": "Parcourez des tutoriels détaillés, des guides vidéo et des questions fréquentes pour trouver des réponses instantanées.",
+      "button": "Bibliothèque Indisponible"
+    },
+    "quickTips": {
+      "title": "Astuces Rapides",
+      "billing": {
+        "title": "Problèmes de Facturation ?",
+        "desc": "Vous pouvez gérer vos factures et méthodes de paiement directement dans la page Paramètres."
+      },
+      "video": {
+        "title": "La vidéo ne se lance pas ?",
+        "desc": "Essayez de rafraîchir votre navigateur ou de vider votre cache. Utilisez Chrome pour la meilleure expérience."
+      },
+      "response": {
+        "title": "Temps de Réponse",
+        "desc": "Nous répondons généralement aux tickets sous 24 heures. Vérifiez vos emails pour les réponses."
+      }
+    }
   }
 }
