@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import type { ReactNode } from 'react'; 
+import type { ReactNode } from 'react';
 import apiClient from '../lib/apiClient';
 
 interface User {
@@ -44,13 +44,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // UPDATE: Use the redirectPath if provided
   const login = (token: string, redirectPath: string = '/dashboard') => {
     localStorage.setItem('authToken', token);
-    window.location.href = redirectPath; 
+    window.location.href = redirectPath;
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
     setUser(null);
-    window.location.href = '/login'; 
+
+    // --- FIX: CLEAR TAWK.TO SESSION ---
+    if (window.Tawk_API) {
+      try {
+        // 1. End the current chat session to clear history view
+        if (typeof window.Tawk_API.endChat === 'function') {
+          window.Tawk_API.endChat();
+        }
+
+        // 2. Wipe the visitor data so the next login starts fresh
+        // (Note: setAttributes with empty data forces a reset)
+        if (typeof window.Tawk_API.setAttributes === 'function') {
+          window.Tawk_API.setAttributes({
+            name: '',
+            email: '',
+            id: ''
+          }, function (error: any) { });
+        }
+      } catch (e) {
+        console.warn("Tawk cleanup failed", e);
+      }
+    }
+    // ----------------------------------
+
+    window.location.href = '/login';
   };
 
   return (

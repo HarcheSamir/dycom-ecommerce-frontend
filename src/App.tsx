@@ -23,9 +23,10 @@ import { QuickPay } from './pages/QuickPay';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import { CoursePlayerPage } from './pages/CoursePlayerPage'; 
+import { CoursePlayerPage } from './pages/CoursePlayerPage';
 import AdminUserDetailsPage from './pages/AdminUserDetailsPage';
 import AdminPastDuePage from './pages/AdminPastDuePage';
+import { SupportPage } from './pages/SupportPage';
 
 const queryClient = new QueryClient();
 
@@ -46,16 +47,17 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/pay/:plan" element={<QuickPay />} />
-            
+
             <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>}>
               <Route index element={<DashboardContent />} />
               <Route path="products" element={<WinningProductsPage />} />
               <Route path="suppliers" element={<SuppliersPage />} />
               <Route path="training" element={<TrainingPage />} />
-              
+              <Route path="support" element={<SupportPage />} />
+
               {/* --- NEW ROUTE HERE --- */}
-              <Route path="training/:courseId" element={<CoursePlayerPage />} /> 
-              
+              <Route path="training/:courseId" element={<CoursePlayerPage />} />
+
               <Route path="influencers" element={<InfluencersPage />} />
               <Route path="influencers/:id" element={<CreatorProfilePage />} />
               <Route path="affiliate" element={<AffiliatePage />} />
@@ -67,7 +69,6 @@ function App() {
               <Route path="admin/financials/past-due" element={<AdminPastDuePage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
-            
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/" element={<LandingPage />} />

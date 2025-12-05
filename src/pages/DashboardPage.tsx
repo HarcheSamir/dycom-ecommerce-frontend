@@ -8,17 +8,17 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 
 import {
-    FaTachometerAlt, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
+    FaTachometerAlt,FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 
 // --- Type Definitions ---
-type NavLink = { 
-    name: string; 
-    icon: React.ReactNode; 
-    path: string; 
+type NavLink = {
+    name: string;
+    icon: React.ReactNode;
+    path: string;
     isExternal?: boolean; // Added for external links
 };
 
@@ -248,20 +248,22 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         { nameKey: 'suppliers', icon: <FaStore />, path: '/dashboard/suppliers' },
         { nameKey: 'training', icon: <FaVideo />, path: '/dashboard/training' },
         { nameKey: 'influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
+        { nameKey: 'support', label: "Support", icon: <FaHeadset />, path: '/dashboard/support', isExternal: false },
+
         // --- NEW LINKS ADDED HERE ---
-        { 
-            nameKey: 'visuelsAds', 
-            label: 'Visuels Ads', 
-            icon: <FaCrown className="text-yellow-500" />, 
-            path: 'https://opalolabs.com/?via=Dycom', 
-            isExternal: true 
+        {
+            nameKey: 'visuelsAds',
+            label: 'Visuels Ads',
+            icon: <FaCrown className="text-yellow-500" />,
+            path: 'https://opalolabs.com/?via=Dycom',
+            isExternal: true
         },
-        { 
-            nameKey: 'trendtrack', 
-            label: 'TrendTrack', 
-            icon: <FaStar className="text-yellow-400" />, 
-            path: 'https://dev.trendtrack.io/promoter/dydy20', 
-            isExternal: true 
+        {
+            nameKey: 'trendtrack',
+            label: 'TrendTrack',
+            icon: <FaStar className="text-yellow-400" />,
+            path: 'https://dev.trendtrack.io/promoter/dydy20',
+            isExternal: true
         },
         // ----------------------------
         { nameKey: 'billing', icon: <FaCreditCard />, path: '/dashboard/billing' },
@@ -274,8 +276,10 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
             { nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
             { nameKey: 'users', icon: <FaUsers />, path: '/dashboard/admin/users' },
             { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' },
-            { nameKey: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due' ,label:"Past Due",
-                isExternal: false}
+            {
+                nameKey: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due', label: "Past Due",
+                isExternal: false
+            }
         );
     }
 
@@ -305,7 +309,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
                     // Check if it's an external link
                     if (link.isExternal) {
                         return (
-                            <a 
+                            <a
                                 key={link.path}
                                 href={link.path}
                                 target="_blank"
@@ -367,6 +371,41 @@ const DashboardPage: FC = () => {
     const location = useLocation();
     const { data: userProfile, isLoading: isProfileLoading } = useUserProfile();
     const { t, i18n } = useTranslation(); // Get i18n instance
+
+   useEffect(() => {
+        if (userProfile) {
+            const setTawkUser = () => {
+                if (window.Tawk_API && typeof window.Tawk_API.setAttributes === 'function') {
+                    window.Tawk_API.setAttributes({
+                        name: `${userProfile.firstName} ${userProfile.lastName}`,
+                        email: userProfile.email,
+                        // REMOVED 'hash' to fix the identity rejection
+                        id: userProfile.id // Sending ID as a custom field instead
+                    }, function (error: any) {
+                        if(error) console.error("Tawk identification error:", error);
+                    });
+                }
+            };
+
+            // 1. Try immediately (if script is cached/loaded)
+            setTawkUser();
+
+            // 2. Try again in 2 seconds (if script is slow)
+            const timer = setTimeout(setTawkUser, 2000);
+
+            // 3. Hook into Tawk's native onLoad event (best practice)
+            if (window.Tawk_API) {
+                // We save the original onLoad if it exists
+                const originalOnLoad = window.Tawk_API.onLoad;
+                window.Tawk_API.onLoad = function() {
+                    setTawkUser();
+                    if (originalOnLoad) originalOnLoad();
+                };
+            }
+
+            return () => clearTimeout(timer);
+        }
+    }, [userProfile]);
 
     // MODIFICATION: Check for RTL language
     const isRtl = i18n.language === 'ar';
