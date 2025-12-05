@@ -14,6 +14,21 @@ export interface AdminStats {
     totalProducts: number;
     monthlyRevenueChart: { [key: string]: number };
 }
+
+
+export interface PastDueUser {
+    id: string;
+    email: string;
+    name: string;
+    phone: string | null;
+    subscriptionStatus: string;
+    daysLate: number;
+    amountDue: number;
+    currency: string;
+    invoiceUrl: string | null;
+    stripeCustomerId: string | null;
+}
+
 export interface AdminCourse {
     id: string;
     title: string;
@@ -213,5 +228,17 @@ export const useGrantLifetime = () => {
             toast.success("Lifetime access granted!");
         },
         onError: () => toast.error("Failed to grant access.")
+    });
+};
+
+
+export const usePastDueUsers = () => {
+    return useQuery<PastDueUser[]>({
+        queryKey: ['adminPastDue'],
+        queryFn: async () => {
+            const response: AxiosResponse<PastDueUser[]> = await apiClient.get('/admin/financials/past-due');
+            return response.data;
+        },
+        staleTime: 1000 * 60 * 5 // 5 minutes cache
     });
 };

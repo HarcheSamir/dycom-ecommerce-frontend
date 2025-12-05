@@ -881,5 +881,20 @@
       "grantConfirm": "Are you sure you want to grant LIFETIME access to {{email}}? This will cancel any active billing."
     },
     "pagination": "Page {{page}} of {{total}}"
+  },
+   "adminPastDue": {
+    "title": "Past Due Accounts",
+    "subtitle": "Manage users with failed payments. Data synced directly from Stripe.",
+    "table": {
+      "user": "User",
+      "contact": "Contact",
+      "daysLate": "Days Late",
+      "amountDue": "Amount Due",
+      "actions": "Actions",
+      "loading": "Loading live data...",
+      "empty": "No past due accounts found. Good job!",
+      "reason": "Failure Reason"
+    },
+    "days": "Days"
   }
 }

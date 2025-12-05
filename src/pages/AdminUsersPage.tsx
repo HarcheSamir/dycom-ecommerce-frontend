@@ -3,7 +3,8 @@ import { useAdminUsers, useGrantLifetime, type AdminUser } from '../hooks/useAdm
 import {
     FaUser, FaSearch, FaChevronLeft, FaChevronRight, FaCrown, FaEllipsisV,
     FaFilter, FaLayerGroup, FaChevronDown, FaExclamationTriangle,
-    FaDollarSign, FaHistory, FaClock, FaCheckCircle, FaTimesCircle, FaFileCsv
+    FaDollarSign, FaHistory, FaClock, FaCheckCircle, FaTimesCircle, FaFileCsv,
+    FaExternalLinkAlt
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../lib/apiClient';
@@ -417,7 +418,18 @@ export const AdminUsersPage: React.FC = () => {
                                     </td>
                                     {/* --- 6. ACTIONS COLUMN --- */}
                                     <td className="p-5 text-right align-top">
-                                        <div onClick={(e) => e.stopPropagation()}>
+                                        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                                            {user.stripeCustomerId && (
+                                                <a
+                                                    href={`https://dashboard.stripe.com/customers/${user.stripeCustomerId}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-xs font-medium text-white transition-colors"
+                                                    title="View in Stripe"
+                                                >
+                                                    Stripe <FaExternalLinkAlt size={10} className="text-neutral-400" />
+                                                </a>
+                                            )}
                                             <ActionMenu user={user} />
                                         </div>
                                     </td>

@@ -25,7 +25,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import { CoursePlayerPage } from './pages/CoursePlayerPage'; 
 import AdminUserDetailsPage from './pages/AdminUserDetailsPage';
-
+import AdminPastDuePage from './pages/AdminPastDuePage';
 
 const queryClient = new QueryClient();
 
@@ -64,6 +64,7 @@ function App() {
               <Route path="admin/financials" element={<AdminFinancialsPage />} />
               <Route path="admin/users" element={<AdminUsersPage />} />
               <Route path="admin/users/:userId" element={<AdminUserDetailsPage />} />
+              <Route path="admin/financials/past-due" element={<AdminPastDuePage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
             

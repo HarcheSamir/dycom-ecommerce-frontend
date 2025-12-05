@@ -881,5 +881,20 @@
       "grantConfirm": "Êtes-vous sûr de vouloir accorder l'accès À VIE à {{email}} ? Cela annulera toute facturation active."
     },
     "pagination": "Page {{page}} sur {{total}}"
+  },
+   "adminPastDue": {
+    "title": "Comptes en Retard",
+    "subtitle": "Gérez les utilisateurs avec des paiements échoués. Données synchronisées directement depuis Stripe.",
+    "table": {
+      "user": "Utilisateur",
+      "contact": "Contact",
+      "daysLate": "Jours de Retard",
+      "amountDue": "Montant Dû",
+      "actions": "Actions",
+      "loading": "Chargement des données en direct...",
+      "empty": "Aucun compte en retard trouvé. Bon travail !",
+      "reason": "Raison de l'échec"
+    },
+    "days": "Jours"
   }
 }

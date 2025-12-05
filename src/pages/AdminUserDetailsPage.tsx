@@ -7,7 +7,8 @@ import {
 import {
     FaArrowLeft, FaEnvelope, FaCreditCard,
     FaCheckCircle, FaClock, FaUniversity, FaGem, FaTimesCircle, FaPhone,
-    FaTools, FaSync, FaSave, FaPlus, FaExclamationTriangle, FaStripe
+    FaTools, FaSync, FaSave, FaPlus, FaExclamationTriangle, FaStripe,
+    FaExternalLinkAlt
 } from 'react-icons/fa';
 import { GlassCard } from '../components/admin/AdminUI';
 import { Toaster } from 'react-hot-toast';
@@ -102,8 +103,21 @@ const AdminUserDetailsPage = () => {
                         <p className="text-neutral-400 text-xs font-mono">ID: {user.id}</p>
                     </div>
                 </div>
-                <div className={`px-4 py-2 rounded-lg border text-sm font-bold tracking-wider ${getStatusStyle(user.subscriptionStatus)}`}>
-                    {user.subscriptionStatus.replace('_', ' ')}
+                <div className="flex items-center gap-3">
+                    {user.stripeCustomerId && (
+                        <a
+                            href={`https://dashboard.stripe.com/customers/${user.stripeCustomerId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-sm font-medium text-white transition-colors"
+                        >
+                            <span>STRIPE</span>
+                            <FaExternalLinkAlt size={10} className="text-neutral-500" />
+                        </a>
+                    )}
+                    <div className={`px-4 py-2 rounded-lg border text-sm font-bold tracking-wider ${getStatusStyle(user.subscriptionStatus)}`}>
+                        {user.subscriptionStatus.replace('_', ' ')}
+                    </div>
                 </div>
             </div>
 

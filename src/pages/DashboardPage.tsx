@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 
 import {
-    FaTachometerAlt, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
+    FaTachometerAlt, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -270,9 +270,12 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
     ];
 
     if (user && user.accountType === 'ADMIN') {
-        baseNavLinks.unshift({ nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
+        baseNavLinks.unshift(
+            { nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
             { nameKey: 'users', icon: <FaUsers />, path: '/dashboard/admin/users' },
-            { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' }
+            { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' },
+            { nameKey: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due' ,label:"Past Due",
+                isExternal: false}
         );
     }
 
