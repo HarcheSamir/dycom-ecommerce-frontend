@@ -1,10 +1,11 @@
 // src/pages/BillingPage.tsx
 
-import React, { useState, type FC } from 'react';
-import { useUserProfile, useCancelSubscription, useReactivateSubscription } from '../hooks/useUser';
+import React, { type FC } from 'react';
+import { useUserProfile, useCancelSubscription, useReactivateSubscription, useHotmartPrice } from '../hooks/useUser';
 import { FaCheckCircle, FaExclamationTriangle, FaCrown, FaGem, FaCcVisa, FaCcMastercard, FaCcPaypal, FaShieldAlt } from 'react-icons/fa';
 import { SiKlarna } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
+import { parsePhoneNumber } from 'react-phone-number-input';
 
 // --- Reusable Glass Card Component ---
 const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = '' }) => (
@@ -17,7 +18,6 @@ const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: s
 
 // --- STATIC HOTMART CONFIG ---
 const HOTMART_LINK = "https://pay.hotmart.com/U103378139T";
-const PRODUCT_PRICE = "980,00 €";
 
 // --- SUBSCRIPTION STATUS COMPONENT ---
 const ManageSubscription: FC = () => {
@@ -28,13 +28,10 @@ const ManageSubscription: FC = () => {
 
     // Determine Status
     const isLifetime = user?.subscriptionStatus === 'LIFETIME_ACCESS';
-    
-    // Legacy Stripe users have a 'stripeSubscriptionId'
     const isStripeUser = !!user?.stripeSubscriptionId;
-
     const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-GB';
 
-    // --- CASE 1: LIFETIME ACCESS (Hotmart or Paid-off Stripe) ---
+    // --- CASE 1: LIFETIME ACCESS ---
     if (isLifetime) {
         return (
             <div className="text-center py-10">
@@ -46,13 +43,13 @@ const ManageSubscription: FC = () => {
                     {t('membershipBilling.manage.lifetimeDesc')}
                 </p>
                 <div className="inline-block px-4 py-2 bg-neutral-800 rounded-lg text-xs text-neutral-500">
-                    Access granted via {user?.stripeSubscriptionId ? 'Stripe' : 'Hotmart'}
+                    {t('billingPage.manage.accessGrantedVia', { provider: user?.stripeSubscriptionId ? 'Stripe' : 'Hotmart' })}
                 </div>
             </div>
         );
     }
 
-    // --- CASE 2: ACTIVE LEGACY STRIPE USER (Paying Installments) ---
+    // --- CASE 2: ACTIVE LEGACY STRIPE USER ---
     const paid = user?.installmentsPaid || 0;
     const required = user?.installmentsRequired || 1;
     const progressPercent = Math.min((paid / required) * 100, 100);
@@ -95,23 +92,14 @@ const ManageSubscription: FC = () => {
                 </div>
             </div>
 
-            {/* Cancel/Reactivate Buttons (Only for Stripe Users) */}
             {isStripeUser && (
                 <div className="flex justify-center">
                     {user?.isCancellationScheduled ? (
-                        <button 
-                            onClick={() => reactivateSubscription()} 
-                            disabled={isReactivating} 
-                            className="w-full h-12 rounded-lg bg-neutral-700 text-white font-medium hover:bg-neutral-600 transition-colors disabled:opacity-50"
-                        >
+                        <button onClick={() => reactivateSubscription()} disabled={isReactivating} className="w-full h-12 rounded-lg bg-neutral-700 text-white font-medium hover:bg-neutral-600 transition-colors disabled:opacity-50">
                             {isReactivating ? t('membershipBilling.manage.reactivating') : t('membershipBilling.manage.reactivateButton')}
                         </button>
                     ) : (
-                        <button 
-                            onClick={() => { if(window.confirm(t('membershipBilling.manage.cancelConfirm'))) cancelSubscription() }} 
-                            disabled={isCancelling} 
-                            className="w-full h-12 rounded-lg border border-red-500/50 text-red-400 font-medium hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                        >
+                        <button onClick={() => { if (window.confirm(t('membershipBilling.manage.cancelConfirm'))) cancelSubscription() }} disabled={isCancelling} className="w-full h-12 rounded-lg border border-red-500/50 text-red-400 font-medium hover:bg-red-500/10 transition-colors disabled:opacity-50">
                             {isCancelling ? t('membershipBilling.manage.cancelling') : t('membershipBilling.manage.cancelButton')}
                         </button>
                     )}
@@ -129,13 +117,19 @@ export const BillingPage: FC = () => {
     // Hotmart Link Logic
     const handleBuyNow = () => {
         if (!userProfile) return;
-        
+
         let link = `${HOTMART_LINK}?name=${encodeURIComponent(userProfile.firstName + ' ' + userProfile.lastName)}&email=${encodeURIComponent(userProfile.email)}`;
-        
-        // Strict phone cleaning: numbers only
+
         if (userProfile.phone) {
-            const cleanPhone = userProfile.phone.replace(/[^0-9]/g, ''); 
-            link += `&phone_number=${cleanPhone}`;
+            try {
+                const parsed = parsePhoneNumber(userProfile.phone);
+                if (parsed) {
+                    // CORRECT LOGIC: Send only phonenumber (National number)
+                    // Hotmart auto-detects country by IP, sending the country code often breaks validation
+                    const nationalNum = parsed.nationalNumber.replace(/\s/g, '');
+                    link += `&phonenumber=${nationalNum}`;
+                }
+            } catch (e) { console.error("Phone parse error", e); }
         }
         window.location.href = link;
     };
@@ -157,8 +151,9 @@ export const BillingPage: FC = () => {
                 </div>
             );
         }
-
-        // 2. No Subscription - Show the FULL PRICING CARD (Matching Pricing.tsx)
+        const { data: priceData, isLoading: isPriceLoading } = useHotmartPrice();
+        const displayPrice = isPriceLoading ? "..." : (priceData?.formatted || "981,00 €");
+        // 2. No Subscription - Show the FULL PRICING CARD
         return (
             <div className="w-full max-w-md mx-auto">
                 <GlassCard className="border-primary/50 shadow-2xl shadow-primary/10 bg-neutral-900/40">
@@ -172,15 +167,17 @@ export const BillingPage: FC = () => {
                         </h3>
                         <div className="inline-flex w-fit items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30 mb-2">
                             <FaGem className="text-green-400 text-xs" />
-                            <span className="text-green-400 text-xs font-bold uppercase tracking-wider">Access A Vie</span>
+                            <span className="text-green-400 text-xs font-bold uppercase tracking-wider">
+                                {t('membershipPricing.card.lifetimeAccess')}
+                            </span>
                         </div>
 
                         <div className="mb-8 border-b border-neutral-800 pb-8">
                             <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-bold text-white tracking-tight">{PRODUCT_PRICE}</span>
+                                <span className="text-5xl font-bold text-white tracking-tight">{displayPrice}</span>
                             </div>
                             <p className="text-sm text-neutral-500 mt-3 font-medium">
-                                Paiement unique
+                                {t('billingPage.card.oneTimePayment')}
                             </p>
                         </div>
 
@@ -195,25 +192,25 @@ export const BillingPage: FC = () => {
 
                         <button
                             onClick={handleBuyNow}
-                            className="w-full block py-4 rounded-xl text-center font-bold text-lg transition-all bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10 transform hover:scale-[1.02]"
+                            className="w-full cursor-pointer block py-4 rounded-xl text-center font-bold text-lg transition-all bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10 transform hover:scale-[1.02]"
                         >
                             {t('membershipPricing.card.startNow')}
                         </button>
 
                         <div className="mt-6 text-center border-t border-neutral-800 pt-6">
                             <p className="text-xs text-green-400 font-bold mb-3 uppercase tracking-wide">
-                                Payez en 3x sans frais avec Klarna
+                                {t('membershipPricing.card.klarna')}
                             </p>
                             <div className="flex justify-center items-center gap-4 text-neutral-400 mb-3">
                                 <FaCcVisa size={24} />
                                 <FaCcMastercard size={24} />
                                 <FaCcPaypal size={24} />
                                 <div className="flex items-center gap-1 font-bold text-white bg-pink-500/10 px-2 py-1 rounded">
-                                    <SiKlarna size={18} className="text-pink-500"/> <span className="text-xs text-pink-500">Klarna.</span>
+                                    <SiKlarna size={18} className="text-pink-500" /> <span className="text-xs text-pink-500">Klarna.</span>
                                 </div>
                             </div>
                             <div className="flex items-center justify-center gap-2 text-[10px] text-neutral-600">
-                                <FaShieldAlt /> Paiement sécurisé par Hotmart. Satisfait ou remboursé.
+                                <FaShieldAlt /> {t('membershipPricing.card.securePayment')}
                             </div>
                         </div>
                     </div>

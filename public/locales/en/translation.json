@@ -313,11 +313,15 @@
       "reactivatingButton": "Reactivating...",
       "reactivateButton": "Reactivate my subscription",
       "cancellingButton": "Cancelling...",
-      "cancelButton": "Cancel subscription"
+      "cancelButton": "Cancel subscription",
+      "accessGrantedVia": "Access granted via {{provider}}"
     },
     "verifying": {
       "title": "Verifying payment...",
       "subtitle": "Please wait, we are confirming your subscription."
+    },
+    "card": {
+      "oneTimePayment": "One-time payment"
     }
   },
   "affiliatePage": {
@@ -393,7 +397,7 @@
   "signupPage": {
     "toasts": {
       "affiliateSuccess": "Affiliate link applied!",
-       "emailExists": "This email address is already registered.", 
+      "emailExists": "This email address is already registered.",
       "signupSuccess": "Account created successfully! Redirecting...",
       "signupError": "Signup failed. Please try again.",
       "unknownError": "An unknown error occurred."
@@ -622,7 +626,7 @@
     "lessonCounter": "Lesson {{current}} / {{total}}",
     "completedCount": "{{completed}} / {{total}} completed",
     "courseCard": {
-       "continue": "Continue",
+      "continue": "Continue",
       "begin": "Start",
       "free": "Free",
       "lessons_one": "{{count}} lesson",
@@ -745,7 +749,11 @@
       "bestValue": "Best Value",
       "perMonth": "/month",
       "totalCost": "Total: {{amount}}",
-      "startNow": "Start Now"
+      "startNow": "Start Now",
+      "lifetimeAccess": "Lifetime Access",
+      "goToDashboard": "Go to Dashboard",
+      "klarna": "Pay in 3 installments fee-free with Klarna",
+      "securePayment": "Secure payment by Hotmart. Satisfaction guaranteed."
     },
     "faq": {
       "title": "Frequently Asked Questions"
@@ -882,7 +890,7 @@
     },
     "pagination": "Page {{page}} of {{total}}"
   },
-   "adminPastDue": {
+  "adminPastDue": {
     "title": "Past Due Accounts",
     "subtitle": "Manage users with failed payments. Data synced directly from Stripe.",
     "table": {

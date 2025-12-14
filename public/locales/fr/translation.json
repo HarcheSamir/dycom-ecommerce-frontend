@@ -313,11 +313,15 @@
       "reactivatingButton": "Réactivation...",
       "reactivateButton": "Réactiver mon abonnement",
       "cancellingButton": "Annulation...",
-      "cancelButton": "Annuler l'abonnement"
+      "cancelButton": "Annuler l'abonnement",
+      "accessGrantedVia": "Accès accordé via {{provider}}"
     },
     "verifying": {
       "title": "Vérification du paiement...",
       "subtitle": "Veuillez patienter, nous confirmons votre abonnement."
+    },
+    "card": {
+      "oneTimePayment": "Paiement unique"
     }
   },
   "affiliatePage": {
@@ -745,7 +749,11 @@
       "bestValue": "Meilleure Offre",
       "perMonth": "/mois",
       "totalCost": "Total : {{amount}}",
-      "startNow": "Commencer maintenant"
+      "startNow": "Commencer maintenant",
+      "lifetimeAccess": "Accès à Vie",
+      "goToDashboard": "Aller au tableau de bord",
+      "klarna": "Payez en 3x sans frais avec Klarna",
+      "securePayment": "Paiement sécurisé par Hotmart. Satisfait ou remboursé."
     },
     "faq": {
       "title": "Questions Fréquentes"
@@ -882,7 +890,7 @@
     },
     "pagination": "Page {{page}} sur {{total}}"
   },
-   "adminPastDue": {
+  "adminPastDue": {
     "title": "Comptes en Retard",
     "subtitle": "Gérez les utilisateurs avec des paiements échoués. Données synchronisées directement depuis Stripe.",
     "table": {

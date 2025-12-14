@@ -2,13 +2,13 @@
 
 import React, { useState, useMemo, type FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetSubscriptionPlans, type SubscriptionPlan } from '../hooks/useUser';
+import { useGetSubscriptionPlans, type SubscriptionPlan, useHotmartPrice } from '../hooks/useUser';
 import { useAuth } from '../context/AuthContext';
-import { FaCheckCircle, FaGem, FaChevronDown, FaCcVisa, FaCcMastercard, FaCcPaypal, FaShieldAlt } from 'react-icons/fa';
-import { SiKlarna } from 'react-icons/si'; 
+import { FaCheckCircle, FaGem, FaCcVisa, FaCcMastercard, FaCcPaypal, FaShieldAlt } from 'react-icons/fa';
+import { SiKlarna } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
-import { parsePhoneNumber } from 'react-phone-number-input'; // Import parser
+import { parsePhoneNumber } from 'react-phone-number-input';
 
 // --- SHARED COMPONENTS ---
 
@@ -27,12 +27,6 @@ const MenuIcon: FC<{ open: boolean }> = ({ open }) => (
         ) : (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
         )}
-    </svg>
-);
-
-const ChevronDownIcon: FC = () => (
-    <svg className="h-6 w-6 text-primary transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
     </svg>
 );
 
@@ -130,7 +124,6 @@ const FaqItem: FC<{ question: string; children: React.ReactNode }> = ({ question
     <details className="group rounded-lg border border-[#333333] bg-[#1a1a1a] p-5 sm:p-6">
         <summary className="flex cursor-pointer list-none items-center justify-between text-base sm:text-lg font-semibold text-white">
             {question}
-            <ChevronDownIcon />
         </summary>
         <p className="mt-4 text-sm sm:text-base text-[#a3a3a3]">{children}</p>
     </details>
@@ -176,19 +169,18 @@ interface PricingCardProps {
     features: string[];
 }
 
-const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features }) => {
+const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features }) => {
     const { t } = useTranslation();
     const { isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
 
     // Hotmart Link
     const HOTMART_LINK = "https://pay.hotmart.com/U103378139T";
-    const priceFormatted = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(plan.price / 100);
 
     // Check if user already has access
-    const hasAccess = user?.subscriptionStatus === 'LIFETIME_ACCESS' || 
-                      user?.subscriptionStatus === 'ACTIVE' || 
-                      user?.subscriptionStatus === 'TRIALING';
+    const hasAccess = user?.subscriptionStatus === 'LIFETIME_ACCESS' ||
+        user?.subscriptionStatus === 'ACTIVE' ||
+        user?.subscriptionStatus === 'TRIALING';
 
     const handleBuyAction = () => {
         if (isAuthenticated && user) {
@@ -199,32 +191,33 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
             }
 
             // 2. User Logged In: Pre-fill Hotmart URL
-            let link = `${HOTMART_LINK}?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&email=${encodeURIComponent(user.email)}`;
-            
-            // --- FIX FOR PHONE NUMBER ---
+            const fullName = `${user.firstName} ${user.lastName}`;
+            let link = `${HOTMART_LINK}?name=${encodeURIComponent(fullName)}&email=${encodeURIComponent(user.email)}`;
+
+            // --- PHONE LOGIC - CORRECT HOTMART FORMAT ---
             if (user.phone) {
                 try {
-                    // Split the number into Country Code and National Number
                     const parsed = parsePhoneNumber(user.phone);
                     if (parsed) {
-                        // Hotmart requires separate parameters for strict matching
-                        link += `&phone_international_code=${parsed.countryCallingCode}`;
-                        link += `&phone_number=${parsed.nationalNumber}`;
-                        // Redundancy: send full just in case specific region logic needs it
-                        link += `&phone=${parsed.number.replace('+', '')}`;
+                        // For France: phoneac should be empty or '0', phonenumber is full national number
+                        // phoneac is meant for area codes within a country, not country codes
+                        const nationalNum = parsed.nationalNumber.replace(/\s/g, '');
+                        link += `&phonenumber=${nationalNum}`;
+                        // Don't add phoneac for international - it's for internal area codes only
                     }
                 } catch (e) {
                     console.error("Phone parse error", e);
                 }
             }
-            
+
             window.location.href = link;
         } else {
             // 3. User NOT Logged In: Go to Signup
             navigate('/signup');
         }
     };
-
+    const { data: priceData, isLoading: isPriceLoading } = useHotmartPrice();
+    const displayPrice = isPriceLoading ? "..." : (priceData?.formatted || "981,00 €");
     return (
         <GlassCard className={`flex-1 flex flex-col h-full ${isBestValue ? 'border-primary/50 shadow-2xl shadow-primary/10 relative transform scale-105 z-10 bg-neutral-900/40' : ''}`}>
             {isBestValue && (
@@ -237,15 +230,17 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
                 <h3 className="text-2xl font-bold text-white mb-2">
                     {t('membershipPricing.card.lifetime')}
                 </h3>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
+                <div className="inline-flex w-fit items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
                     <FaGem className="text-green-400 text-xs" />
-                    <span className="text-green-400 text-xs font-bold uppercase tracking-wider">Access A Vie</span>
+                    <span className="text-green-400 text-xs font-bold uppercase tracking-wider">
+                        {t('membershipPricing.card.lifetimeAccess')}
+                    </span>
                 </div>
             </div>
 
             <div className="mb-8 border-b border-neutral-800 pb-8">
                 <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold text-white tracking-tight">{priceFormatted}</span>
+                    <span className="text-5xl font-bold text-white tracking-tight">{displayPrice}</span>
                 </div>
                 <p className="text-sm text-neutral-500 mt-3 font-medium">
                     {t('membershipPricing.card.oneTime')}
@@ -263,30 +258,29 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
 
             <button
                 onClick={handleBuyAction}
-                className={`w-full block py-4 rounded-xl text-center font-bold text-lg transition-all ${
-                    hasAccess 
+                className={`w-full cursor-pointer block py-4 rounded-xl text-center font-bold text-lg transition-all ${hasAccess
                     ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-500/20' // Green for Dashboard
                     : (isBestValue ? 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10' : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800')
-                }`}
+                    }`}
             >
-                {hasAccess ? "Go to Dashboard" : t('membershipPricing.card.startNow')}
+                {t(hasAccess ? 'membershipPricing.card.goToDashboard' : 'membershipPricing.card.startNow')}
             </button>
 
             {/* KLARNA & PAYMENT LOGOS SECTION */}
             <div className="mt-6 text-center border-t border-neutral-800 pt-6">
                 <p className="text-xs text-green-400 font-bold mb-3 uppercase tracking-wide">
-                    Payez en 3x sans frais avec Klarna
+                    {t('membershipPricing.card.klarna')}
                 </p>
                 <div className="flex justify-center items-center gap-4 text-neutral-400 mb-3">
                     <FaCcVisa size={24} />
                     <FaCcMastercard size={24} />
                     <FaCcPaypal size={24} />
                     <div className="flex items-center gap-1 font-bold text-white bg-pink-500/10 px-2 py-1 rounded">
-                        <SiKlarna size={18} className="text-pink-500"/> <span className="text-xs text-pink-500">Klarna.</span>
+                        <SiKlarna size={18} className="text-pink-500" /> <span className="text-xs text-pink-500">Klarna.</span>
                     </div>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-[10px] text-neutral-600">
-                    <FaShieldAlt /> Paiement sécurisé par Hotmart. Satisfait ou remboursé.
+                    <FaShieldAlt /> {t('membershipPricing.card.securePayment')}
                 </div>
             </div>
         </GlassCard>
@@ -297,7 +291,7 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
 
 const PricingPage: FC = () => {
     const { t, i18n } = useTranslation();
-    
+
     let currency: 'eur' | 'usd' | 'aed' = 'usd';
     if (i18n.language === 'fr') currency = 'eur';
     if (i18n.language === 'ar') currency = 'aed';
@@ -309,18 +303,11 @@ const PricingPage: FC = () => {
 
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
-        
-        // 1. Filter to ONLY keep the plan with installments === '1' (The 980 one)
-        let availablePlans = plans.filter(p => 
-            p.metadata?.type === 'membership_tier' && 
-            p.metadata?.installments === '1'
-        );
-
-        return availablePlans;
+        return plans.filter(p => p.metadata?.type === 'membership_tier' && p.metadata?.installments === '1');
     }, [plans]);
 
-    // Use a center alignment since there's only one card
     const gridClasses = "flex flex-col items-center justify-center w-full max-w-md mx-auto";
+
 
     return (
         <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
@@ -331,7 +318,7 @@ const PricingPage: FC = () => {
                 <Header />
 
                 <main className="flex-1 flex flex-col items-center justify-center px-6 pt-32 pb-20">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-12">
                         <div className="inline-flex items-center gap-2 bg-[#1C1E22] border border-neutral-800 rounded-full px-4 py-2 mb-6 animate-[fadeIn-up_1s_ease-out]">
                             <FaGem className="text-primary" />
                             <span className="text-sm font-medium text-neutral-300">{t('membershipPricing.hero.tagline')}</span>
@@ -352,7 +339,6 @@ const PricingPage: FC = () => {
                         </div>
                     ) : (
                         <div className={`${gridClasses} animate-[fadeIn-up_1s_ease-out_0.6s] [animation-fill-mode:forwards] opacity-0`}>
-                            {/* Render ONLY the single remaining plan */}
                             {sortedPlans.map((plan) => (
                                 <div key={plan.id} className="w-full h-full">
                                     <PricingCard

@@ -313,11 +313,15 @@
       "reactivatingButton": "جاري إعادة التفعيل...",
       "reactivateButton": "إعادة تفعيل اشتراكي",
       "cancellingButton": "جاري الإلغاء...",
-      "cancelButton": "إلغاء الاشتراك"
+      "cancelButton": "إلغاء الاشتراك",
+      "accessGrantedVia": "تم منح الوصول عبر {{provider}}"
     },
     "verifying": {
       "title": "جاري التحقق من الدفع...",
       "subtitle": "يرجى الانتظار، نحن نؤكد اشتراكك."
+    },
+    "card": {
+      "oneTimePayment": "دفع لمرة واحدة"
     }
   },
   "affiliatePage": {
@@ -622,7 +626,7 @@
     "lessonCounter": "الدرس {{current}} / {{total}}",
     "completedCount": "تم إكمال {{completed}} / {{total}}",
     "courseCard": {
-       "continue": "متابعة",
+      "continue": "متابعة",
       "begin": "ابدأ",
       "free": "مجاني",
       "lessons_one": "درس واحد",
@@ -745,7 +749,11 @@
       "bestValue": "أفضل قيمة",
       "perMonth": "/شهر",
       "totalCost": "الإجمالي: {{amount}}",
-      "startNow": "ابدأ الآن"
+      "startNow": "ابدأ الآن",
+      "lifetimeAccess": "وصول مدى الحياة",
+      "goToDashboard": "الذهاب إلى لوحة التحكم",
+      "klarna": "ادفع على 3 أقساط بدون فوائد مع Klarna",
+      "securePayment": "دفع آمن عبر Hotmart. رضاء مضمون أو استرداد الأموال."
     },
     "faq": {
       "title": "أسئلة شائعة"
@@ -882,7 +890,7 @@
     },
     "pagination": "صفحة {{page}} من {{total}}"
   },
-   "adminPastDue": {
+  "adminPastDue": {
     "title": "حسابات متأخرة الدفع",
     "subtitle": "إدارة المستخدمين الذين فشلت مدفوعاتهم. البيانات متزامنة مباشرة من Stripe.",
     "table": {

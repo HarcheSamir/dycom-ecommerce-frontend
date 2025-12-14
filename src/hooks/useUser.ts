@@ -212,3 +212,15 @@ export const useReactivateSubscription = () => {
     },
   });
 };
+
+
+export const useHotmartPrice = () => {
+  return useQuery({
+    queryKey: ['hotmartPrice'],
+    queryFn: async () => {
+      const response = await apiClient.get('/payment/hotmart-price');
+      return response.data; // Returns { value, currency, formatted }
+    },
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
+};
