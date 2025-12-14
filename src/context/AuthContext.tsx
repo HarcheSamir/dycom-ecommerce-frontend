@@ -7,6 +7,11 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone?: string | null;
+  stripeSubscriptionId?: string | null;
+  hotmartTransactionCode?: string | null;
+  subscriptionStatus?: string;
+  accountType?: string;
 }
 
 interface AuthContextType {

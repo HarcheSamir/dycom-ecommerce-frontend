@@ -1,12 +1,14 @@
 // src/pages/Pricing.tsx
 
 import React, { useState, useMemo, type FC, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGetSubscriptionPlans, type SubscriptionPlan } from '../hooks/useUser';
 import { useAuth } from '../context/AuthContext';
-import { FaCheckCircle, FaGem, FaChevronDown } from 'react-icons/fa';
+import { FaCheckCircle, FaGem, FaChevronDown, FaCcVisa, FaCcMastercard, FaCcPaypal, FaShieldAlt } from 'react-icons/fa';
+import { SiKlarna } from 'react-icons/si'; 
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { parsePhoneNumber } from 'react-phone-number-input'; // Import parser
 
 // --- SHARED COMPONENTS ---
 
@@ -136,15 +138,17 @@ const FaqItem: FC<{ question: string; children: React.ReactNode }> = ({ question
 
 const FaqSection: FC = () => {
     const { t } = useTranslation();
-    const faqs = t('membershipPricing.faq.questions', { returnObjects: true }) as { q: string, a: string }[] || [];
+    const rawFaqs = t('membershipPricing.faq.questions', { returnObjects: true });
+    // Safety check
+    const faqs = Array.isArray(rawFaqs) ? rawFaqs : [];
 
-    if (!Array.isArray(faqs) || faqs.length === 0) return null;
+    if (faqs.length === 0) return null;
 
     return (
         <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20">
             <h2 className="text-center text-3xl sm:text-4xl font-bold tracking-tight text-white">{t('membershipPricing.faq.title')}</h2>
             <div className="mx-auto mt-10 sm:mt-12 max-w-3xl space-y-4">
-                {faqs.map((faq, index) => (
+                {faqs.map((faq: any, index: number) => (
                     <FaqItem key={index} question={faq.q}>{faq.a}</FaqItem>
                 ))}
             </div>
@@ -156,36 +160,8 @@ const Footer: FC = () => {
     const { t } = useTranslation();
     return (
         <footer className="py-16" id="footer">
-            <div className="container mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-                    <div className="md:col-span-1">
-                        <div className="flex items-center gap-3 mb-4"><img className='w-40' src='/logo2.png' alt='logo' /></div>
-                        <p className="text-neutral-400">{t('membershipPricing.footer.tagline')}</p>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">{t('landingPage.footer.productTitle')}</h4>
-                        <ul className="space-y-3">
-                            <li><a href="/home#features" className="text-neutral-400 hover:text-white transition-colors">{t('landingPage.footer.productLink1')}</a></li>
-                            <li><a href="/home#features" className="text-neutral-400 hover:text-white transition-colors">{t('landingPage.footer.productLink2')}</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">{t('landingPage.footer.companyTitle')}</h4>
-                        <ul className="space-y-3">
-                            <li><a href="/home#footer" className="text-neutral-400 hover:text-white transition-colors">{t('landingPage.footer.companyLink1')}</a></li>
-                            <li><a href="/pricing" className="text-neutral-400 hover:text-white transition-colors">{t('landingPage.footer.companyLink2')}</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">{t('landingPage.footer.legalTitle')}</h4>
-                        <ul className="space-y-3">
-                            <li><a href="#" className="text-neutral-400 hover:text-white transition-colors">{t('landingPage.footer.legalLink1')}</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div className="mt-16 border-t border-neutral-800 pt-8 text-center text-sm text-neutral-500">
-                    <p>{t('membershipPricing.footer.copyright')}</p>
-                </div>
+            <div className="container mx-auto px-6 text-center text-sm text-neutral-500">
+                <p>{t('membershipPricing.footer.copyright')}</p>
             </div>
         </footer>
     );
@@ -202,19 +178,52 @@ interface PricingCardProps {
 
 const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features }) => {
     const { t } = useTranslation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
+    const navigate = useNavigate();
 
-    // Extract metadata
-    const installments = plan.metadata?.installments ? parseInt(plan.metadata.installments) : 1;
-    const isOneTime = installments === 1;
-
-    // Format prices
+    // Hotmart Link
+    const HOTMART_LINK = "https://pay.hotmart.com/U103378139T";
     const priceFormatted = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(plan.price / 100);
-    const totalCost = isOneTime ? plan.price : (plan.price * installments);
-    const totalFormatted = new Intl.NumberFormat(locale, { style: 'currency', currency: plan.currency }).format(totalCost / 100);
 
-    // --- NEW: Generate offer string (1x, 2x, 3x) ---
-    const offerQuery = `&offer=${installments}x`;
+    // Check if user already has access
+    const hasAccess = user?.subscriptionStatus === 'LIFETIME_ACCESS' || 
+                      user?.subscriptionStatus === 'ACTIVE' || 
+                      user?.subscriptionStatus === 'TRIALING';
+
+    const handleBuyAction = () => {
+        if (isAuthenticated && user) {
+            // 1. Prevent Double Payment Logic
+            if (hasAccess) {
+                navigate('/dashboard');
+                return;
+            }
+
+            // 2. User Logged In: Pre-fill Hotmart URL
+            let link = `${HOTMART_LINK}?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&email=${encodeURIComponent(user.email)}`;
+            
+            // --- FIX FOR PHONE NUMBER ---
+            if (user.phone) {
+                try {
+                    // Split the number into Country Code and National Number
+                    const parsed = parsePhoneNumber(user.phone);
+                    if (parsed) {
+                        // Hotmart requires separate parameters for strict matching
+                        link += `&phone_international_code=${parsed.countryCallingCode}`;
+                        link += `&phone_number=${parsed.nationalNumber}`;
+                        // Redundancy: send full just in case specific region logic needs it
+                        link += `&phone=${parsed.number.replace('+', '')}`;
+                    }
+                } catch (e) {
+                    console.error("Phone parse error", e);
+                }
+            }
+            
+            window.location.href = link;
+        } else {
+            // 3. User NOT Logged In: Go to Signup
+            navigate('/signup');
+        }
+    };
 
     return (
         <GlassCard className={`flex-1 flex flex-col h-full ${isBestValue ? 'border-primary/50 shadow-2xl shadow-primary/10 relative transform scale-105 z-10 bg-neutral-900/40' : ''}`}>
@@ -226,26 +235,21 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
 
             <div className="mb-4">
                 <h3 className="text-2xl font-bold text-white mb-2">
-                    {isOneTime ? t('membershipPricing.card.oneTime') : t('membershipPricing.card.installments', { count: installments })}
+                    {t('membershipPricing.card.lifetime')}
                 </h3>
-                {isOneTime && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
-                        <FaGem className="text-green-400 text-xs" />
-                        <span className="text-green-400 text-xs font-bold uppercase tracking-wider">{t('membershipPricing.card.lifetime')}</span>
-                    </div>
-                )}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/30 border border-green-500/30">
+                    <FaGem className="text-green-400 text-xs" />
+                    <span className="text-green-400 text-xs font-bold uppercase tracking-wider">Access A Vie</span>
+                </div>
             </div>
 
             <div className="mb-8 border-b border-neutral-800 pb-8">
                 <div className="flex items-baseline gap-1">
                     <span className="text-5xl font-bold text-white tracking-tight">{priceFormatted}</span>
-                    {!isOneTime && <span className="text-lg text-neutral-400 font-medium">{t('membershipPricing.card.perMonth')}</span>}
                 </div>
-                {!isOneTime && (
-                    <p className="text-sm text-neutral-500 mt-3 font-medium">
-                        {t('membershipPricing.card.totalCost', { amount: totalFormatted })}
-                    </p>
-                )}
+                <p className="text-sm text-neutral-500 mt-3 font-medium">
+                    {t('membershipPricing.card.oneTime')}
+                </p>
             </div>
 
             <ul className="space-y-4 mb-8 flex-grow">
@@ -257,13 +261,34 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
                 ))}
             </ul>
 
-            <Link
-                // --- CHANGED: Append offerQuery to the URL ---
-                to={isAuthenticated ? `/dashboard/billing?plan=${plan.id}${offerQuery}` : `/signup?plan=${plan.id}${offerQuery}`}
-                className={`w-full block py-4 rounded-xl text-center font-bold text-lg transition-all ${isBestValue ? 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10' : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800'}`}
+            <button
+                onClick={handleBuyAction}
+                className={`w-full block py-4 rounded-xl text-center font-bold text-lg transition-all ${
+                    hasAccess 
+                    ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-500/20' // Green for Dashboard
+                    : (isBestValue ? 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10' : 'bg-[#1C1E22] border border-neutral-700 text-white hover:bg-neutral-800')
+                }`}
             >
-                {t('membershipPricing.card.startNow')}
-            </Link>
+                {hasAccess ? "Go to Dashboard" : t('membershipPricing.card.startNow')}
+            </button>
+
+            {/* KLARNA & PAYMENT LOGOS SECTION */}
+            <div className="mt-6 text-center border-t border-neutral-800 pt-6">
+                <p className="text-xs text-green-400 font-bold mb-3 uppercase tracking-wide">
+                    Payez en 3x sans frais avec Klarna
+                </p>
+                <div className="flex justify-center items-center gap-4 text-neutral-400 mb-3">
+                    <FaCcVisa size={24} />
+                    <FaCcMastercard size={24} />
+                    <FaCcPaypal size={24} />
+                    <div className="flex items-center gap-1 font-bold text-white bg-pink-500/10 px-2 py-1 rounded">
+                        <SiKlarna size={18} className="text-pink-500"/> <span className="text-xs text-pink-500">Klarna.</span>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-[10px] text-neutral-600">
+                    <FaShieldAlt /> Paiement sécurisé par Hotmart. Satisfait ou remboursé.
+                </div>
+            </div>
         </GlassCard>
     );
 };
@@ -272,11 +297,7 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, locale, features
 
 const PricingPage: FC = () => {
     const { t, i18n } = useTranslation();
-    const [searchParams] = useSearchParams();
     
-    // --- CHANGED: Always show all plans (Installments included) ---
-    const showInstallments = true; // Was: searchParams.get('offer') === 'flex';
-
     let currency: 'eur' | 'usd' | 'aed' = 'usd';
     if (i18n.language === 'fr') currency = 'eur';
     if (i18n.language === 'ar') currency = 'aed';
@@ -289,24 +310,17 @@ const PricingPage: FC = () => {
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
         
-        let availablePlans = plans.filter(p => p.metadata?.type === 'membership_tier');
+        // 1. Filter to ONLY keep the plan with installments === '1' (The 980 one)
+        let availablePlans = plans.filter(p => 
+            p.metadata?.type === 'membership_tier' && 
+            p.metadata?.installments === '1'
+        );
 
-        // Logic handled by 'showInstallments' which is now true
-        if (!showInstallments) {
-            availablePlans = availablePlans.filter(p => p.metadata?.installments === '1');
-        }
+        return availablePlans;
+    }, [plans]);
 
-        return availablePlans.sort((a, b) => {
-            const instA = parseInt(a.metadata?.installments || '1');
-            const instB = parseInt(b.metadata?.installments || '1');
-            return instA - instB;
-        });
-    }, [plans, showInstallments]);
-
-    // Dynamic grid classes
-    const gridClasses = showInstallments 
-        ? "grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl w-full items-stretch"
-        : "flex flex-col items-center justify-center w-full max-w-md";
+    // Use a center alignment since there's only one card
+    const gridClasses = "flex flex-col items-center justify-center w-full max-w-md mx-auto";
 
     return (
         <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
@@ -338,13 +352,14 @@ const PricingPage: FC = () => {
                         </div>
                     ) : (
                         <div className={`${gridClasses} animate-[fadeIn-up_1s_ease-out_0.6s] [animation-fill-mode:forwards] opacity-0`}>
+                            {/* Render ONLY the single remaining plan */}
                             {sortedPlans.map((plan) => (
                                 <div key={plan.id} className="w-full h-full">
                                     <PricingCard
                                         plan={plan}
                                         locale={locale}
                                         features={features}
-                                        isBestValue={plan.metadata?.installments === '1'}
+                                        isBestValue={true} // Always best value since it's the only one
                                     />
                                 </div>
                             ))}

@@ -83,7 +83,8 @@ interface User {
   // --- NEW FIELDS ---
   installmentsPaid: number;
   installmentsRequired: number;
-  
+  stripeSubscriptionId?: string | null; 
+  hotmartTransactionCode?: string | null;
   coursePurchases: { courseId: string }[];
   isCancellationScheduled?: boolean;
   planDetails?: {
