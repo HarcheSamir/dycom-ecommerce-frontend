@@ -27,7 +27,7 @@ export const GuestTicketPage = () => {
     if (isError || !ticket) return <div className="min-h-screen bg-black flex items-center justify-center text-red-500">{t('guestTicketPage.error')}</div>;
 
     return (
-        <div className="min-h-screen bg-[#111317] text-white flex flex-col">
+        <div className="h-screen bg-[#111317] text-white flex flex-col">
             <header className="p-6 border-b border-neutral-800 bg-[#16181c] flex justify-between items-center">
                 <div>
                     <h1 className="text-xl font-bold">{ticket.subject}</h1>

@@ -72,7 +72,7 @@ export const AdminSupportPage = () => {
     };
 
     return (
-        <main className="flex h-full overflow-hidden bg-[#111317]">
+        <main className="flex h-screen overflow-hidden bg-[#111317]">
 
             {/* LEFT PANEL: Ticket List */}
             <div className="w-1/3 border-r border-neutral-800 flex flex-col bg-[#16181c]">
