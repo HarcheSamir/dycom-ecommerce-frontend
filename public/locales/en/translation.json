@@ -906,34 +906,100 @@
     "days": "Days"
   },
   "supportPage": {
-    "title": "Support Center",
-    "subtitle": "How can we help you today? Select an option below.",
-    "liveChat": {
-      "badge": "Online",
-      "title": "Live Chat & Tickets",
-      "description": "Talk to us directly. If we are online, we'll answer instantly. If we are away, this will automatically open a priority support ticket sent to our email.",
-      "button": "Start Conversation"
+    "title": "Support Tickets",
+    "newTicketButton": "New Ticket",
+    "loading": "Loading tickets...",
+    "emptyState": {
+      "title": "No tickets yet",
+      "description": "Need help? Create your first support ticket."
     },
-    "knowledgeBase": {
-      "badge": "Coming Soon",
-      "title": "Knowledge Base",
-      "description": "Browse detailed tutorials, video guides, and frequently asked questions to find instant answers to common issues.",
-      "button": "Library Unavailable"
+    "card": {
+      "noPreview": "No preview available",
+      "idPrefix": "ID"
     },
-    "quickTips": {
-      "title": "Quick Tips",
-      "billing": {
-        "title": "Billing Issues?",
-        "desc": "You can manage invoices and payment methods directly in the Settings page."
+    "createModal": {
+      "title": "Open New Ticket",
+      "labels": {
+        "subject": "Subject",
+        "category": "Category",
+        "message": "Message"
       },
-      "video": {
-        "title": "Video Not Playing?",
-        "desc": "Try refreshing your browser or clearing your cache. Use Chrome for the best experience."
+      "placeholders": {
+        "subject": "Brief summary of issue",
+        "message": "Describe your issue in detail..."
       },
-      "response": {
-        "title": "Response Time",
-        "desc": "We typically respond to tickets within 24 hours. Check your email for replies."
+      "categories": {
+        "GENERAL": "General Inquiry",
+        "BILLING": "Billing Issue",
+        "TECHNICAL": "Technical Support",
+        "PARTNERSHIP": "Partnership"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "submit": "Submit Ticket",
+        "sending": "Sending..."
       }
     }
+  },
+  "adminSupportPage": {
+    "inbox": "Inbox",
+    "filter": {
+      "ALL": "All",
+      "OPEN": "Open",
+      "IN_PROGRESS": "In Progress",
+      "RESOLVED": "Resolved"
+    },
+    "card": {
+      "guestUser": "Guest User",
+      "unknown": "Unknown",
+      "viewProfile": "View User Profile"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago"
+    },
+    "details": {
+      "plan": "Plan",
+      "guest": "GUEST",
+      "markSolved": "Mark Solved",
+      "emptyState": "Select a ticket to view conversation",
+      "systemResolvedMessage": "Ticket marked as resolved by Admin."
+    },
+    "reply": {
+      "privateNote": "Private Note",
+      "placeholderInternal": "Write an internal note...",
+      "placeholderPublic": "Type your reply..."
+    }
+  },
+  "guestTicketPage": {
+    "loading": "Loading ticket...",
+    "error": "Access Denied or Ticket Not Found",
+    "ticketId": "Ticket ID",
+    "placeholder": "Type your reply..."
+  },
+  "supportWidget": {
+    "header": {
+      "title": "Hello there! 👋",
+      "subtitle": "We typically reply within a few hours. Leave a message and we'll email you."
+    },
+    "success": {
+      "title": "Message Sent!",
+      "description": "We have sent a confirmation link to <1>{{email}}</1>.",
+      "instruction": "Please check your inbox to track your ticket.",
+      "close": "Close"
+    },
+    "form": {
+      "error": "Failed to send message. Please try again.",
+      "defaultSubject": "Question via Widget",
+      "placeholders": {
+        "name": "Name",
+        "email": "Email*",
+        "subject": "Subject (e.g. Login Issue)",
+        "message": "How can we help you?"
+      },
+      "submit": "Send Message"
+    },
+    "footer": "Powered by Dycom Support"
   }
 }

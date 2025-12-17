@@ -27,6 +27,9 @@ import { CoursePlayerPage } from './pages/CoursePlayerPage';
 import AdminUserDetailsPage from './pages/AdminUserDetailsPage';
 import AdminPastDuePage from './pages/AdminPastDuePage';
 import { SupportPage } from './pages/SupportPage';
+import { AdminSupportPage } from './pages/AdminSupportPage';
+import { GuestTicketPage } from './pages/GuestTicketPage';
+import { SupportWidget } from './components/support/SupportWidget';
 
 const queryClient = new QueryClient();
 
@@ -41,12 +44,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
+          <SupportWidget />
           <Routes>
             <Route path="/home" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/pay/:plan" element={<QuickPay />} />
+            <Route path="/support/ticket/:ticketId" element={<GuestTicketPage />} />
 
             <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>}>
               <Route index element={<DashboardContent />} />
@@ -67,6 +72,7 @@ function App() {
               <Route path="admin/users" element={<AdminUsersPage />} />
               <Route path="admin/users/:userId" element={<AdminUserDetailsPage />} />
               <Route path="admin/financials/past-due" element={<AdminPastDuePage />} />
+              <Route path="admin/support" element={<AdminSupportPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 
 import {
-    FaTachometerAlt,FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
+    FaTachometerAlt,FaTicketAlt , FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -279,7 +279,9 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
             {
                 nameKey: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due', label: "Past Due",
                 isExternal: false
-            }
+            },
+            { nameKey: 'Tickets', icon: <FaTicketAlt />, path: '/dashboard/admin/support', label: "Support Inbox", isExternal: false }
+
         );
     }
 
@@ -372,40 +374,6 @@ const DashboardPage: FC = () => {
     const { data: userProfile, isLoading: isProfileLoading } = useUserProfile();
     const { t, i18n } = useTranslation(); // Get i18n instance
 
-   useEffect(() => {
-        if (userProfile) {
-            const setTawkUser = () => {
-                if (window.Tawk_API && typeof window.Tawk_API.setAttributes === 'function') {
-                    window.Tawk_API.setAttributes({
-                        name: `${userProfile.firstName} ${userProfile.lastName}`,
-                        email: userProfile.email,
-                        // REMOVED 'hash' to fix the identity rejection
-                        id: userProfile.id // Sending ID as a custom field instead
-                    }, function (error: any) {
-                        if(error) console.error("Tawk identification error:", error);
-                    });
-                }
-            };
-
-            // 1. Try immediately (if script is cached/loaded)
-            setTawkUser();
-
-            // 2. Try again in 2 seconds (if script is slow)
-            const timer = setTimeout(setTawkUser, 2000);
-
-            // 3. Hook into Tawk's native onLoad event (best practice)
-            if (window.Tawk_API) {
-                // We save the original onLoad if it exists
-                const originalOnLoad = window.Tawk_API.onLoad;
-                window.Tawk_API.onLoad = function() {
-                    setTawkUser();
-                    if (originalOnLoad) originalOnLoad();
-                };
-            }
-
-            return () => clearTimeout(timer);
-        }
-    }, [userProfile]);
 
     // MODIFICATION: Check for RTL language
     const isRtl = i18n.language === 'ar';
@@ -416,8 +384,9 @@ const DashboardPage: FC = () => {
         const status = userProfile?.subscriptionStatus;
         const isAdmin = userProfile?.accountType === 'ADMIN';
         const isOnBillingPage = location.pathname === '/dashboard/billing';
+        const isOnSupportPage = location.pathname.startsWith('/dashboard/support'); 
 
-        if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && !isOnBillingPage) {
+        if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && !isOnBillingPage && !isOnSupportPage) {
             navigate('/dashboard/billing', { replace: true });
         }
     }, [isProfileLoading, userProfile, location.pathname, navigate]);

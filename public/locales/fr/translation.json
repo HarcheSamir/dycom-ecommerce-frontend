@@ -905,35 +905,101 @@
     },
     "days": "Jours"
   },
-  "supportPage": {
-    "title": "Centre de Support",
-    "subtitle": "Comment pouvons-nous vous aider aujourd'hui ? Sélectionnez une option ci-dessous.",
-    "liveChat": {
-      "badge": "En ligne",
-      "title": "Chat en direct & Tickets",
-      "description": "Parlez-nous directement. Si nous sommes en ligne, nous répondrons instantanément. Si nous sommes absents, cela ouvrira automatiquement un ticket de support prioritaire.",
-      "button": "Démarrer la conversation"
+"supportPage": {
+    "title": "Tickets de support",
+    "newTicketButton": "Nouveau ticket",
+    "loading": "Chargement des tickets...",
+    "emptyState": {
+      "title": "Aucun ticket pour le moment",
+      "description": "Besoin d'aide ? Créez votre premier ticket de support."
     },
-    "knowledgeBase": {
-      "badge": "Bientôt disponible",
-      "title": "Base de Connaissances",
-      "description": "Parcourez des tutoriels détaillés, des guides vidéo et des questions fréquentes pour trouver des réponses instantanées.",
-      "button": "Bibliothèque Indisponible"
+    "card": {
+      "noPreview": "Aucun aperçu disponible",
+      "idPrefix": "ID"
     },
-    "quickTips": {
-      "title": "Astuces Rapides",
-      "billing": {
-        "title": "Problèmes de Facturation ?",
-        "desc": "Vous pouvez gérer vos factures et méthodes de paiement directement dans la page Paramètres."
+    "createModal": {
+      "title": "Ouvrir un nouveau ticket",
+      "labels": {
+        "subject": "Sujet",
+        "category": "Catégorie",
+        "message": "Message"
       },
-      "video": {
-        "title": "La vidéo ne se lance pas ?",
-        "desc": "Essayez de rafraîchir votre navigateur ou de vider votre cache. Utilisez Chrome pour la meilleure expérience."
+      "placeholders": {
+        "subject": "Bref résumé du problème",
+        "message": "Décrivez votre problème en détail..."
       },
-      "response": {
-        "title": "Temps de Réponse",
-        "desc": "Nous répondons généralement aux tickets sous 24 heures. Vérifiez vos emails pour les réponses."
+      "categories": {
+        "GENERAL": "Question générale",
+        "BILLING": "Problème de facturation",
+        "TECHNICAL": "Support technique",
+        "PARTNERSHIP": "Partenariat"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "submit": "Soumettre le ticket",
+        "sending": "Envoi..."
       }
     }
+  },
+  "adminSupportPage": {
+    "inbox": "Boîte de réception",
+    "filter": {
+      "ALL": "Tout",
+      "OPEN": "Ouvert",
+      "IN_PROGRESS": "En cours",
+      "RESOLVED": "Résolu"
+    },
+    "card": {
+      "guestUser": "Utilisateur invité",
+      "unknown": "Inconnu",
+      "viewProfile": "Voir le profil utilisateur"
+    },
+    "time": {
+      "justNow": "À l'instant",
+      "minutesAgo": "il y a {{count}}m",
+      "hoursAgo": "il y a {{count}}h"
+    },
+    "details": {
+      "plan": "Plan",
+      "guest": "INVITÉ",
+      "markSolved": "Marquer résolu",
+      "emptyState": "Sélectionnez un ticket pour voir la conversation",
+      "systemResolvedMessage": "Ticket marqué comme résolu par l'Admin."
+    },
+    "reply": {
+      "privateNote": "Note privée",
+      "placeholderInternal": "Écrire une note interne...",
+      "placeholderPublic": "Tapez votre réponse..."
+    }
+  },
+  "guestTicketPage": {
+    "loading": "Chargement du ticket...",
+    "error": "Accès refusé ou ticket introuvable",
+    "ticketId": "ID du ticket",
+    "placeholder": "Tapez votre réponse..."
+  },
+  "supportWidget": {
+    "header": {
+      "title": "Bonjour ! 👋",
+      "subtitle": "Nous répondons généralement en quelques heures. Laissez un message et nous vous enverrons un e-mail."
+    },
+    "success": {
+      "title": "Message envoyé !",
+      "description": "Nous avons envoyé un lien de confirmation à <1>{{email}}</1>.",
+      "instruction": "Veuillez vérifier votre boîte de réception pour suivre votre ticket.",
+      "close": "Fermer"
+    },
+    "form": {
+      "error": "Échec de l'envoi du message. Veuillez réessayer.",
+      "defaultSubject": "Question via Widget",
+      "placeholders": {
+        "name": "Nom",
+        "email": "E-mail*",
+        "subject": "Sujet (ex: Problème de connexion)",
+        "message": "Comment pouvons-nous vous aider ?"
+      },
+      "submit": "Envoyer le message"
+    },
+    "footer": "Propulsé par Dycom Support"
   }
 }
