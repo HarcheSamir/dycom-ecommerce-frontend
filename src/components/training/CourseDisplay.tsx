@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useSearchParams } from 'react-router-dom';
 import { GlassCard } from '../GlassCard';
 import VimeoPlayer from '../VimeoPlayer';
-import { useUpdateVideoProgress, type VideoCourse } from '../../hooks/useTraining';
+import { useUpdateVideoProgress, useMarkSectionSeen, type VideoCourse } from '../../hooks/useTraining';
 
 interface CourseDisplayProps {
     course: VideoCourse;
@@ -17,6 +17,7 @@ interface CourseDisplayProps {
 export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, onBack }) => {
     const { t } = useTranslation();
     const { mutate: updateProgress } = useUpdateVideoProgress();
+    const { mutate: markSectionSeen } = useMarkSectionSeen(); // Added hook
     const [_, setSearchParams] = useSearchParams();
 
     // --- State & Memo ---
@@ -67,11 +68,17 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
         }
     }, [activeSectionId]);
 
-    const toggleSection = (sectionId: string) => {
+    const toggleSection = (sectionId: string, isNew?: boolean) => {
         setExpandedSections(prev => {
             const next = new Set(prev);
             if (next.has(sectionId)) next.delete(sectionId);
-            else next.add(sectionId);
+            else {
+                next.add(sectionId);
+                // If the module was new, mark it as seen immediately upon expansion
+                if (isNew) {
+                    markSectionSeen(sectionId);
+                }
+            }
             return next;
         });
     };
@@ -232,11 +239,18 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                                 return (
                                     <div key={section.id} className="overflow-hidden rounded-xl border border-neutral-800 bg-[#16181c] transition-colors hover:border-neutral-700">
                                         <button
-                                            onClick={() => toggleSection(section.id)}
+                                            onClick={() => toggleSection(section.id, section.isNew)}
                                             className="flex w-full items-center justify-between bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
                                         >
-                                            <div className="flex flex-col items-start">
-                                                <span className="font-semibold text-white text-sm text-left">{section.title}</span>
+                                            <div className="flex flex-col items-start pr-6">
+                                                <div className='flex items-center gap-2'>
+                                                    <span className="font-semibold text-white text-sm text-left">{section.title}</span>
+                                                    {section.isNew && (
+                                                        <span className="bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase animate-pulse">
+                                                            NOUVEAU MODULE
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <span className="text-[10px] text-neutral-400 font-medium tracking-wide mt-0.5">
                                                     {completedInSection} / {totalInSection} COMPLETED
                                                 </span>
@@ -272,9 +286,16 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                                                                 </div>
 
                                                                 <div className="flex flex-1 flex-col items-start gap-0.5 overflow-hidden">
-                                                                    <span className={`truncate text-xs font-medium w-full text-left ${isActive ? 'text-white' : 'text-neutral-300 group-hover:text-white'}`}>
-                                                                        {video.title}
-                                                                    </span>
+                                                                    <div className="flex items-center gap-2 w-full">
+                                                                        <span className={`truncate text-xs font-medium w-full text-left ${isActive ? 'text-white' : 'text-neutral-300 group-hover:text-white'}`}>
+                                                                            {video.title}
+                                                                        </span>
+                                                                        {video.isNew && (
+                                                                            <span className="ml-auto bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase">
+                                                                                NOUVELLE VIDÉO
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
                                                                     {video.duration && (
                                                                         <span className={`flex items-center gap-1 text-[10px] ${isActive ? 'text-primary/80' : 'text-neutral-500'}`}>
                                                                             <FaClock size={8} /> {video.duration} min

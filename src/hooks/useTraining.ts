@@ -18,11 +18,21 @@ export interface Video {
     duration: number | null;
     order: number;
     progress: VideoProgress[];
+        isNew?: boolean; // Added
+
 }
 
-export interface Section { id: string; title: string; order: number; videos: Video[]; }
-export interface VideoCourse { id: string; title: string; description: string | null; coverImageUrl: string | null; order: number; sections: Section[]; totalVideos?: number; completedVideos?: number; price?: number | null; currency?: string; level?: string; rating?: number; duration?: string; author?: string; language?: 'FR' | 'EN' | 'AR'; }
+export interface Section { id: string; title: string; order: number; videos: Video[];    isNew?: boolean; }
+export interface VideoCourse { id: string; title: string; description: string | null; coverImageUrl: string | null; order: number; sections: Section[]; totalVideos?: number; completedVideos?: number; price?: number | null; currency?: string; level?: string; rating?: number; duration?: string; author?: string; language?: 'FR' | 'EN' | 'AR';isNew?: boolean; hasNewContent?: boolean;}
 export interface CourseFilters { lang: string; search?: string; sortBy?: string; language?: string; }
+export interface UpdateItem {
+   type: 'VIDEO' | 'MODULE' | 'COURSE';
+    id: string;
+    title: string;
+    courseTitle: string;
+    date: string;
+    link: string;
+}
 
 export const useCourses = (filters: CourseFilters) => {
   return useQuery({
@@ -69,4 +79,36 @@ export const useUpdateVideoProgress = () => {
         }
     },
   });
+};
+
+
+export const useMarkSectionSeen = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (sectionId: string) => apiClient.post(`/training/sections/${sectionId}/seen`),
+        onSuccess: () => {
+            // Silently refetch course data to update the UI (remove orange badge)
+            queryClient.invalidateQueries({ queryKey: ['course'] }); 
+        }
+    });
+};
+
+export const useLatestUpdates = () => {
+    return useQuery<UpdateItem[]>({
+        queryKey: ['latestUpdates'],
+        queryFn: async () => {
+            const res = await apiClient.get('/training/updates');
+            return res.data;
+        }
+    });
+};
+
+export const useMarkCourseSeen = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (courseId: string) => apiClient.post(`/training/courses/${courseId}/seen`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['courses'] }); 
+        }
+    });
 };

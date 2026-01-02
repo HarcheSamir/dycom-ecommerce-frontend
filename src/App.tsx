@@ -30,7 +30,7 @@ import { SupportPage } from './pages/SupportPage';
 import { AdminSupportPage } from './pages/AdminSupportPage';
 import { GuestTicketPage } from './pages/GuestTicketPage';
 import { SupportWidget } from './components/support/SupportWidget';
-
+import { UpdatesPage } from './pages/UpdatesPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -59,8 +59,7 @@ function App() {
               <Route path="suppliers" element={<SuppliersPage />} />
               <Route path="training" element={<TrainingPage />} />
               <Route path="support" element={<SupportPage />} />
-
-              {/* --- NEW ROUTE HERE --- */}
+              <Route path="updates" element={<UpdatesPage />} />
               <Route path="training/:courseId" element={<CoursePlayerPage />} />
 
               <Route path="influencers" element={<InfluencersPage />} />

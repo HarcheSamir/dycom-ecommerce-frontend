@@ -1,5 +1,5 @@
 import { useState, useMemo, type FC } from 'react';
-import { useCourses, type VideoCourse } from '../hooks/useTraining';
+import { useCourses, useMarkCourseSeen, type VideoCourse } from '../hooks/useTraining';
 import { useUserProfile } from '../hooks/useUser';
 import { FaSort, FaGlobe, FaBookReader, FaSearch } from 'react-icons/fa';
 import { Elements } from '@stripe/react-stripe-js';
@@ -26,7 +26,7 @@ export const TrainingPage: FC = () => {
     const [sortBy, setSortBy] = useState('createdAt');
     const [languageFilter, setLanguageFilter] = useState('');
     const [showOwnedOnly, setShowOwnedOnly] = useState(false);
-
+    const { mutate: markCourseSeen } = useMarkCourseSeen();
     const { data: courses, isLoading, isError, refetch: refetchCourses } = useCourses({
         lang: i18n.language,
         search: searchTerm,
@@ -36,11 +36,11 @@ export const TrainingPage: FC = () => {
     const { data: userProfile, refetch: refetchUser } = useUserProfile();
 
     // Updated Access Logic: Admins, Active Subs, Lifetime, Trialing
-    const isSubscriber = 
-        userProfile?.subscriptionStatus === 'ACTIVE' || 
-        userProfile?.subscriptionStatus === 'LIFETIME_ACCESS' || 
+    const isSubscriber =
+        userProfile?.subscriptionStatus === 'ACTIVE' ||
+        userProfile?.subscriptionStatus === 'LIFETIME_ACCESS' ||
         userProfile?.subscriptionStatus === 'TRIALING';
-        
+
     const isAdmin = userProfile?.accountType === 'ADMIN';
     const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.map(p => p.courseId) || []), [userProfile]);
 
@@ -113,15 +113,19 @@ export const TrainingPage: FC = () => {
                             const isFreeCourse = course.price === null || course.price === 0;
                             // Update HasAccess Logic for Card
                             const hasAccess = isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
-                            
+
                             return (
-                                <CourseCard 
-                                    key={course.id} 
-                                    course={course} 
-                                    hasAccess={hasAccess} 
+                                <CourseCard
+                                    key={course.id}
+                                    course={course}
+                                    hasAccess={hasAccess}
                                     // Change: Redirect to new player page
-                                    onClick={() => navigate(`/dashboard/training/${course.id}`)} 
-                                    onBuy={() => setCourseToBuy(course)} 
+                                    onClick={() => {
+                                        // Mark as seen immediately when clicking to enter
+                                        if (course.isNew) markCourseSeen(course.id);
+                                        navigate(`/dashboard/training/${course.id}`);
+                                    }}
+                                    onBuy={() => setCourseToBuy(course)}
                                 />
                             );
                         })}

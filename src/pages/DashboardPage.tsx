@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 
 import {
-    FaTachometerAlt,FaTicketAlt , FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
+    FaTachometerAlt,FaTicketAlt ,FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -249,6 +249,8 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         { nameKey: 'training', icon: <FaVideo />, path: '/dashboard/training' },
         { nameKey: 'influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
         { nameKey: 'support', label: "Support", icon: <FaHeadset />, path: '/dashboard/support', isExternal: false },
+        { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400"/>, path: '/dashboard/updates' },
+
 
         // --- NEW LINKS ADDED HERE ---
         {
