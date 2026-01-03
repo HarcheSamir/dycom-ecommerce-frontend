@@ -6,9 +6,9 @@ import { useWinningProducts, type WinningProduct } from '../hooks/useWinningProd
 import ProductDetailModal from '../components/ProductDetailModal';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
-
+import { WelcomeModal } from '../components/WelcomeModal';
 import {
-    FaTachometerAlt,FaTicketAlt ,FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -249,7 +249,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         { nameKey: 'training', icon: <FaVideo />, path: '/dashboard/training' },
         { nameKey: 'influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
         { nameKey: 'support', label: "Support", icon: <FaHeadset />, path: '/dashboard/support', isExternal: false },
-        { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400"/>, path: '/dashboard/updates' },
+        { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400" />, path: '/dashboard/updates' },
 
 
         // --- NEW LINKS ADDED HERE ---
@@ -386,7 +386,7 @@ const DashboardPage: FC = () => {
         const status = userProfile?.subscriptionStatus;
         const isAdmin = userProfile?.accountType === 'ADMIN';
         const isOnBillingPage = location.pathname === '/dashboard/billing';
-        const isOnSupportPage = location.pathname.startsWith('/dashboard/support'); 
+        const isOnSupportPage = location.pathname.startsWith('/dashboard/support');
 
         if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && !isOnBillingPage && !isOnSupportPage) {
             navigate('/dashboard/billing', { replace: true });
@@ -404,25 +404,35 @@ const DashboardPage: FC = () => {
             </div>
         );
     }
+    const showWelcomeModal = userProfile && !userProfile.hasSeenWelcomeModal;
 
     return (
         <div className="min-h-screen font-sans" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
             <div className="flex">
-                {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
-                <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} />
-                <div className="flex-1 flex flex-col min-w-0">
-                    {/* MODIFICATION: Conditionally position the mobile menu button */}
-                    <button
-                        onClick={() => setIsSidebarOpen(true)}
-                        className={`md:hidden absolute top-5 z-20 p-2 bg-[#1C1E22] rounded-md text-white ${isRtl ? 'right-5' : 'left-5'}`}
-                    >
-                        <FaBars />
-                    </button>
-                    <Outlet />
+
+                {showWelcomeModal && (
+                    <WelcomeModal onClose={() => {/* Logic handled inside component via mutation */ }} />
+                )}
+
+                <div className={`flex ${showWelcomeModal ? 'blur-sm pointer-events-none h-screen overflow-hidden' : ''}`}>
+                    {/* ^ Optional: Add blur/lock to background when modal is open */}
+
+                    {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
+                    <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} />
+                    <div className="flex-1 flex flex-col min-w-0">
+                        {/* MODIFICATION: Conditionally position the mobile menu button */}
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className={`md:hidden absolute top-5 z-20 p-2 bg-[#1C1E22] rounded-md text-white ${isRtl ? 'right-5' : 'left-5'}`}
+                        >
+                            <FaBars />
+                        </button>
+                        <Outlet />
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+            </div>
+            );
 };
 
-export default DashboardPage;
+            export default DashboardPage;

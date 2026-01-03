@@ -7,9 +7,10 @@ interface VimeoPlayerProps {
   initialTime?: number;
   onProgress: (seconds: number, percent: number) => void;
   onEnded: () => void;
+  autoplay?: boolean;
 }
 
-const Player: FC<VimeoPlayerProps> = ({ vimeoId, initialTime = 0, onProgress, onEnded }) => {
+const Player: FC<VimeoPlayerProps> = ({ vimeoId, initialTime = 0, onProgress, onEnded,autoplay = false  }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<VimeoPlayer | null>(null);
   const lastUpdateRef = useRef<number>(0);
@@ -30,7 +31,7 @@ const Player: FC<VimeoPlayerProps> = ({ vimeoId, initialTime = 0, onProgress, on
 
     const player = new VimeoPlayer(containerRef.current, {
       id: parseInt(vimeoId, 10),
-      autoplay: false,
+      autoplay: autoplay, 
       responsive: true,
     });
     playerRef.current = player;

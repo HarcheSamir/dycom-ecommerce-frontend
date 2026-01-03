@@ -83,10 +83,12 @@ interface User {
   // --- NEW FIELDS ---
   installmentsPaid: number;
   installmentsRequired: number;
-  stripeSubscriptionId?: string | null; 
+  stripeSubscriptionId?: string | null;
   hotmartTransactionCode?: string | null;
   coursePurchases: { courseId: string }[];
   isCancellationScheduled?: boolean;
+  hasSeenWelcomeModal: boolean;
+
   planDetails?: {
     name: string;
     amount: number | null;
@@ -105,7 +107,7 @@ export const useGetSubscriptionPlans = (currency: 'eur' | 'usd' | 'aed') => {
       });
       return response.data;
     },
-    staleTime: 0, 
+    staleTime: 0,
   });
 };
 
@@ -223,4 +225,15 @@ export const useHotmartPrice = () => {
     },
     staleTime: 1000 * 60 * 60, // 1 hour
   });
+};
+
+export const useMarkWelcomeSeen = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: () => apiClient.patch('/profile/welcome-seen'),
+        onSuccess: () => {
+            // Update the user cache immediately so the modal disappears
+            queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+        },
+    });
 };

@@ -32,6 +32,12 @@
     "loadingWorkspace": "Chargement de votre espace de travail...",
     "welcome": "Bienvenue, {{name}} !",
     "welcomeSubtitle": "Voici un aperçu de votre activité aujourd'hui",
+    "welcomeModal": {
+      "title": "Bienvenue sur Dycom V3 🚀",
+      "subtitle": "Message important de Dylan",
+      "accessButton": "J'ai compris, accéder à mon espace",
+      "loading": "Chargement..."
+    },
     "stats": {
       "trendingProducts": "Produits tendance",
       "availableCourses": "Cours disponibles",
@@ -905,7 +911,7 @@
     },
     "days": "Jours"
   },
-"supportPage": {
+  "supportPage": {
     "title": "Tickets de support",
     "newTicketButton": "Nouveau ticket",
     "loading": "Chargement des tickets...",
