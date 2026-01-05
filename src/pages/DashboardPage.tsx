@@ -137,7 +137,7 @@ export const DashboardContent: FC = () => {
 
     return (
         <>
-            <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10">
+            <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10 ">
                 <AnimatedSection>
                     <h1 className="text-4xl font-bold text-white">{t('dashboard.welcome', { name: userProfile?.firstName || 'User' })}</h1>
                     <p className="text-neutral-400 mt-1">{t('dashboard.welcomeSubtitle')}</p>
@@ -407,19 +407,19 @@ const DashboardPage: FC = () => {
     const showWelcomeModal = userProfile && !userProfile.hasSeenWelcomeModal;
 
     return (
-        <div className="min-h-screen font-sans" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
-            <div className="flex">
+        <div className="min-h-screen font-sans " style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
+            <div className="flex w-full ">
 
                 {showWelcomeModal && (
                     <WelcomeModal onClose={() => {/* Logic handled inside component via mutation */ }} />
                 )}
 
-                <div className={`flex ${showWelcomeModal ? 'blur-sm pointer-events-none h-screen overflow-hidden' : ''}`}>
+                <div className={`flex w-full ${showWelcomeModal ? 'blur-sm pointer-events-none h-screen overflow-hidden' : ''}`}>
                     {/* ^ Optional: Add blur/lock to background when modal is open */}
 
                     {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
                     <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} />
-                    <div className="flex-1 flex flex-col min-w-0">
+                    <div className="flex-1 flex flex-col min-w-0 bg-blue-500">
                         {/* MODIFICATION: Conditionally position the mobile menu button */}
                         <button
                             onClick={() => setIsSidebarOpen(true)}
