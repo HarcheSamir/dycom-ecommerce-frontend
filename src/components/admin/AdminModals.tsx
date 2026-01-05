@@ -163,6 +163,12 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
     const [priceUsd, setPriceUsd] = useState<string | number>('');
     const [priceAed, setPriceAed] = useState<string | number>('');
     const [language, setLanguage] = useState<string>('EN');
+    
+    // --- NEW: Image Upload State ---
+    const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    // -------------------------------
+
     const { mutate: updateCourse, isPending } = useUpdateCourse();
 
     useEffect(() => {
@@ -180,8 +186,41 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
         }
     }, [course]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        let finalCoverImageUrl = course.coverImageUrl;
+
+        // --- NEW: Upload Image Logic (if file selected) ---
+        if (coverImageFile) {
+            setIsUploading(true);
+            const uploadToast = toast.loading(t('adminPage.toasts.uploadingImage'));
+            const formData = new FormData();
+            formData.append('file', coverImageFile);
+            formData.append('upload_preset', 'test2test'); // Same preset as upload modal
+
+            try {
+                const response = await fetch('https://api.cloudinary.com/v1_1/dw2d5lgfk/image/upload', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.secure_url) {
+                    finalCoverImageUrl = data.secure_url;
+                    toast.dismiss(uploadToast);
+                } else {
+                    toast.dismiss(uploadToast);
+                    toast.error(t('adminPage.toasts.cloudinaryError'));
+                    setIsUploading(false);
+                    return; // Stop if upload fails
+                }
+            } catch (err) {
+                console.error(err);
+                toast.dismiss(uploadToast);
+                toast.error(t('adminPage.toasts.imageUploadError'));
+                setIsUploading(false);
+                return;
+            }
+        }
+        // ------------------------------------------------
+
         updateCourse({
             courseId: course.id,
             data: {
@@ -190,15 +229,22 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                 priceEur: isFree ? 0 : Number(priceEur),
                 priceUsd: isFree ? 0 : Number(priceUsd),
                 priceAed: isFree ? 0 : Number(priceAed),
-                language
+                language,
+                coverImageUrl: finalCoverImageUrl // Pass the new (or old) URL
             }
-        }, { onSuccess: onClose });
+        }, { 
+            onSuccess: () => {
+                setIsUploading(false);
+                onClose();
+            },
+            onError: () => setIsUploading(false)
+        });
     };
 
     if (!show) return null;
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[60] p-4" onClick={onClose}>
-            <div className="relative border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
+            <div className="relative h-[80vh] overflow-scroll border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
                 <div className="p-8">
                     <h2 className="text-2xl font-bold text-white mb-6">{t('adminPage.modals.editCourse.title')}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -214,7 +260,6 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                 onChange={(e) => setIsFree(e.target.checked)}
                                 className="w-5 h-5 rounded border-neutral-600 bg-neutral-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-neutral-900"
                             />
-                            {/* TRANSLATION APPLIED */}
                             <label htmlFor="isFreeEdit" className="text-white font-medium cursor-pointer select-none">
                                 {t('adminPage.modals.uploadCourse.isFreeLabel')}
                             </label>
@@ -230,7 +275,6 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                     <input type="number" step="0.01" value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="e.g., 55.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
                                 <div>
-                                    {/* TRANSLATION APPLIED */}
                                     <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.priceAed')}</label>
                                     <input type="number" step="0.01" value={priceAed} onChange={e => setPriceAed(e.target.value)} placeholder="e.g., 199.00" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                                 </div>
@@ -241,7 +285,6 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white" />
                         </div>
                         <div>
-                            {/* TRANSLATION APPLIED */}
                             <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.language')}</label>
                             <select value={language} onChange={e => setLanguage(e.target.value)} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white">
                                 <option value="EN">English</option>
@@ -249,10 +292,38 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                 <option value="AR">العربية (Arabic)</option>
                             </select>
                         </div>
+
+                        {/* --- NEW: Image Upload Field --- */}
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.uploadCourse.coverImage')}</label>
+                            {/* Preview Current Image */}
+                            {course.coverImageUrl && !coverImageFile && (
+                                <div className="mb-3">
+                                    <p className="text-xs text-neutral-500 mb-1">Current Image:</p>
+                                    <img src={course.coverImageUrl} alt="Current Cover" className="h-20 w-auto rounded-md object-cover border border-neutral-700" />
+                                </div>
+                            )}
+                            
+                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-neutral-700 px-6 py-6 hover:border-neutral-500 transition-colors">
+                                <div className="text-center">
+                                    <FaFileImage className="mx-auto h-10 w-10 text-neutral-500" />
+                                    <div className="mt-2 flex text-sm text-neutral-400 justify-center">
+                                        <label htmlFor="file-upload-edit" className="relative cursor-pointer rounded-md font-semibold text-white hover:text-gray-300">
+                                            <span>{t('adminPage.modals.uploadCourse.uploadFile')}</span>
+                                            <input id="file-upload-edit" name="file-upload-edit" type="file" className="sr-only" onChange={(e) => { if (e.target.files) setCoverImageFile(e.target.files[0]) }} accept="image/*" />
+                                        </label>
+                                    </div>
+                                    <p className="text-xs text-neutral-500 mt-1">{t('adminPage.modals.uploadCourse.imageHint')}</p>
+                                    {coverImageFile && <p className="text-sm mt-2 text-green-400 font-bold">{coverImageFile.name}</p>}
+                                </div>
+                            </div>
+                        </div>
+                        {/* ------------------------------- */}
+
                         <div className="flex justify-end gap-4 pt-4">
                             <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-lg bg-[#1C1E22] text-white hover:bg-neutral-800 transition-colors">{t('adminPage.modals.common.cancel')}</button>
-                            <button type="submit" disabled={isPending} className="px-6 py-2.5 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition-colors disabled:opacity-50">
-                                {isPending ? t('adminPage.modals.common.saving') : t('adminPage.modals.common.update')}
+                            <button type="submit" disabled={isUploading || isPending} className="px-6 py-2.5 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition-colors disabled:opacity-50">
+                                {isUploading || isPending ? t('adminPage.modals.common.saving') : t('adminPage.modals.common.update')}
                             </button>
                         </div>
                     </form>
@@ -262,7 +333,6 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
     );
 };
 
-// ... Rest of the file (AddSection, AddVideo, EditSection, EditVideo) remains unchanged as they use existing translations ...
 export const AddSectionModal: FC<{ show: boolean; onClose: () => void; courseId: string; }> = ({ show, onClose, courseId }) => {
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
@@ -346,12 +416,29 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
     const { t } = useTranslation();
     const [title, setTitle] = useState('');
     const [vimeoId, setVimeoId] = useState('');
+    // --- CONFIRMATION: Description Field Logic ---
+    const [description, setDescription] = useState('');
+    
     const { mutate: updateVideo, isPending } = useUpdateVideo();
-    useEffect(() => { if (video) { setTitle(video.title); setVimeoId(video.vimeoId); } }, [video]);
+    
+    useEffect(() => { 
+        if (video) { 
+            setTitle(video.title); 
+            setVimeoId(video.vimeoId);
+            // Ensure description isn't null
+            setDescription(video.description || ''); 
+        } 
+    }, [video]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        updateVideo({ videoId: video.id, courseId, data: { title, vimeoId } }, { onSuccess: onClose });
+        updateVideo({ 
+            videoId: video.id, 
+            courseId, 
+            data: { title, vimeoId, description } 
+        }, { onSuccess: onClose });
     };
+
     if (!show) return null;
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[60] p-4" onClick={onClose}>
@@ -359,9 +446,32 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
                 <div className="p-8">
                     <h2 className="text-2xl font-bold text-white mb-6">{t('adminPage.modals.editVideo.title')}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div><label>{t('adminPage.modals.common.title')}</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
-                        <div><label>{t('adminPage.modals.common.vimeoId')}</label><input type="text" value={vimeoId} onChange={e => setVimeoId(e.target.value)} required className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
-                        <div className="flex justify-end gap-4 pt-4"><button type="button" onClick={onClose}>{t('adminPage.modals.common.cancel')}</button><button type="submit" disabled={isPending}>{isPending ? t('adminPage.modals.common.saving') : t('adminPage.modals.common.update')}</button></div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.title')}</label>
+                            <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
+                        </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.vimeoId')}</label>
+                            <input type="text" value={vimeoId} onChange={e => setVimeoId(e.target.value)} required className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
+                        </div>
+                        {/* --- EXPLICIT DESCRIPTION FIELD --- */}
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.description')}</label>
+                            <textarea 
+                                value={description} 
+                                onChange={e => setDescription(e.target.value)} 
+                                rows={4} 
+                                className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white" 
+                                placeholder="Enter video description here..."
+                            />
+                        </div>
+                        {/* ---------------------------------- */}
+                        <div className="flex justify-end gap-4 pt-4">
+                            <button type="button" onClick={onClose} className="px-6 py-2.5 rounded-lg bg-[#1C1E22] text-white hover:bg-neutral-800 transition-colors">{t('adminPage.modals.common.cancel')}</button>
+                            <button type="submit" disabled={isPending} className="px-6 py-2.5 rounded-lg bg-gray-200 text-black font-semibold hover:bg-gray-300 transition-colors">
+                                {isPending ? t('adminPage.modals.common.saving') : t('adminPage.modals.common.update')}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
