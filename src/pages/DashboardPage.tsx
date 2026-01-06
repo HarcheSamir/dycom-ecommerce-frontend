@@ -419,7 +419,7 @@ const DashboardPage: FC = () => {
 
                     {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
                     <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} />
-                    <div className="flex-1 flex flex-col min-w-0 bg-blue-500">
+                    <div className="flex-1 flex flex-col min-w-0 ">
                         {/* MODIFICATION: Conditionally position the mobile menu button */}
                         <button
                             onClick={() => setIsSidebarOpen(true)}
