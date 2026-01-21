@@ -21,6 +21,7 @@
       "training": "التدريب بالفيديو",
       "suppliers": "الموردون",
       "influencers": "المؤثرون",
+      "resources": "الموارد",
       "billing": "الفواتير",
       "settings": "الإعدادات",
       "affiliate": "التسويق بالعمولة",
@@ -905,7 +906,7 @@
     },
     "days": "أيام"
   },
-"supportPage": {
+  "supportPage": {
     "title": "تذاكر الدعم",
     "newTicketButton": "تذكرة جديدة",
     "loading": "جاري تحميل التذاكر...",
@@ -1002,5 +1003,14 @@
       "submit": "إرسال الرسالة"
     },
     "footer": "مدعوم من Dycom Support"
+  },
+  "resources": {
+    "title": "الموارد",
+    "subtitle": "حمّل الأدلة والقوالب والأدوات",
+    "searchPlaceholder": "بحث...",
+    "allCategories": "الكل",
+    "noResources": "لا توجد موارد متاحة",
+    "noResourcesDesc": "ستكون الموارد متاحة قريباً.",
+    "error": "تعذر تحميل الموارد"
   }
 }

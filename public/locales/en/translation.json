@@ -21,6 +21,7 @@
       "training": "Video Training",
       "suppliers": "Suppliers",
       "influencers": "Influencers",
+      "resources": "Resources",
       "billing": "Billing",
       "settings": "Settings",
       "affiliate": "Affiliate",
@@ -1001,5 +1002,14 @@
       "submit": "Send Message"
     },
     "footer": "Powered by Dycom Support"
+  },
+  "resources": {
+    "title": "Resources",
+    "subtitle": "Download guides, templates and tools",
+    "searchPlaceholder": "Search...",
+    "allCategories": "All",
+    "noResources": "No resources available",
+    "noResourcesDesc": "Resources will be available soon.",
+    "error": "Could not load resources"
   }
 }

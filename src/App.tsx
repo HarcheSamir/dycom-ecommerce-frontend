@@ -31,6 +31,8 @@ import { AdminSupportPage } from './pages/AdminSupportPage';
 import { GuestTicketPage } from './pages/GuestTicketPage';
 import { SupportWidget } from './components/support/SupportWidget';
 import { UpdatesPage } from './pages/UpdatesPage';
+import { ResourcesPage } from './pages/ResourcesPage';
+import { AdminResourcesPage } from './pages/AdminResourcesPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -72,6 +74,8 @@ function App() {
               <Route path="admin/users/:userId" element={<AdminUserDetailsPage />} />
               <Route path="admin/financials/past-due" element={<AdminPastDuePage />} />
               <Route path="admin/support" element={<AdminSupportPage />} />
+              <Route path="admin/resources" element={<AdminResourcesPage />} />
+              <Route path="resources" element={<ResourcesPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
