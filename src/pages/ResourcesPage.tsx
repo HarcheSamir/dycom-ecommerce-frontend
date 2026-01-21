@@ -50,7 +50,13 @@ const ResourceCard: FC<{ resource: Resource }> = ({ resource }) => {
         if (resource.type === 'URL' && resource.externalUrl) {
             window.open(resource.externalUrl, '_blank', 'noopener,noreferrer');
         } else if (resource.type === 'FILE' && resource.fileUrl) {
-            window.open(resource.fileUrl, '_blank');
+            // Force download for Cloudinary files (images/PDFs)
+            // Raw files (zips, etc) download automatically usually, and transformations might break raw URLs
+            let downloadUrl = resource.fileUrl;
+            if (downloadUrl.includes('cloudinary.com') && downloadUrl.includes('/upload/') && !downloadUrl.includes('/raw/upload/')) {
+                downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+            }
+            window.open(downloadUrl, '_blank');
         }
     };
 
@@ -169,8 +175,8 @@ export const ResourcesPage: FC = () => {
                     <button
                         onClick={() => setSelectedCategory(null)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${!selectedCategory
-                                ? 'bg-gray-200 text-black'
-                                : 'bg-[#1C1E22] text-neutral-400 border border-neutral-700 hover:text-white'
+                            ? 'bg-gray-200 text-black'
+                            : 'bg-[#1C1E22] text-neutral-400 border border-neutral-700 hover:text-white'
                             }`}
                     >
                         {t('resources.allCategories', 'Toutes')} ({totalResources})
@@ -180,8 +186,8 @@ export const ResourcesPage: FC = () => {
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat.id
-                                    ? 'bg-gray-200 text-black'
-                                    : 'bg-[#1C1E22] text-neutral-400 border border-neutral-700 hover:text-white'
+                                ? 'bg-gray-200 text-black'
+                                : 'bg-[#1C1E22] text-neutral-400 border border-neutral-700 hover:text-white'
                                 }`}
                         >
                             {cat.name} ({cat.resources?.length || 0})

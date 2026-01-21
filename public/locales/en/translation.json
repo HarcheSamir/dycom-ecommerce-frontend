@@ -245,7 +245,10 @@
         "loading": "Loading...",
         "duration": "Duration (min)",
         "language": "Language",
-        "priceAed": "Price (AED)"
+        "priceAed": "Price (AED)",
+        "category": "Category",
+        "main": "Main",
+        "archive": "Archive"
       },
       "uploadCourse": {
         "isFreeLabel": "This course is Free (Visible to everyone)",
@@ -615,6 +618,8 @@
     },
     "title": "Video Training",
     "subtitle": "Master new skills with our expert video courses",
+    "mainCourses": "Main Courses",
+    "archivedCourses": "Archived Courses",
     "allCourses": "All Courses",
     "loading": "Loading...",
     "error": "Error.",

@@ -251,7 +251,10 @@
         "loading": "Chargement...",
         "duration": "Durée (min)",
         "language": "Langue",
-        "priceAed": "Prix (AED)"
+        "priceAed": "Prix (AED)",
+        "category": "Catégorie",
+        "main": "Formation Principale",
+        "archive": "Archive"
       },
       "uploadCourse": {
         "title": "Télécharger un cours",
@@ -621,6 +624,8 @@
     },
     "title": "Formation Vidéo",
     "subtitle": "Maîtrisez de nouvelles compétences avec nos cours vidéo d'experts",
+    "mainCourses": "Formations Principales",
+    "archivedCourses": "Formations Archivées",
     "allCourses": "Tous les cours",
     "loading": "Chargement...",
     "error": "Erreur.",

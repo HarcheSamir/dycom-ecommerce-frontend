@@ -39,6 +39,7 @@ export interface AdminCourse {
     priceUsd: number | null;
     priceAed: number | null;
     language: 'FR' | 'EN' | 'AR';
+    category: 'MAIN' | 'ARCHIVE';
 }
 interface NewCourseData {
     title: string;
@@ -48,6 +49,7 @@ interface NewCourseData {
     priceUsd?: number;
     priceAed?: number;
     language?: string;
+    category?: 'MAIN' | 'ARCHIVE';
 }
 export interface AdminVideo { id: string; title: string; vimeoId: string; description: string | null; duration: number | null; order: number; }
 export interface AdminSection { id: string; title: string; videos: AdminVideo[]; }
@@ -76,6 +78,7 @@ interface UpdateCourseData {
         priceUsd?: number | null;
         priceAed?: number | null;
         language?: string;
+        category?: 'MAIN' | 'ARCHIVE';
     }
 }
 export interface AdminUserDetail {
@@ -197,7 +200,7 @@ export const useUpdateMembershipPrices = () => {
 export const useUpdateSectionOrder = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ courseId, sections }: UpdateSectionOrderData) => 
+        mutationFn: ({ courseId, sections }: UpdateSectionOrderData) =>
             apiClient.put(`/admin/courses/${courseId}/sections/order`, { sections }),
         onSuccess: (_, variables) => {
             // Silently update the cache or show a small toast if you prefer

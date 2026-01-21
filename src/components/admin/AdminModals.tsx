@@ -17,6 +17,7 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
     const [priceUsd, setPriceUsd] = useState('');
     const [priceAed, setPriceAed] = useState('');
     const [language, setLanguage] = useState('EN');
+    const [category, setCategory] = useState<'MAIN' | 'ARCHIVE'>('MAIN');
     const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const { mutate: createCourse, isPending } = useCreateCourse();
@@ -46,6 +47,7 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
                     priceUsd: isFree ? 0 : (Number(priceUsd) || 0),
                     priceAed: isFree ? 0 : (Number(priceAed) || 0),
                     language: language,
+                    category: category,
                 }, {
                     onSuccess: () => {
                         toast.dismiss(createToast);
@@ -56,6 +58,7 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
                         setPriceUsd('');
                         setPriceAed('');
                         setLanguage('EN');
+                        setCategory('MAIN');
                         setCoverImageFile(null);
                         setIsFree(true);
                         onClose();
@@ -120,6 +123,13 @@ export const UploadCourseModal: FC<{ show: boolean; onClose: () => void }> = ({ 
                             </div>
                         </div>
                         <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.category')}</label>
+                            <select value={category} onChange={e => setCategory(e.target.value as 'MAIN' | 'ARCHIVE')} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white">
+                                <option value="MAIN">{t('adminPage.modals.common.main')}</option>
+                                <option value="ARCHIVE">{t('adminPage.modals.common.archive')}</option>
+                            </select>
+                        </div>
+                        <div>
                             <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.description')}</label>
                             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white" />
                         </div>
@@ -163,7 +173,8 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
     const [priceUsd, setPriceUsd] = useState<string | number>('');
     const [priceAed, setPriceAed] = useState<string | number>('');
     const [language, setLanguage] = useState<string>('EN');
-    
+    const [category, setCategory] = useState<'MAIN' | 'ARCHIVE'>('MAIN');
+
     // --- NEW: Image Upload State ---
     const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -179,16 +190,17 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
             setPriceUsd(course.priceUsd ?? '');
             setPriceAed(course.priceAed ?? '');
             setLanguage(course.language ?? 'EN');
+            setCategory(course.category ?? 'MAIN');
             const currentlyFree = (course.priceEur === 0 || course.priceEur === null) &&
-                                  (course.priceUsd === 0 || course.priceUsd === null) &&
-                                  (course.priceAed === 0 || course.priceAed === null);
+                (course.priceUsd === 0 || course.priceUsd === null) &&
+                (course.priceAed === 0 || course.priceAed === null);
             setIsFree(currentlyFree);
         }
     }, [course]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         let finalCoverImageUrl = course.coverImageUrl;
 
         // --- NEW: Upload Image Logic (if file selected) ---
@@ -230,9 +242,10 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                 priceUsd: isFree ? 0 : Number(priceUsd),
                 priceAed: isFree ? 0 : Number(priceAed),
                 language,
+                category,
                 coverImageUrl: finalCoverImageUrl // Pass the new (or old) URL
             }
-        }, { 
+        }, {
             onSuccess: () => {
                 setIsUploading(false);
                 onClose();
@@ -292,6 +305,13 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                 <option value="AR">العربية (Arabic)</option>
                             </select>
                         </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.category')}</label>
+                            <select value={category} onChange={e => setCategory(e.target.value as 'MAIN' | 'ARCHIVE')} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white">
+                                <option value="MAIN">{t('adminPage.modals.common.main')}</option>
+                                <option value="ARCHIVE">{t('adminPage.modals.common.archive')}</option>
+                            </select>
+                        </div>
 
                         {/* --- NEW: Image Upload Field --- */}
                         <div>
@@ -303,7 +323,7 @@ export const EditCourseModal: FC<{ show: boolean; onClose: () => void; course: a
                                     <img src={course.coverImageUrl} alt="Current Cover" className="h-20 w-auto rounded-md object-cover border border-neutral-700" />
                                 </div>
                             )}
-                            
+
                             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-neutral-700 px-6 py-6 hover:border-neutral-500 transition-colors">
                                 <div className="text-center">
                                     <FaFileImage className="mx-auto h-10 w-10 text-neutral-500" />
@@ -418,24 +438,24 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
     const [vimeoId, setVimeoId] = useState('');
     // --- CONFIRMATION: Description Field Logic ---
     const [description, setDescription] = useState('');
-    
+
     const { mutate: updateVideo, isPending } = useUpdateVideo();
-    
-    useEffect(() => { 
-        if (video) { 
-            setTitle(video.title); 
+
+    useEffect(() => {
+        if (video) {
+            setTitle(video.title);
             setVimeoId(video.vimeoId);
             // Ensure description isn't null
-            setDescription(video.description || ''); 
-        } 
+            setDescription(video.description || '');
+        }
     }, [video]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        updateVideo({ 
-            videoId: video.id, 
-            courseId, 
-            data: { title, vimeoId, description } 
+        updateVideo({
+            videoId: video.id,
+            courseId,
+            data: { title, vimeoId, description }
         }, { onSuccess: onClose });
     };
 
@@ -457,11 +477,11 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
                         {/* --- EXPLICIT DESCRIPTION FIELD --- */}
                         <div>
                             <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.description')}</label>
-                            <textarea 
-                                value={description} 
-                                onChange={e => setDescription(e.target.value)} 
-                                rows={4} 
-                                className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white" 
+                            <textarea
+                                value={description}
+                                onChange={e => setDescription(e.target.value)}
+                                rows={4}
+                                className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg p-4 text-white"
                                 placeholder="Enter video description here..."
                             />
                         </div>

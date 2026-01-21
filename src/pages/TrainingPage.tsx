@@ -53,6 +53,28 @@ export const TrainingPage: FC = () => {
         });
     }, [courses, showOwnedOnly, isAdmin, isSubscriber, purchasedCourseIds]);
 
+    // --- Split Courses by Category ---
+    const mainCourses = useMemo(() => filteredCourses?.filter(c => !c.category || c.category === 'MAIN') || [], [filteredCourses]);
+    const archiveCourses = useMemo(() => filteredCourses?.filter(c => c.category === 'ARCHIVE') || [], [filteredCourses]);
+
+    const renderCourseCard = (course: VideoCourse) => {
+        const isFreeCourse = course.price === null || course.price === 0;
+        const hasAccess = isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
+
+        return (
+            <CourseCard
+                key={course.id}
+                course={course}
+                hasAccess={hasAccess}
+                onClick={() => {
+                    if (course.isNew) markCourseSeen(course.id);
+                    navigate(`/dashboard/training/${course.id}`);
+                }}
+                onBuy={() => setCourseToBuy(course)}
+            />
+        );
+    };
+
     const handlePurchaseSubmitted = () => {
         setIsVerifyingPurchase(true);
         const pollInterval = setInterval(() => {
@@ -105,34 +127,39 @@ export const TrainingPage: FC = () => {
                     </div>
                 </div>
 
-                <section>
+                <section className="space-y-16">
                     {isLoading && <p className="text-center text-neutral-400">{t('trainingPage.loading')}</p>}
                     {isError && <p className="text-center text-red-500">{t('trainingPage.error')}</p>}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredCourses?.map((course) => {
-                            const isFreeCourse = course.price === null || course.price === 0;
-                            // Update HasAccess Logic for Card
-                            const hasAccess = isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
 
-                            return (
-                                <CourseCard
-                                    key={course.id}
-                                    course={course}
-                                    hasAccess={hasAccess}
-                                    // Change: Redirect to new player page
-                                    onClick={() => {
-                                        // Mark as seen immediately when clicking to enter
-                                        if (course.isNew) markCourseSeen(course.id);
-                                        navigate(`/dashboard/training/${course.id}`);
-                                    }}
-                                    onBuy={() => setCourseToBuy(course)}
-                                />
-                            );
-                        })}
-                    </div>
+                    {/* --- Main Courses Section --- */}
+                    {mainCourses.length > 0 && (
+                        <div className="animate-[fadeIn_0.5s_ease-out]">
+                            <h2 className="text-2xl font-bold text-white mb-8 pl-4 border-l-4 border-blue-500">
+                                {t('trainingPage.mainCourses')}
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {mainCourses.map(course => renderCourseCard(course))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- Archived Courses Section --- */}
+                    {archiveCourses.length > 0 && (
+                        <div>
+                            <h2 className="text-2xl font-bold text-neutral-400 mb-8 pl-4 border-l-4 border-neutral-600 flex items-center gap-3">
+                                {t('trainingPage.archivedCourses')}
+                                <span className="text-sm font-normal text-neutral-600 bg-neutral-900 px-3 py-1 rounded-full">{archiveCourses.length}</span>
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-75 hover:opacity-100 transition-opacity duration-300">
+                                {archiveCourses.map(course => renderCourseCard(course))}
+                            </div>
+                        </div>
+                    )}
+
                     {filteredCourses && filteredCourses.length === 0 && !isLoading && (
-                        <div className="col-span-full text-center py-10">
-                            <p className="text-neutral-500">No courses match your current filters.</p>
+                        <div className="col-span-full text-center py-20 bg-[#1C1E22] rounded-3xl border border-neutral-800 border-dashed">
+                            <FaSearch className="mx-auto h-12 w-12 text-neutral-600 mb-4" />
+                            <p className="text-neutral-400 text-lg">No courses match your current filters.</p>
                         </div>
                     )}
                 </section>
