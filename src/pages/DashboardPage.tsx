@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -269,6 +269,8 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
             isExternal: true
         },
         // ----------------------------
+        { nameKey: 'orderShop', label: '🛍️ Commander ma boutique', icon: <FaShoppingBag className="text-green-400" />, path: '/dashboard/order-shop' },
+        { nameKey: 'myOrders', label: '📦 Mes commandes', icon: <FaShoppingBag className="text-blue-400" />, path: '/dashboard/my-orders' },
         { nameKey: 'billing', icon: <FaCreditCard />, path: '/dashboard/billing' },
         { nameKey: 'settings', icon: <FaCog />, path: '/dashboard/settings' },
         { nameKey: 'affiliate', icon: <FaGift />, path: '/dashboard/affiliate' },
@@ -284,7 +286,8 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
                 isExternal: false
             },
             { nameKey: 'Tickets', icon: <FaTicketAlt />, path: '/dashboard/admin/support', label: "Support Inbox", isExternal: false },
-            { nameKey: 'adminResources', icon: <FaFolderOpen />, path: '/dashboard/admin/resources', label: "Gestion Ressources" }
+            { nameKey: 'adminResources', icon: <FaFolderOpen />, path: '/dashboard/admin/resources', label: "Gestion Ressources" },
+            { nameKey: 'adminShopOrders', icon: <FaShoppingBag />, path: '/dashboard/admin/shop-orders', label: "Commandes Boutiques" }
         );
     }
 

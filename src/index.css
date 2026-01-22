@@ -180,6 +180,18 @@ body {
   overflow-x: hidden;
 }
 
+/* Global Button Cursor Fix */
+button,
+[role="button"],
+select,
+a,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* Selection Colors */
 ::selection {
   background: rgba(249, 115, 22, 0.3);
