@@ -13,6 +13,7 @@ import {
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { AcademyAgentWidget } from '../components/academy/AcademyAgentWidget';
 
 // --- Type Definitions ---
 type NavLink = {
@@ -520,6 +521,8 @@ const DashboardPage: FC = () => {
                         </button>
                         <Outlet />
                     </div>
+                    {/* Floating Agent Widget */}
+                    <AcademyAgentWidget />
                 </div>
             </div>
         </div>
