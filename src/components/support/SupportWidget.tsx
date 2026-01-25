@@ -9,7 +9,7 @@ export const SupportWidget = () => {
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const { user } = useAuth();
-    
+
     // --- RTL DETECTION ---
     const isRtl = i18n.language === 'ar';
 
