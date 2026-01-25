@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, FC } from 'react';
+import React, { useState, useRef, useEffect, type FC } from 'react';
 import { FaRobot, FaPaperPlane, FaTimes, FaCommentDots } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown'; // Ensure you have this or use simple text
 // If react-markdown is not installed, we can fall back to simple text for now or simple regex
