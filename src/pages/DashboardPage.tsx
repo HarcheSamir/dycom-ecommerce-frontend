@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -237,67 +237,75 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
     const { data: user } = useUserProfile();
     const { logout } = useAuth();
     const location = useLocation();
-    const { t, i18n } = useTranslation(); // Get i18n instance
-
-    // MODIFICATION: Check if the current language is RTL
+    const { t, i18n } = useTranslation();
     const isRtl = i18n.language === 'ar';
+    const isAdmin = user?.accountType === 'ADMIN';
 
-    const baseNavLinks = [
-        { nameKey: 'dashboard', icon: <FaTachometerAlt />, path: '/dashboard' },
-        { nameKey: 'products', icon: <FaChartLine />, path: '/dashboard/products' },
-        { nameKey: 'suppliers', icon: <FaStore />, path: '/dashboard/suppliers' },
-        { nameKey: 'training', icon: <FaVideo />, path: '/dashboard/training' },
-        { nameKey: 'resources', label: 'Ressources', icon: <FaFolderOpen />, path: '/dashboard/resources' },
-        { nameKey: 'influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
-        { nameKey: 'support', label: "Support", icon: <FaHeadset />, path: '/dashboard/support', isExternal: false },
-        { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400" />, path: '/dashboard/updates' },
+    type NavLink = {
+        nameKey?: string;
+        label?: string; // Explicit label overrides translation
+        icon: React.ReactNode;
+        path: string;
+        isExternal?: boolean;
+        adminOnly?: boolean;
+    };
 
+    type NavGroup = {
+        title: string;
+        adminOnly?: boolean;
+        items: NavLink[];
+    };
 
-        // --- NEW LINKS ADDED HERE ---
+    const sidebarGroups: NavGroup[] = [
         {
-            nameKey: 'visuelsAds',
-            label: 'Visuels Ads',
-            icon: <FaCrown className="text-yellow-500" />,
-            path: 'https://opalolabs.com/?via=Dycom',
-            isExternal: true
+            title: "🔐 Admin",
+            adminOnly: true,
+            items: [
+                { nameKey: 'users', label: 'Gestion utilisateurs', icon: <FaUsers />, path: '/dashboard/admin/users' },
+                { nameKey: 'financials', label: 'Finances', icon: <FaCreditCard />, path: '/dashboard/admin/financials' },
+                { nameKey: 'pastDue', label: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due' },
+                { nameKey: 'supportInbox', label: 'Support Inbox', icon: <FaTicketAlt />, path: '/dashboard/admin/support' },
+                { nameKey: 'shopOrders', label: 'Commandes boutiques', icon: <FaShoppingBag />, path: '/dashboard/admin/shop-orders' },
+                { nameKey: 'dashboard', label: 'Tableau de bord', icon: <FaTachometerAlt />, path: '/dashboard/admin' },
+            ]
         },
         {
-            nameKey: 'trendtrack',
-            label: 'TrendTrack',
-            icon: <FaStar className="text-yellow-400" />,
-            path: 'https://dev.trendtrack.io/promoter/dydy20',
-            isExternal: true
+            title: "🎓 Formation",
+            items: [
+                { nameKey: 'training', label: 'Formation vidéo', icon: <FaVideo />, path: '/dashboard/training' },
+                { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400" />, path: '/dashboard/updates' },
+                { nameKey: 'resources', label: 'Ressources', icon: <FaFolderOpen />, path: '/dashboard/resources' },
+                { nameKey: 'manageResources', label: 'Gestion ressources', icon: <FaFolderOpen />, path: '/dashboard/admin/resources', adminOnly: true },
+            ]
         },
-        // ----------------------------
-        { nameKey: 'orderShop', label: '🛍️ Commander ma boutique', icon: <FaShoppingBag className="text-green-400" />, path: '/dashboard/order-shop' },
-        { nameKey: 'myOrders', label: '📦 Mes commandes', icon: <FaShoppingBag className="text-blue-400" />, path: '/dashboard/my-orders' },
-        { nameKey: 'billing', icon: <FaCreditCard />, path: '/dashboard/billing' },
-        { nameKey: 'settings', icon: <FaCog />, path: '/dashboard/settings' },
-        { nameKey: 'affiliate', icon: <FaGift />, path: '/dashboard/affiliate' },
+        {
+            title: "🚀 Lancer mon business",
+            items: [
+                { nameKey: 'orderShop', label: 'Commander ma boutique', icon: <FaShoppingBag className="text-green-400" />, path: '/dashboard/order-shop' },
+                { nameKey: 'visuelsAds', label: 'Visuels Ads', icon: <FaCrown className="text-yellow-500" />, path: 'https://opalolabs.com/?via=Dycom', isExternal: true },
+                { nameKey: 'influencers', label: 'Influencers', icon: <FaUsers />, path: '/dashboard/influencers' },
+                { nameKey: 'trendtrack', label: 'TrendTrack', icon: <FaStar className="text-yellow-400" />, path: 'https://dev.trendtrack.io/promoter/dydy20', isExternal: true },
+                { nameKey: 'suppliers', label: 'Fournisseurs', icon: <FaStore />, path: '/dashboard/suppliers' },
+                { nameKey: 'products', label: 'Produits tendance', icon: <FaChartLine />, path: '/dashboard/products' },
+            ]
+        },
+        {
+            title: "Aide ?",
+            items: [
+                { nameKey: 'support', label: 'Support', icon: <FaHeadset />, path: '/dashboard/support' },
+                { nameKey: 'whatsapp', label: 'Whatsapp SAV Dycom', icon: <FaWhatsapp className="text-green-500" />, path: 'https://wa.me/message/SCESABMUBCVOF1', isExternal: true },
+            ]
+        },
+        {
+            title: "👤 Mon compte",
+            items: [
+                { nameKey: 'myOrders', label: 'Mes commandes', icon: <FaShoppingBag className="text-blue-400" />, path: '/dashboard/my-orders' },
+                { nameKey: 'billing', label: 'Facturation', icon: <FaCreditCard />, path: '/dashboard/billing' },
+                { nameKey: 'settings', label: 'Paramètres', icon: <FaCog />, path: '/dashboard/settings' },
+                { nameKey: 'affiliate', label: 'Affiliation', icon: <FaGift />, path: '/dashboard/affiliate' },
+            ]
+        }
     ];
-
-    if (user && user.accountType === 'ADMIN') {
-        baseNavLinks.unshift(
-            { nameKey: 'admin', icon: <FaShieldAlt />, path: '/dashboard/admin' },
-            { nameKey: 'users', icon: <FaUsers />, path: '/dashboard/admin/users' },
-            { nameKey: 'financials', icon: <FaCreditCard />, path: '/dashboard/admin/financials' },
-            {
-                nameKey: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due', label: "Past Due",
-                isExternal: false
-            },
-            { nameKey: 'Tickets', icon: <FaTicketAlt />, path: '/dashboard/admin/support', label: "Support Inbox", isExternal: false },
-            { nameKey: 'adminResources', icon: <FaFolderOpen />, path: '/dashboard/admin/resources', label: "Gestion Ressources" },
-            { nameKey: 'adminShopOrders', icon: <FaShoppingBag />, path: '/dashboard/admin/shop-orders', label: "Commandes Boutiques" }
-        );
-    }
-
-    const navLinks: NavLink[] = baseNavLinks.map(link => ({
-        // Use provided label if available, otherwise try translation
-        name: (link as any).label || t(`sidebar.nav.${link.nameKey}`),
-        icon: link.icon,
-        path: link.path,
-        isExternal: (link as any).isExternal
-    }));
 
     // MODIFICATION: Conditionally apply positioning and transform classes
     const sidebarClasses = `
@@ -308,42 +316,120 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         ${isOpen ? 'translate-x-0' : isRtl ? 'translate-x-full' : '-translate-x-full'}
     `;
 
+    // State for collapsible groups
+    const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+
+    // Effect to set initial expanded group and handle navigation changes
+    useEffect(() => {
+        const foundGroup = sidebarGroups.find(group =>
+            group.items.some(link => !link.isExternal && location.pathname.startsWith(link.path))
+        );
+
+        if (foundGroup) {
+            setExpandedGroups(prev => ({
+                ...prev,
+                [foundGroup.title]: true
+            }));
+        }
+    }, [location.pathname]); // Update when path changes
+
+    // Update state initialization to run once on mount for the initial path if needed, 
+    // but the useEffect covers it. To avoid "flash", we can lazy init.
+    // However, since `sidebarGroups` is defined inside the component, we can't easily access it in useState initializer 
+    // WITHOUT refactoring where sidebarGroups is defined. 
+    // Let's rely on the useEffect for simplicity as it runs immediately after render, or refactor sidebarGroups structure.
+
+    // Better approach: Define helper to find active group title
+    const getActiveGroupTitle = () => {
+        const found = sidebarGroups.find(group =>
+            group.items.some(link => !link.isExternal && location.pathname === link.path || (link.path !== '/dashboard' && location.pathname.startsWith(link.path)))
+        );
+        return found ? found.title : null;
+    };
+
+    // Initialize state keeping only the active group open
+    useEffect(() => {
+        const activeTitle = getActiveGroupTitle();
+        if (activeTitle) {
+            setExpandedGroups({ [activeTitle]: true });
+        }
+    }, [location.pathname]);
+
+    const toggleGroup = (title: string) => {
+        setExpandedGroups(prev => {
+            const isOpen = prev[title];
+            // If clicking an open group, close it (empty object).
+            // If clicking a closed group, open it and close others (object with just that title).
+            return isOpen ? {} : { [title]: true };
+        });
+    };
+
     return (
         <aside className={sidebarClasses}>
-            {/* ... rest of the component is unchanged ... */}
             <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
-            <nav className="flex flex-col gap-2 overflow-y-scroll">
-                {navLinks.map((link) => {
-                    // Check if it's an external link
-                    if (link.isExternal) {
-                        return (
-                            <a
-                                key={link.path}
-                                href={link.path}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={onNavigate}
-                                className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-left text-neutral-400 hover:bg-[#1C1E22] hover:text-white"
-                            >
-                                {link.icon} <span>{link.name}</span>
-                            </a>
-                        );
-                    }
 
-                    // Standard internal link
-                    const isActive = location.pathname === link.path;
+            <nav className="flex flex-col gap-4 overflow-y-auto flex-1 pr-2">
+                {sidebarGroups.map((group, groupIndex) => {
+                    // Filter groups: if group is adminOnly, user must be admin
+                    if (group.adminOnly && !isAdmin) return null;
+
+                    // Filter items within group
+                    const visibleItems = group.items.filter(item => !item.adminOnly || isAdmin);
+
+                    if (visibleItems.length === 0) return null;
+
+                    const isExpanded = expandedGroups[group.title];
+
                     return (
-                        <Link key={link.name} to={link.path} onClick={onNavigate} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-left ${isActive ? 'bg-gray-200 text-black font-semibold' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}>
-                            {link.icon} <span>{link.name}</span>
-                        </Link>
+                        <div key={groupIndex} className="border-b border-neutral-800/50 pb-2 last:border-0">
+                            {/* Group Header / Toggle */}
+                            <button
+                                onClick={() => toggleGroup(group.title)}
+                                className="w-full flex items-center justify-between px-2 py-2 text-xs font-bold text-neutral-500 uppercase tracking-wider hover:text-white transition-colors focus:outline-none"
+                            >
+                                <span>{group.title}</span>
+                                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+                            </button>
+
+                            {/* Collapsible Content */}
+                            <div className={`flex flex-col gap-1 mt-1 transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                {visibleItems.map((link) => {
+                                    const linkLabel = link.label || (link.nameKey ? t(`sidebar.nav.${link.nameKey}`) : '');
+
+                                    if (link.isExternal) {
+                                        return (
+                                            <a
+                                                key={link.path}
+                                                href={link.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={onNavigate}
+                                                className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-neutral-400 hover:bg-[#1C1E22] hover:text-white text-sm"
+                                            >
+                                                <span className="text-lg">{link.icon}</span> <span>{linkLabel}</span>
+                                            </a>
+                                        );
+                                    }
+
+                                    const isActive = location.pathname === link.path;
+                                    return (
+                                        <Link
+                                            key={link.path}
+                                            to={link.path}
+                                            onClick={onNavigate}
+                                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-sm ${isActive ? 'bg-neutral-800 text-white font-medium' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}
+                                        >
+                                            <span className="text-lg">{link.icon}</span> <span>{linkLabel}</span>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     );
                 })}
             </nav>
 
-
-            <div className="mt-auto flex flex-col gap-4 ">
-                <div className="mb-4 ">
-                </div>
+            <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-neutral-800">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C1E22]">
                     <img
                         src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=random`}
@@ -356,7 +442,8 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
                     </div>
                 </div>
                 <div className='flex ml-3 '><LanguageSwitcher /></div>
-                <button onClick={logout} className="ml-3 cursor-pointer flex items-center gap-3 text-neutral-400 hover:text-white w-full text-left"><FaSignOutAlt /><span>{t('sidebar.logout')}</span></button></div>
+                <button onClick={logout} className="ml-3 cursor-pointer flex items-center gap-3 text-neutral-400 hover:text-white w-full text-left"><FaSignOutAlt /><span>{t('sidebar.logout')}</span></button>
+            </div>
         </aside>
     );
 };

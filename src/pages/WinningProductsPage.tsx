@@ -1,8 +1,10 @@
 import React, { useState, type FC, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useWinningProducts, useProductCategories, type WinningProduct, type ProductFilters } from '../hooks/useWinningProducts';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { FaSearch, FaBoxOpen, FaTh, FaStar, FaDollarSign, FaSortAmountDown, FaChevronDown, FaSync } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import apiClient from '../lib/apiClient';
 
 // --- Reusable Glass Card Component (Your New Design) ---
 const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = 'p-6' }) => (
@@ -14,16 +16,21 @@ const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: s
 );
 
 // --- Product Card Component (Your New Design) ---
-const ProductCard: FC<{ product: WinningProduct; onClick: () => void }> = ({ product, onClick }) => {
+const ProductCard: FC<{ product: WinningProduct; onClick: () => void; highlighted?: boolean }> = ({ product, onClick, highlighted }) => {
     const { t, i18n } = useTranslation();
     const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
     const formattedPrice = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(product.price || 0);
 
     return (
-        <GlassCard className="flex flex-col cursor-pointer hover:-translate-y-1 h-full" padding="p-0">
+        <GlassCard className={`flex flex-col cursor-pointer hover:-translate-y-1 h-full ${highlighted ? 'ring-2 ring-primary border-primary' : ''}`} padding="p-0">
             <div onClick={onClick} className="flex flex-col h-full w-full flex-1">
                 <div className="relative w-full h-48 bg-[#1C1E22] rounded-t-3xl overflow-hidden flex-shrink-0">
                     {product.imageUrl && <img src={product.imageUrl} alt={product.title || 'Product'} className="w-full h-full object-cover" />}
+                    {highlighted && (
+                        <div className="absolute top-2 right-2 px-2 py-1 bg-primary text-black text-xs font-bold rounded">
+                            Produit sélectionné
+                        </div>
+                    )}
                 </div>
                 <div className="p-4  flex flex-col flex-1 min-h-0">
                     <h3 className="font-bold text-white truncate h-6">{product.title}</h3>
@@ -61,6 +68,9 @@ const ProductCard: FC<{ product: WinningProduct; onClick: () => void }> = ({ pro
 // --- Main Page Component ---
 export const WinningProductsPage: FC = () => {
     const { t, i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
+    const highlightId = searchParams.get('highlight');
+
     const [filters, setFilters] = useState<ProductFilters>({ page: 1, limit: 12, sortBy: 'salesVolume' });
     const [selectedProduct, setSelectedProduct] = useState<WinningProduct | null>(null);
     const [tempKeyword, setTempKeyword] = useState('');
@@ -68,6 +78,25 @@ export const WinningProductsPage: FC = () => {
     const { data: categories, isLoading: isLoadingCategories } = useProductCategories();
     const { data: response, isLoading, isError, isFetching, refetch } = useWinningProducts(filters);
     const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+
+    // Handle highlight param - fetch specific product and open modal
+    useEffect(() => {
+        if (highlightId) {
+            // Fetch the specific product by ID and open modal
+            apiClient.get(`/winning-products/${highlightId}`)
+                .then(res => {
+                    // API returns { data: WinningProduct }
+                    if (res.data?.data) {
+                        setSelectedProduct(res.data.data);
+                    } else if (res.data) {
+                        setSelectedProduct(res.data);
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to fetch highlighted product:', err);
+                });
+        }
+    }, [highlightId]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -128,7 +157,7 @@ export const WinningProductsPage: FC = () => {
                     </div>
 
                     <div className="relative w-full mt-4">
-                         <div className="flex space-x-2 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+                        <div className="flex space-x-2 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
                             {isLoadingCategories ? <p className="text-sm text-neutral-400 py-2">{t('winningProductsPage.filters.loadingCategories')}</p> :
                                 categories?.map(cat => (
                                     <button

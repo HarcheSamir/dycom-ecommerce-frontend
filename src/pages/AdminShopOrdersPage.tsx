@@ -302,6 +302,206 @@ const OrderDetailModal: React.FC<{
                             </div>
                         </GlassCard>
                     )}
+
+                    {/* Products Section */}
+                    <GlassCard>
+                        <h3 className="font-semibold text-white text-sm mb-4">📦 Produits Commandés ({order.productCount || 0})</h3>
+
+                        {/* Product Source Badge */}
+                        <div className="mb-4">
+                            <span className={`px-3 py-1.5 rounded-lg text-xs font-medium ${order.productSource === 'TRENDING'
+                                ? 'bg-purple-500/20 text-purple-400'
+                                : 'bg-blue-500/20 text-blue-400'
+                                }`}>
+                                {order.productSource === 'TRENDING' ? '🔥 Produits Gagnants' : '📝 Produits Personnalisés'}
+                            </span>
+                        </div>
+
+                        {/* Own Products */}
+                        {order.ownProductInfo && (
+                            <div className="space-y-3">
+                                {(Array.isArray(order.ownProductInfo) ? order.ownProductInfo : [order.ownProductInfo]).map((product: any, idx: number) => (
+                                    <div key={idx} className="p-4 bg-neutral-900/50 rounded-xl border border-neutral-800">
+                                        <div className="flex gap-4">
+                                            {product.imageUrl && (
+                                                <a
+                                                    href={product.imageUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="shrink-0"
+                                                >
+                                                    <img
+                                                        src={product.imageUrl}
+                                                        alt={product.name}
+                                                        className="w-20 h-20 object-cover rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
+                                                    />
+                                                </a>
+                                            )}
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h4 className="text-white font-medium">{product.name || `Produit ${idx + 1}`}</h4>
+                                                    <span className={`px-2 py-0.5 text-xs rounded-full ${product.type === 'winning'
+                                                            ? 'bg-purple-500/20 text-purple-400'
+                                                            : 'bg-blue-500/20 text-blue-400'
+                                                        }`}>
+                                                        {product.type === 'winning' ? '🔥 Winning' : '📝 Custom'}
+                                                    </span>
+                                                </div>
+                                                {product.description && (
+                                                    <p className="text-neutral-400 text-sm mt-1 line-clamp-2">{product.description}</p>
+                                                )}
+                                                <div className="flex items-center gap-4 mt-2 text-xs flex-wrap">
+                                                    {product.price && (
+                                                        <span className="text-green-400 font-semibold">{product.price}€</span>
+                                                    )}
+                                                    {product.url && (
+                                                        <a
+                                                            href={product.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-primary hover:underline"
+                                                        >
+                                                            Lien produit →
+                                                        </a>
+                                                    )}
+                                                    {product.winningProductId && (
+                                                        <a
+                                                            href={`/dashboard/products?highlight=${product.winningProductId}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-purple-400 hover:underline"
+                                                        >
+                                                            Voir fiche produit gagnant →
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Selected Trending Product ID (legacy fallback) */}
+                        {order.selectedProductId && !order.ownProductInfo && (
+                            <div className="p-4 bg-neutral-900/50 rounded-xl border border-neutral-800">
+                                <div className="flex items-center gap-3">
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400">🔥 Winning</span>
+                                    <span className="text-neutral-500 text-sm">ID:</span>
+                                    <code className="bg-neutral-800 px-2 py-0.5 rounded text-xs text-white">{order.selectedProductId}</code>
+                                    <a
+                                        href={`/dashboard/products?highlight=${order.selectedProductId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-purple-400 hover:underline text-xs"
+                                    >
+                                        Voir fiche →
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
+                        {!order.ownProductInfo && !order.selectedProductId && (
+                            <p className="text-neutral-500 text-sm italic">Aucun produit spécifié</p>
+                        )}
+                    </GlassCard>
+
+                    {/* Logo Section */}
+                    {(order.logoUrl || order.logoStyle) && (
+                        <GlassCard>
+                            <h3 className="font-semibold text-white text-sm mb-4">🎨 Logo</h3>
+                            <div className="flex items-start gap-4">
+                                {order.logoUrl && (
+                                    <a href={order.logoUrl} target="_blank" rel="noopener noreferrer">
+                                        <img
+                                            src={order.logoUrl}
+                                            alt="Logo"
+                                            className="w-24 h-24 object-contain rounded-xl bg-neutral-800 p-2"
+                                        />
+                                    </a>
+                                )}
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-neutral-500 text-sm">A son propre logo:</span>
+                                        <span className={`text-sm font-medium ${order.hasOwnLogo ? 'text-green-400' : 'text-yellow-400'}`}>
+                                            {order.hasOwnLogo ? '✓ Oui' : '✗ Non (à créer)'}
+                                        </span>
+                                    </div>
+                                    {order.logoStyle && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-neutral-500 text-sm">Style souhaité:</span>
+                                            <span className="px-2 py-1 bg-neutral-800 rounded text-xs text-white capitalize">
+                                                {order.logoStyle}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {/* Inspiration URLs */}
+                    {order.inspirationUrls && (order.inspirationUrls as string[]).length > 0 && (
+                        <GlassCard>
+                            <h3 className="font-semibold text-white text-sm mb-4">🌐 Sites d'Inspiration</h3>
+                            <div className="space-y-2">
+                                {(order.inspirationUrls as string[]).map((url, idx) => (
+                                    <a
+                                        key={idx}
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-3 p-3 bg-neutral-900/50 rounded-lg border border-neutral-800 hover:border-neutral-700 transition-all group"
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+                                            {idx + 1}
+                                        </div>
+                                        <span className="text-neutral-300 text-sm group-hover:text-primary truncate flex-1">
+                                            {url}
+                                        </span>
+                                        <span className="text-neutral-500 text-xs">↗</span>
+                                    </a>
+                                ))}
+                            </div>
+                        </GlassCard>
+                    )}
+
+                    {/* Uploaded Files */}
+                    {order.files && order.files.length > 0 && (
+                        <GlassCard>
+                            <h3 className="font-semibold text-white text-sm mb-4">📎 Fichiers Téléversés ({order.files.length})</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                {order.files.map((file) => (
+                                    <a
+                                        key={file.id}
+                                        href={file.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group relative overflow-hidden rounded-xl border border-neutral-800 hover:border-neutral-600 transition-all"
+                                    >
+                                        {file.mimeType?.startsWith('image/') ? (
+                                            <img
+                                                src={file.fileUrl}
+                                                alt={file.fileName}
+                                                className="w-full h-24 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-24 bg-neutral-800 flex items-center justify-center">
+                                                <span className="text-2xl">📄</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <span className="text-white text-xs font-medium">Ouvrir</span>
+                                        </div>
+                                        <div className="p-2 bg-neutral-900">
+                                            <p className="text-xs text-neutral-400 truncate">{file.fileName}</p>
+                                            <p className="text-xs text-neutral-600">{file.fileType}</p>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </GlassCard>
+                    )}
                 </div>
             </div>
         </div>
