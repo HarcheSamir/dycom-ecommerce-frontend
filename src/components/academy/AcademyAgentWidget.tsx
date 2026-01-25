@@ -58,7 +58,7 @@ export const AcademyAgentWidget: FC = () => {
             // Retrieve token from localStorage/Context if needed. 
             // Assuming axios interceptor or standard fetch with header handles auth if using global axios.
             // Using fetch here for simplicity.
-            const token = localStorage.getItem('token'); // Adjust key as per your auth system
+            const token = localStorage.getItem('authToken'); // Adjust key as per your auth system
 
             const response = await fetch('/api/academy-agent/chat', {
                 method: 'POST',
