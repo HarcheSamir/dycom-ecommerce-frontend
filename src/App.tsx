@@ -30,6 +30,8 @@ import { SupportPage } from './pages/SupportPage';
 import { AdminSupportPage } from './pages/AdminSupportPage';
 import { GuestTicketPage } from './pages/GuestTicketPage';
 import { SupportWidget } from './components/support/SupportWidget';
+import { AcademyAgentWidget } from './components/Agent/AcademyAgentWidget';
+
 import { UpdatesPage } from './pages/UpdatesPage';
 import { ResourcesPage } from './pages/ResourcesPage';
 import { AdminResourcesPage } from './pages/AdminResourcesPage';
@@ -50,6 +52,8 @@ function App() {
       <AuthProvider>
         <Router>
           <SupportWidget />
+          <AcademyAgentWidget />
+
           <Routes>
             <Route path="/home" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
