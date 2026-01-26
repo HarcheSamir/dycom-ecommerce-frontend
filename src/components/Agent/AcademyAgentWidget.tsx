@@ -41,10 +41,8 @@ export const AcademyAgentWidget = () => {
     }, [messages, isOpen]);
 
     // --- VISIBILITY ---
-    // Hide on public pages if desired, or keep everywhere.
-    // For now, let's show it everywhere except login/signup to help users.
-    const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
-    if (isAuthPage) return null;
+    // Only show for logged in users
+    if (!user) return null;
 
     // --- HANDLERS ---
     const handleSubmit = async (e: React.FormEvent) => {
