@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaCheckCircle, FaExclamationCircle, FaUser, FaShieldAlt, FaPaperclip, FaFileImage, FaFilePdf, FaFileAlt, FaDownload } from 'react-icons/fa';
-import type { TicketAttachment } from '../hooks/useSupport';
+import type { TicketAttachment } from '../../hooks/useSupport';
 
 export const StatusBadge = ({ status }: { status: string }) => {
     const styles: Record<string, string> = {
@@ -99,8 +99,8 @@ export const MessageBubble = ({ message, isSelf }: { message: any; isSelf: boole
     return (
         <div className={`flex w-full mb-4 ${isSelf ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-2xl p-4 ${isSelf
-                    ? 'bg-blue-600 text-white rounded-br-none'
-                    : 'bg-[#1C1E22] border border-neutral-700 text-neutral-200 rounded-bl-none'
+                ? 'bg-blue-600 text-white rounded-br-none'
+                : 'bg-[#1C1E22] border border-neutral-700 text-neutral-200 rounded-bl-none'
                 }`}>
                 <div className="flex items-center gap-2 mb-1 opacity-50 text-xs">
                     {message.senderType === 'ADMIN' && <FaShieldAlt />}
