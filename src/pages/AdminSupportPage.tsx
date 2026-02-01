@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAdminTickets, useTicketDetails, useAdminReply } from '../hooks/useSupport';
 import { StatusBadge, MessageBubble } from '../components/support/TicketUI';
-import { FaExternalLinkAlt, FaPaperPlane, FaLock, FaCheckCircle, FaInbox, FaUser } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPaperPlane, FaLock, FaCheckCircle, FaInbox, FaUser, FaPaperclip, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Import hook
+import { useTranslation } from 'react-i18next';
 
 export const AdminSupportPage = () => {
-    const { t, i18n } = useTranslation(); // Initialize hook
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const [reply, setReply] = useState('');
     const [isInternal, setIsInternal] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data: ticketList } = useAdminTickets(statusFilter);
     const { data: activeTicket } = useTicketDetails(selectedTicketId);
@@ -19,8 +21,17 @@ export const AdminSupportPage = () => {
 
     const handleGoToProfile = (e: React.MouseEvent, userId?: string | null) => {
         if (!userId) return;
-        e.stopPropagation(); // Prevent opening the ticket if clicked in the list
+        e.stopPropagation();
         navigate(`/dashboard/admin/users/${userId}`);
+    };
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        setSelectedFiles(prev => [...prev, ...files].slice(0, 5)); // Max 5 files
+    };
+
+    const removeFile = (index: number) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSend = (e: React.FormEvent) => {
@@ -30,9 +41,13 @@ export const AdminSupportPage = () => {
             ticketId: selectedTicketId,
             message: reply,
             isInternal,
-            newStatus: isInternal ? undefined : 'IN_PROGRESS' // Auto update status on public reply
+            newStatus: isInternal ? undefined : 'IN_PROGRESS',
+            files: isInternal ? undefined : selectedFiles
         }, {
-            onSuccess: () => setReply('')
+            onSuccess: () => {
+                setReply('');
+                setSelectedFiles([]);
+            }
         });
     };
 
@@ -40,13 +55,12 @@ export const AdminSupportPage = () => {
         if (!selectedTicketId) return;
         sendReply({
             ticketId: selectedTicketId,
-            message: t('adminSupportPage.details.systemResolvedMessage'), // Translated system message
+            message: t('adminSupportPage.details.systemResolvedMessage'),
             isInternal: true,
             newStatus: 'RESOLVED'
         });
     };
 
-    // Helper to format date professionally with translations
     const formatTimeDisplay = (dateString: string) => {
         const date = new Date(dateString);
         const now = new Date();
@@ -54,7 +68,6 @@ export const AdminSupportPage = () => {
         const diffMins = Math.floor(diffMs / 60000);
         const diffHours = Math.floor(diffMins / 60);
 
-        // Standard format: "Dec 17, 14:30"
         const localeCode = i18n.language === 'ar' ? 'ar-EG' : (i18n.language === 'fr' ? 'fr-FR' : 'en-US');
         const absolute = date.toLocaleDateString(localeCode, {
             month: 'short',
@@ -121,7 +134,6 @@ export const AdminSupportPage = () => {
                             <div className="flex gap-2 mt-2">
                                 <StatusBadge status={ticket.status} />
                                 <span className="px-2 py-1 text-[10px] rounded bg-neutral-800 text-neutral-400">
-                                    {/* Try to translate category if possible, else show raw */}
                                     {t(`supportPage.createModal.categories.${ticket.category}`, ticket.category)}
                                 </span>
                             </div>
@@ -153,7 +165,6 @@ export const AdminSupportPage = () => {
 
                         {/* Chat Area */}
                         <div className="flex-1 overflow-y-auto p-6 flex flex-col-reverse">
-                            {/* Reverse mapping for chat-like scroll from bottom */}
                             {[...(activeTicket.messages || [])].reverse().map(msg => (
                                 <MessageBubble
                                     key={msg.id}
@@ -171,7 +182,46 @@ export const AdminSupportPage = () => {
                                         <input type="checkbox" checked={isInternal} onChange={e => setIsInternal(e.target.checked)} className="hidden" />
                                         <FaLock size={10} /> {t('adminSupportPage.reply.privateNote')}
                                     </label>
+
+                                    {/* File attachment button - hidden for internal notes */}
+                                    {!isInternal && (
+                                        <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="flex items-center gap-2 px-3 py-1 rounded text-xs font-bold text-neutral-500 hover:text-neutral-300 transition-colors"
+                                        >
+                                            <FaPaperclip size={10} /> Attach Files
+                                        </button>
+                                    )}
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        multiple
+                                        accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.zip"
+                                        onChange={handleFileSelect}
+                                        className="hidden"
+                                    />
                                 </div>
+
+                                {/* Selected files preview */}
+                                {selectedFiles.length > 0 && (
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedFiles.map((file, index) => (
+                                            <div key={index} className="flex items-center gap-2 px-3 py-1 bg-neutral-800 rounded-lg text-sm">
+                                                <FaPaperclip className="text-neutral-500" />
+                                                <span className="truncate max-w-32">{file.name}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeFile(index)}
+                                                    className="text-neutral-500 hover:text-red-400"
+                                                >
+                                                    <FaTimes size={12} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
                                 <div className="relative">
                                     <textarea
                                         className={`w-full rounded-xl p-4 pr-12 text-white outline-none focus:ring-2 resize-none ${isInternal ? 'bg-yellow-900/10 border border-yellow-700/30 focus:ring-yellow-500/50' : 'bg-black border border-neutral-700 focus:ring-blue-500/50'}`}

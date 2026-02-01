@@ -3,17 +3,27 @@ import apiClient from '../lib/apiClient';
 import toast from 'react-hot-toast';
 
 // --- Types ---
+export interface TicketAttachment {
+    id: string;
+    fileName: string;
+    fileUrl: string;
+    mimeType?: string;
+    fileSize?: number;
+    createdAt: string;
+}
+
 export interface TicketMessage {
     id: string;
     content: string;
     senderType: 'USER' | 'ADMIN' | 'GUEST' | 'SYSTEM';
     isInternal: boolean;
     createdAt: string;
+    attachments?: TicketAttachment[];
 }
 
 export interface Ticket {
     id: string;
-    userId?: string | null; 
+    userId?: string | null;
     subject: string;
     status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
     priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
@@ -43,8 +53,22 @@ export const useUserTickets = () => {
 export const useCreateTicket = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: { subject: string; category: string; message: string }) =>
-            apiClient.post('/support/create', data),
+        mutationFn: (data: { subject: string; category: string; message: string; files?: File[] }) => {
+            const formData = new FormData();
+            formData.append('subject', data.subject);
+            formData.append('category', data.category);
+            formData.append('message', data.message);
+
+            if (data.files) {
+                data.files.forEach(file => {
+                    formData.append('files', file);
+                });
+            }
+
+            return apiClient.post('/support/create', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+        },
         onSuccess: () => {
             toast.success("Ticket created successfully!");
             queryClient.invalidateQueries({ queryKey: ['myTickets'] });
@@ -74,8 +98,24 @@ export const useTicketDetails = (ticketId: string | null) => {
 export const useAdminReply = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: { ticketId: string; message: string; isInternal: boolean; newStatus?: string }) =>
-            apiClient.post(`/support/admin/${data.ticketId}/reply`, data),
+        mutationFn: (data: { ticketId: string; message: string; isInternal: boolean; newStatus?: string; files?: File[] }) => {
+            const formData = new FormData();
+            formData.append('message', data.message);
+            formData.append('isInternal', String(data.isInternal));
+            if (data.newStatus) {
+                formData.append('newStatus', data.newStatus);
+            }
+
+            if (data.files && !data.isInternal) {
+                data.files.forEach(file => {
+                    formData.append('files', file);
+                });
+            }
+
+            return apiClient.post(`/support/admin/${data.ticketId}/reply`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+        },
         onSuccess: (_, variables) => {
             toast.success("Reply sent.");
             queryClient.invalidateQueries({ queryKey: ['ticket', variables.ticketId] });
@@ -98,8 +138,21 @@ export const useGuestTicket = (ticketId: string, accessKey: string) => {
 export const useGuestReply = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: { ticketId: string; key: string; message: string }) =>
-            apiClient.post(`/support/public/${data.ticketId}/reply`, data),
+        mutationFn: (data: { ticketId: string; key: string; message: string; files?: File[] }) => {
+            const formData = new FormData();
+            formData.append('key', data.key);
+            formData.append('message', data.message);
+
+            if (data.files) {
+                data.files.forEach(file => {
+                    formData.append('files', file);
+                });
+            }
+
+            return apiClient.post(`/support/public/${data.ticketId}/reply`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+        },
         onSuccess: (_, variables) => {
             toast.success("Message sent!");
             queryClient.invalidateQueries({ queryKey: ['guestTicket', variables.ticketId] });
