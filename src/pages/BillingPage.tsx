@@ -6,6 +6,7 @@ import { FaCheckCircle, FaExclamationTriangle, FaCrown, FaGem, FaCcVisa, FaCcMas
 import { SiKlarna } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { parsePhoneNumber } from 'react-phone-number-input';
+import SocialProofNotification from '../components/SocialProofNotification';
 
 // --- Reusable Glass Card Component ---
 const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = '' }) => (
@@ -240,6 +241,7 @@ export const BillingPage: FC = () => {
     return (
         <main className="flex-1 overflow-y-auto p-6 md:p-8 flex items-center justify-center">
             {renderContent()}
+            <SocialProofNotification />
         </main>
     );
 };
