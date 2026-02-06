@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const FAKE_NAMES = [
     "Amir S.", "Thomas L.", "Sarah M.", "Mohamed A.", "Lucas R.", "Youssef B.", "Emma B.", "Karim Z.", "Manon G.", "Bilal H.",
@@ -8,25 +9,26 @@ const FAKE_NAMES = [
     "Nicolas F.", "Malik A.", "Alexandre P.", "Leila D.", "Antoine G.", "Nadia S.", "Maxime D.", "Sofiane T."
 ];
 
-const ACTIONS = [
-    "a rejoint la Dycom Académie",
-    "a rejoint la Dycom Académie",
-    "vient de s'inscrire",
-    "a commencé sa formation"
-];
-
 const SocialProofNotification = () => {
+    const { t } = useTranslation();
     const [notification, setNotification] = useState<{ name: string; action: string; time: string } | null>(null);
 
     useEffect(() => {
         const showNotification = () => {
+            const ACTIONS = [
+                t('membershipPricing.urgency.socialProof.joined'),
+                t('membershipPricing.urgency.socialProof.joined'),
+                t('membershipPricing.urgency.socialProof.started'),
+                t('membershipPricing.urgency.socialProof.upgraded')
+            ];
+
             const randomName = FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)];
             const randomAction = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
 
             setNotification({
                 name: randomName,
                 action: randomAction,
-                time: "à l'instant"
+                time: t('timeAgo.seconds') // Using existing "A few seconds ago" translation
             });
 
             // Hide after 5 seconds

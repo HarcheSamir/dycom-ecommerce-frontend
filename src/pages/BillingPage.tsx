@@ -7,6 +7,7 @@ import { SiKlarna } from 'react-icons/si';
 import { useTranslation } from 'react-i18next';
 import { parsePhoneNumber } from 'react-phone-number-input';
 import SocialProofNotification from '../components/SocialProofNotification';
+import { usePublicSettings } from '../hooks/useSettings';
 
 // --- Reusable Glass Card Component ---
 const GlassCard: FC<{ children: React.ReactNode; className?: string; padding?: string }> = ({ children, className = '', padding = '' }) => (
@@ -114,6 +115,8 @@ const ManageSubscription: FC = () => {
 export const BillingPage: FC = () => {
     const { t } = useTranslation();
     const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile();
+    const { data: settings } = usePublicSettings();
+    const urgencyEnabled = settings?.urgencyEnabled ?? true; // Default to true
 
     // Hotmart Link Logic
     const handleBuyNow = () => {
@@ -188,12 +191,14 @@ export const BillingPage: FC = () => {
                             </div>
 
                             {/* URGENCY MESSAGE */}
-                            <div className="mt-3 inline-block">
-                                <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
-                                    <span className="text-base">⚡</span>
-                                    <span>Il reste moins de 10 places !</span>
+                            {urgencyEnabled && (
+                                <div className="mt-3 inline-block">
+                                    <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
+                                        <span className="text-base">⚡</span>
+                                        <span>{t('membershipPricing.urgency.message')}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <p className="text-sm text-neutral-500 mt-3 font-medium">
                                 {t('billingPage.card.oneTimePayment')}
@@ -241,7 +246,7 @@ export const BillingPage: FC = () => {
     return (
         <main className="flex-1 overflow-y-auto p-6 md:p-8 flex items-center justify-center">
             {renderContent()}
-            <SocialProofNotification />
+            {urgencyEnabled && <SocialProofNotification />}
         </main>
     );
 };

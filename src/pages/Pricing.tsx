@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { parsePhoneNumber } from 'react-phone-number-input';
 import SocialProofNotification from '../components/SocialProofNotification';
+import { usePublicSettings } from '../hooks/useSettings';
 
 // --- SHARED COMPONENTS ---
 
@@ -169,9 +170,10 @@ interface PricingCardProps {
     locale: string;
     features: string[];
     currency: string;
+    urgencyEnabled: boolean;
 }
 
-const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features, currency }) => {
+const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features, currency, urgencyEnabled }) => {
     const { t } = useTranslation();
     const { isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
@@ -255,12 +257,14 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features, curren
                 </div>
 
                 {/* URGENCY MESSAGE */}
-                <div className="mt-3 inline-block">
-                    <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
-                        <span className="text-base">⚡</span>
-                        <span>Il reste moins de 20 places !</span>
+                {urgencyEnabled && (
+                    <div className="mt-3 inline-block">
+                        <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
+                            <span className="text-base">⚡</span>
+                            <span>{t('membershipPricing.urgency.message')}</span>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <p className="text-sm text-neutral-500 mt-3 font-medium">
                     {t('membershipPricing.card.oneTime')}
@@ -328,6 +332,9 @@ const PricingPage: FC = () => {
 
     const gridClasses = "flex flex-col items-center justify-center w-full max-w-md mx-auto";
 
+    const { data: settings } = usePublicSettings();
+    const urgencyEnabled = settings?.urgencyEnabled ?? true; // Default to true if loading or undefined
+
 
     return (
         <div className="relative overflow-x-clip font-sans w-full text-white min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
@@ -367,6 +374,7 @@ const PricingPage: FC = () => {
                                         features={features}
                                         isBestValue={true} // Always best value since it's the only one
                                         currency={currency}
+                                        urgencyEnabled={urgencyEnabled}
                                     />
                                 </div>
                             ))}
@@ -379,7 +387,7 @@ const PricingPage: FC = () => {
                 </main>
 
                 <Footer />
-                <SocialProofNotification />
+                {urgencyEnabled && <SocialProofNotification />}
             </div>
         </div>
     );

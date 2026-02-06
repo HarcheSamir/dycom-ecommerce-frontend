@@ -134,6 +134,10 @@
   "adminPage": {
     "title": "Admin Dashboard",
     "subtitle": "Complete overview of your platform",
+    "urgencyMode": {
+      "label": "Urgency Mode",
+      "description": "Enables urgency messages and social proof notifications."
+    },
     "toasts": {
       "courseCreateSuccess": "Course created successfully!",
       "courseCreateError": "Error creating the course.",
@@ -739,6 +743,14 @@
     "notFound": "Creator not found or an error occurred."
   },
   "membershipPricing": {
+    "urgency": {
+      "message": " Less than 20 spots remaining!",
+      "socialProof": {
+        "joined": "joined Dycom Academy",
+        "started": "started training",
+        "upgraded": "upgraded to Lifetime plan"
+      }
+    },
     "header": {
       "getStarted": "Get Started",
       "dashboard": "Dashboard"

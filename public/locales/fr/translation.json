@@ -140,6 +140,10 @@
   "adminPage": {
     "title": "Tableau de bord administrateur",
     "subtitle": "Aperçu complet de votre plateforme",
+    "urgencyMode": {
+      "label": "Mode Urgence",
+      "description": "Active les messages d'urgence et les notifications."
+    },
     "toasts": {
       "courseCreateSuccess": "Cours créé avec succès !",
       "courseCreateError": "Erreur lors de la création du cours.",
@@ -745,6 +749,14 @@
     "notFound": "Créateur introuvable ou une erreur est survenue."
   },
   "membershipPricing": {
+    "urgency": {
+      "message": " Il reste moins de 20 places !",
+      "socialProof": {
+        "joined": "a rejoint la Dycom Académie",
+        "started": "a commencé la formation",
+        "upgraded": "est passé au plan Lifetime"
+      }
+    },
     "header": {
       "getStarted": "Commencer",
       "dashboard": "Tableau de bord"

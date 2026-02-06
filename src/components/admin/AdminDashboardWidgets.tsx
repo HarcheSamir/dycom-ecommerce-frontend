@@ -3,6 +3,7 @@ import {
     useGetMembershipPrices, useUpdateMembershipPrices, type PricingGrid,
     useGetSettings, useUpdateSettings, useAdminCourses, useAffiliateLeaderboard, type AdminCourse
 } from '../../hooks/useAdmin';
+import { usePublicSettings, useUpdateSettings as useUpdateGlobalSettings } from '../../hooks/useSettings';
 import { GlassCard, DashboardCard } from './AdminUI';
 import { FaEuroSign, FaCog, FaPlus, FaEdit, FaTrophy, FaCheckCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
@@ -123,6 +124,8 @@ export const PlatformSettings: FC = () => {
     const { t } = useTranslation();
     const { data: settings, isLoading: isLoadingSettings } = useGetSettings();
     const { mutate: updateSettings, isPending: isUpdatingSettings } = useUpdateSettings();
+    const { data: globalSettings } = usePublicSettings();
+    const { mutate: updateGlobalSettings, isPending: isUpdatingGlobal } = useUpdateGlobalSettings(); // Rename to avoid conflict
     const [discountPercentage, setDiscountPercentage] = useState('');
 
     useEffect(() => {
@@ -140,12 +143,33 @@ export const PlatformSettings: FC = () => {
         updateSettings({ affiliateCourseDiscountPercentage: String(rateValue) });
     };
 
+    const toggleUrgency = () => {
+        const newValue = !globalSettings?.urgencyEnabled;
+        updateGlobalSettings({ urgencyEnabled: newValue });
+    };
+
     if (isLoadingSettings) return <DashboardCard><p className="text-neutral-500">{t('adminPage.platformSettings.loading')}</p></DashboardCard>;
 
     return (
         <DashboardCard>
             <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4"><FaCog /> {t('adminPage.platformSettings.title')}</h2>
-            <div className="space-y-4">
+            <div className="space-y-6">
+
+                {/* URGENCY MODE TOGGLE */}
+                <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                    <div>
+                        <h3 className="text-white font-medium">{t('adminPage.urgencyMode.label')}</h3>
+                        <p className="text-sm text-neutral-400">{t('adminPage.urgencyMode.description')}</p>
+                    </div>
+                    <button
+                        onClick={toggleUrgency}
+                        disabled={isUpdatingGlobal}
+                        className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${globalSettings?.urgencyEnabled ? 'bg-green-500' : 'bg-neutral-700'}`}
+                    >
+                        <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 ${globalSettings?.urgencyEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                    </button>
+                </div>
+
                 <div>
                     <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.platformSettings.discountRateLabel', 'Affiliate Reward Discount (%)')}</label>
                     <input type="number" value={discountPercentage} onChange={(e) => setDiscountPercentage(e.target.value)} className="w-full bg-[#111317] border border-neutral-700 rounded-lg h-12 px-4 text-white" placeholder={t('adminPage.platformSettings.commissionRatePlaceholder', 'e.g., 50')} />

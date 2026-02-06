@@ -134,6 +134,10 @@
   "adminPage": {
     "title": "لوحة تحكم الإدارة",
     "subtitle": "نظرة عامة كاملة على منصتك",
+    "urgencyMode": {
+      "label": "وضع الاستعجال",
+      "description": "تفعيل رسائل الاستعجال وإشعارات إثبات المجتمع."
+    },
     "toasts": {
       "courseCreateSuccess": "تم إنشاء الدورة بنجاح!",
       "courseCreateError": "خطأ في إنشاء الدورة.",
@@ -739,6 +743,14 @@
     "notFound": "لم يتم العثور على المنشئ أو حدث خطأ."
   },
   "membershipPricing": {
+    "urgency": {
+      "message": " بقي أقل من 20 مقعداً!",
+      "socialProof": {
+        "joined": "انضم إلى أكاديمية دايكوم",
+        "started": "بدأ التدريب",
+        "upgraded": "قام بالترقية إلى خطة مدى الحياة"
+      }
+    },
     "header": {
       "getStarted": "ابدأ الآن",
       "dashboard": "لوحة التحكم"
