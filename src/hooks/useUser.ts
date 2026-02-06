@@ -228,12 +228,47 @@ export const useHotmartPrice = () => {
 };
 
 export const useMarkWelcomeSeen = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: () => apiClient.patch('/profile/welcome-seen'),
-        onSuccess: () => {
-            // Update the user cache immediately so the modal disappears
-            queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-        },
-    });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiClient.patch('/profile/welcome-seen'),
+    onSuccess: () => {
+      // Update the user cache immediately so the modal disappears
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+  });
+};
+
+// --- EMAIL CHANGE HOOKS ---
+
+export const useRequestEmailChange = () => {
+  return useMutation({
+    mutationFn: (data: { newEmail: string }) =>
+      apiClient.post<{ message: string; pendingEmail: string }>('/profile/request-email-change', data),
+    onSuccess: (response) => {
+      toast.success(response.data.message || 'Verification code sent to your new email.');
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { error?: string };
+      toast.error(errorData?.error || 'Failed to request email change.');
+    },
+  });
+};
+
+export const useConfirmEmailChange = () => {
+  const { logout } = useAuth();
+  return useMutation({
+    mutationFn: (data: { code: string }) =>
+      apiClient.post<{ message: string; newEmail: string }>('/profile/confirm-email-change', data),
+    onSuccess: (response) => {
+      toast.success(response.data.message || 'Email updated! Please log in again.');
+      // Force re-login with new email
+      setTimeout(() => {
+        logout();
+      }, 1500);
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { error?: string };
+      toast.error(errorData?.error || 'Invalid or expired verification code.');
+    },
+  });
 };

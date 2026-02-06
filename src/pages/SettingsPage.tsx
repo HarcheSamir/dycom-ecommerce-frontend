@@ -1,7 +1,7 @@
 import React, { useState, useEffect, type FC } from 'react';
-import { useUserProfile, useUpdateUserProfile, useCancelSubscription, useReactivateSubscription } from '../hooks/useUser';
+import { useUserProfile, useUpdateUserProfile, useCancelSubscription, useReactivateSubscription, useUpdatePassword, useRequestEmailChange, useConfirmEmailChange } from '../hooks/useUser';
 import { useAffiliateDashboard } from '../hooks/useAffiliate';
-import { FaUser, FaTicketAlt, FaEnvelope, FaGift, FaUsers, FaCheckCircle, FaCopy, FaLink, FaExclamationTriangle, FaCrown } from 'react-icons/fa';
+import { FaUser, FaTicketAlt, FaEnvelope, FaGift, FaUsers, FaCheckCircle, FaCopy, FaLink, FaExclamationTriangle, FaCrown, FaLock, FaEdit, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -53,12 +53,26 @@ const SettingsPage: FC = () => {
     const { mutate: updateUser, isPending: isUpdatingProfile } = useUpdateUserProfile();
     const { mutate: cancelSubscription, isPending: isCancelling } = useCancelSubscription();
     const { mutate: reactivateSubscription, isPending: isReactivating } = useReactivateSubscription();
+    const { mutate: updatePassword, isPending: isUpdatingPassword } = useUpdatePassword();
+    const { mutate: requestEmailChange, isPending: isRequestingEmailChange } = useRequestEmailChange();
+    const { mutate: confirmEmailChange, isPending: isConfirmingEmailChange } = useConfirmEmailChange();
 
     // State for the profile form fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState<string | undefined>(); // Updated for PhoneInput
+
+    // Email change state
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
+    const [emailVerificationCode, setEmailVerificationCode] = useState('');
+    const [emailChangeStep, setEmailChangeStep] = useState<'request' | 'verify'>('request');
+
+    // Password change state
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     // Populate form with user data once it's loaded
     useEffect(() => {
@@ -81,10 +95,60 @@ const SettingsPage: FC = () => {
             return;
         }
 
-        updateUser({ 
-            firstName, 
-            lastName, 
+        updateUser({
+            firstName,
+            lastName,
             phone: phone || '' // Send empty string if undefined to clear it, or the number
+        });
+    };
+
+    // Email change handlers
+    const handleRequestEmailChange = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newEmail || !newEmail.includes('@')) {
+            toast.error('Please enter a valid email address.');
+            return;
+        }
+        requestEmailChange({ newEmail }, {
+            onSuccess: () => {
+                setEmailChangeStep('verify');
+            }
+        });
+    };
+
+    const handleConfirmEmailChange = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (emailVerificationCode.length !== 6) {
+            toast.error('Please enter the 6-digit verification code.');
+            return;
+        }
+        confirmEmailChange({ code: emailVerificationCode });
+    };
+
+    const resetEmailModal = () => {
+        setShowEmailModal(false);
+        setNewEmail('');
+        setEmailVerificationCode('');
+        setEmailChangeStep('request');
+    };
+
+    // Password change handler
+    const handlePasswordChange = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newPassword.length < 8) {
+            toast.error('New password must be at least 8 characters.');
+            return;
+        }
+        if (newPassword !== confirmNewPassword) {
+            toast.error('Passwords do not match.');
+            return;
+        }
+        updatePassword({ currentPassword, newPassword }, {
+            onSuccess: () => {
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmNewPassword('');
+            }
         });
     };
 
@@ -260,11 +324,95 @@ const SettingsPage: FC = () => {
                             </div>
                         </div>
 
-                        <InfoInput label={t('settingsPage.profile.emailLabel')} value={email} onChange={(e) => setEmail(e.target.value)} icon={<FaEnvelope />} disabled />
+                        {/* Email with Change Button */}
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">{t('settingsPage.profile.emailLabel')}</label>
+                            <div className="flex gap-3">
+                                <div className="relative flex-grow">
+                                    <div className="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-500"><FaEnvelope /></div>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        disabled
+                                        className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 pl-11 pr-4 text-white placeholder:text-neutral-500 focus:outline-none disabled:opacity-60"
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowEmailModal(true)}
+                                    className="px-4 h-12 rounded-lg bg-neutral-700 text-white font-medium transition-colors hover:bg-neutral-600 flex items-center gap-2"
+                                >
+                                    <FaEdit /> Change
+                                </button>
+                            </div>
+                        </div>
 
                         <div>
                             <button type="submit" disabled={isUpdatingProfile} className="px-6 py-2.5 rounded-lg bg-gray-200 text-black font-semibold transition-colors hover:bg-gray-300 disabled:opacity-50 disabled:cursor-wait">
                                 {isUpdatingProfile ? t('settingsPage.profile.savingButton') : t('settingsPage.profile.saveButton')}
+                            </button>
+                        </div>
+                    </form>
+                </GlassCard>
+
+                {/* Password Change Section */}
+                <GlassCard>
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 w-12 h-12 flex items-center justify-center rounded-xl">
+                            <FaLock size={20} />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-white">Change Password</h2>
+                            <p className="text-neutral-400 text-sm">Update your account password</p>
+                        </div>
+                    </div>
+                    <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">Current Password</label>
+                            <div className="relative">
+                                <div className="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-500"><FaLock /></div>
+                                <input
+                                    type="password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    placeholder="Enter your current password"
+                                    className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 pl-11 pr-4 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">New Password</label>
+                            <div className="relative">
+                                <div className="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-500"><FaLock /></div>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="At least 8 characters"
+                                    className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 pl-11 pr-4 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">Confirm New Password</label>
+                            <div className="relative">
+                                <div className="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-500"><FaLock /></div>
+                                <input
+                                    type="password"
+                                    value={confirmNewPassword}
+                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                    placeholder="Re-enter new password"
+                                    className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 pl-11 pr-4 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                />
+                            </div>
+                        </div>
+                        <div className="pt-2">
+                            <button
+                                type="submit"
+                                disabled={isUpdatingPassword || !currentPassword || !newPassword || !confirmNewPassword}
+                                className="px-6 py-2.5 rounded-lg bg-red-500 text-white font-semibold transition-colors hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                             </button>
                         </div>
                     </form>
@@ -365,6 +513,85 @@ const SettingsPage: FC = () => {
                     )}
                 </div>
             </main>
+
+            {/* Email Change Modal */}
+            {showEmailModal && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#1C1E22] rounded-2xl border border-neutral-700 p-6 max-w-md w-full relative">
+                        <button
+                            onClick={resetEmailModal}
+                            className="absolute top-4 right-4 text-neutral-400 hover:text-white"
+                        >
+                            <FaTimes size={20} />
+                        </button>
+
+                        <h3 className="text-xl font-bold text-white mb-2">Change Email Address</h3>
+
+                        {emailChangeStep === 'request' ? (
+                            <>
+                                <p className="text-neutral-400 text-sm mb-6">
+                                    Enter your new email address. We'll send a verification code to confirm.
+                                </p>
+                                <form onSubmit={handleRequestEmailChange} className="space-y-4">
+                                    <div>
+                                        <label className="text-sm text-neutral-400 mb-2 block">New Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={newEmail}
+                                            onChange={(e) => setNewEmail(e.target.value)}
+                                            placeholder="Enter new email"
+                                            className="w-full bg-[#111317] border border-neutral-700 rounded-lg h-12 px-4 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={isRequestingEmailChange || !newEmail}
+                                        className="w-full py-3 rounded-lg bg-white text-black font-semibold transition-colors hover:bg-gray-200 disabled:opacity-50"
+                                    >
+                                        {isRequestingEmailChange ? 'Sending...' : 'Send Verification Code'}
+                                    </button>
+                                </form>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-neutral-400 text-sm mb-2">
+                                    We sent a 6-digit code to:
+                                </p>
+                                <p className="text-white font-medium mb-6">{newEmail}</p>
+                                <form onSubmit={handleConfirmEmailChange} className="space-y-4">
+                                    <div>
+                                        <label className="text-sm text-neutral-400 mb-2 block">Verification Code</label>
+                                        <input
+                                            type="text"
+                                            value={emailVerificationCode}
+                                            onChange={(e) => setEmailVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                            placeholder="Enter 6-digit code"
+                                            maxLength={6}
+                                            className="w-full bg-[#111317] border border-neutral-700 rounded-lg h-12 px-4 text-white text-center text-2xl tracking-widest placeholder:text-neutral-500 placeholder:text-base placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={isConfirmingEmailChange || emailVerificationCode.length !== 6}
+                                        className="w-full py-3 rounded-lg bg-green-500 text-white font-semibold transition-colors hover:bg-green-600 disabled:opacity-50"
+                                    >
+                                        {isConfirmingEmailChange ? 'Verifying...' : 'Confirm Email Change'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setEmailChangeStep('request')}
+                                        className="w-full py-2 text-neutral-400 hover:text-white text-sm"
+                                    >
+                                        Use a different email
+                                    </button>
+                                </form>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </>
     );
 };
