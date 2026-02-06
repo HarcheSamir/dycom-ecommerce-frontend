@@ -173,9 +173,27 @@ export const BillingPage: FC = () => {
                         </div>
 
                         <div className="mb-8 border-b border-neutral-800 pb-8">
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-bold text-white tracking-tight">{displayPrice}</span>
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xl text-neutral-500 line-through font-medium">
+                                        1490€
+                                    </span>
+                                    <div className="flex items-baseline">
+                                        <span className="text-5xl font-bold text-white tracking-tight">
+                                            980.00€
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
+
+                            {/* URGENCY MESSAGE */}
+                            <div className="mt-3 inline-block">
+                                <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
+                                    <span className="text-base">⚡</span>
+                                    <span>Il reste moins de 10 places !</span>
+                                </div>
+                            </div>
+
                             <p className="text-sm text-neutral-500 mt-3 font-medium">
                                 {t('billingPage.card.oneTimePayment')}
                             </p>
