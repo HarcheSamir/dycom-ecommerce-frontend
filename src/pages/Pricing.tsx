@@ -258,7 +258,7 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features, curren
                 <div className="mt-3 inline-block">
                     <div className="flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded-lg text-sm animate-pulse">
                         <span className="text-base">⚡</span>
-                        <span>Il reste moins de 10 places !</span>
+                        <span>Il reste moins de 20 places !</span>
                     </div>
                 </div>
 

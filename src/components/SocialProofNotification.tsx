@@ -3,13 +3,14 @@ import { FaUserCircle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAKE_NAMES = [
-    "Amir S.", "Sarah M.", "Thomas L.", "Lucas R.", "Emma B.", "Jasmine K.", "Mohamed A.", "Sophie D.", "Yanis B.", "Chloé M.",
-    "Kevin D.", "Nicolas F.", "Alexandre P.", "Manon G.", "Julie L.", "Léo T.", "Gabriel H.", "Adam E."
+    "Amir S.", "Thomas L.", "Sarah M.", "Mohamed A.", "Lucas R.", "Youssef B.", "Emma B.", "Karim Z.", "Manon G.", "Bilal H.",
+    "Sophie D.", "Mehdi K.", "Chloé M.", "Walid R.", "Julie L.", "Samy B.", "Léo T.", "Kenza F.", "Gabriel H.", "Farah N.",
+    "Nicolas F.", "Malik A.", "Alexandre P.", "Leila D.", "Antoine G.", "Nadia S.", "Maxime D.", "Sofiane T."
 ];
 
 const ACTIONS = [
     "a rejoint la Dycom Académie",
-    "a rejoint la Dycom Académie", 
+    "a rejoint la Dycom Académie",
     "vient de s'inscrire",
     "a commencé sa formation"
 ];
@@ -21,7 +22,7 @@ const SocialProofNotification = () => {
         const showNotification = () => {
             const randomName = FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)];
             const randomAction = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
-            
+
             setNotification({
                 name: randomName,
                 action: randomAction,
@@ -41,7 +42,7 @@ const SocialProofNotification = () => {
         const intervalId = setInterval(() => {
             const randomDelay = Math.random() * 10000 + 10000; // 10s + 0-10s = 10-20s interval
             setTimeout(showNotification, randomDelay);
-        }, 15000); 
+        }, 15000);
 
         return () => {
             clearTimeout(initialTimer);
@@ -53,9 +54,9 @@ const SocialProofNotification = () => {
         <AnimatePresence>
             {notification && (
                 <motion.div
-                    initial={{x: -100, opacity: 0, scale: 0.9}}
-                    animate={{x: 0, opacity: 1, scale: 1}}
-                    exit={{x: -100, opacity: 0, scale: 0.9}}
+                    initial={{ x: -100, opacity: 0, scale: 0.9 }}
+                    animate={{ x: 0, opacity: 1, scale: 1 }}
+                    exit={{ x: -100, opacity: 0, scale: 0.9 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     className="fixed bottom-6 left-6 z-50 max-w-sm w-full md:w-auto"
                 >
