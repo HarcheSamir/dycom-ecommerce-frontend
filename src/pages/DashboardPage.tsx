@@ -14,6 +14,7 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { SupportWidget } from '../components/support/SupportWidget';
+import { useAdminUnreadCounts } from '../hooks/useAdminUnreadCounts';
 
 // --- Type Definitions ---
 type NavLink = {
@@ -241,6 +242,15 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === 'ar';
     const isAdmin = user?.accountType === 'ADMIN';
+    const { data: unreadCounts } = useAdminUnreadCounts();
+
+    // Map paths to unread count keys
+    const getBadgeCount = (path: string): number | undefined => {
+        if (!unreadCounts) return undefined;
+        if (path === '/dashboard/admin/support') return unreadCounts.support || undefined;
+        if (path === '/dashboard/admin/shop-orders') return unreadCounts.shopOrders || undefined;
+        return undefined;
+    };
 
     type NavLink = {
         nameKey?: string;
@@ -413,6 +423,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
                                     }
 
                                     const isActive = location.pathname === link.path;
+                                    const badgeCount = getBadgeCount(link.path);
                                     return (
                                         <Link
                                             key={link.path}
@@ -420,7 +431,15 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
                                             onClick={onNavigate}
                                             className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-sm ${isActive ? 'bg-neutral-800 text-white font-medium' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}
                                         >
-                                            <span className="text-lg">{link.icon}</span> <span>{linkLabel}</span>
+                                            <span className="text-lg relative">
+                                                {link.icon}
+                                                {badgeCount && badgeCount > 0 && (
+                                                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                                                        {badgeCount > 9 ? '9+' : badgeCount}
+                                                    </span>
+                                                )}
+                                            </span>
+                                            <span>{linkLabel}</span>
                                         </Link>
                                     );
                                 })}

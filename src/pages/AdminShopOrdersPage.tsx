@@ -6,6 +6,7 @@ import {
     useAdminShopOrderStats,
     useAdminUpdateStatus,
     useAdminUpdateNotes,
+    useMarkOrderViewed,
     getPricingTier,
     formatPrice
 } from '../hooks/useShopOrder';
@@ -341,8 +342,8 @@ const OrderDetailModal: React.FC<{
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <h4 className="text-white font-medium">{product.name || `Produit ${idx + 1}`}</h4>
                                                     <span className={`px-2 py-0.5 text-xs rounded-full ${product.type === 'winning'
-                                                            ? 'bg-purple-500/20 text-purple-400'
-                                                            : 'bg-blue-500/20 text-blue-400'
+                                                        ? 'bg-purple-500/20 text-purple-400'
+                                                        : 'bg-blue-500/20 text-blue-400'
                                                         }`}>
                                                         {product.type === 'winning' ? '🔥 Winning' : '📝 Custom'}
                                                     </span>
@@ -528,6 +529,14 @@ export const AdminShopOrdersPage: React.FC = () => {
 
     const updateStatus = useAdminUpdateStatus();
     const updateNotes = useAdminUpdateNotes();
+    const markViewed = useMarkOrderViewed();
+
+    // Mark order as viewed when selected
+    const handleSelectOrder = (order: ShopOrder) => {
+        setSelectedOrder(order);
+        // Call backend to mark as viewed (triggers badge update)
+        markViewed.mutate(order.id);
+    };
 
     const handleStatusUpdate = async (orderId: string, status: string) => {
         try {
@@ -658,7 +667,7 @@ export const AdminShopOrdersPage: React.FC = () => {
                                             <tr
                                                 key={order.id}
                                                 className="border-b border-neutral-800/50 hover:bg-white/[0.02] transition-colors cursor-pointer"
-                                                onClick={() => setSelectedOrder(order)}
+                                                onClick={() => handleSelectOrder(order)}
                                             >
                                                 <td className="py-4 px-5">
                                                     <div>
@@ -690,7 +699,7 @@ export const AdminShopOrdersPage: React.FC = () => {
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            setSelectedOrder(order);
+                                                            handleSelectOrder(order);
                                                         }}
                                                         className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium rounded-lg transition-all"
                                                     >

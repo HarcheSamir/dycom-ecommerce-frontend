@@ -367,6 +367,25 @@ export const useAdminUpdateNotes = () => {
     });
 };
 
+/**
+ * Admin: Mark order as viewed (for notification badge clearing)
+ */
+export const useMarkOrderViewed = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (orderId: string) => {
+            // Call the admin order details endpoint which marks it as viewed
+            const { data } = await apiClient.get(`/shop-orders/admin/${orderId}`);
+            return data;
+        },
+        onSuccess: () => {
+            // Invalidate the unread counts to update badges
+            queryClient.invalidateQueries({ queryKey: ['adminUnreadCounts'] });
+        }
+    });
+};
+
 // ================
 // PRICING HELPERS
 // ================
