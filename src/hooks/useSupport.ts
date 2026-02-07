@@ -19,6 +19,10 @@ export interface TicketMessage {
     isInternal: boolean;
     createdAt: string;
     attachments?: TicketAttachment[];
+    // Edit & Delete tracking
+    isDeleted?: boolean;
+    deletedAt?: string;
+    editedAt?: string;
 }
 
 export interface Ticket {
@@ -39,6 +43,8 @@ export interface Ticket {
     };
     guestEmail?: string;
     guestName?: string;
+    accessToken?: string;
+    adminUnread?: boolean;
 }
 
 // --- USER HOOKS ---
@@ -82,7 +88,8 @@ export const useCreateTicket = () => {
 export const useAdminTickets = (status: string) => {
     return useQuery<{ data: Ticket[], meta: any }>({
         queryKey: ['adminTickets', status],
-        queryFn: async () => (await apiClient.get('/support/admin/all', { params: { status } })).data
+        queryFn: async () => (await apiClient.get('/support/admin/all', { params: { status } })).data,
+        refetchInterval: 15000 // Poll every 15 seconds for new tickets
     });
 };
 
@@ -121,6 +128,32 @@ export const useAdminReply = () => {
             queryClient.invalidateQueries({ queryKey: ['ticket', variables.ticketId] });
             queryClient.invalidateQueries({ queryKey: ['adminTickets'] });
         }
+    });
+};
+
+export const useEditMessage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { messageId: string; content: string; ticketId: string }) =>
+            apiClient.patch(`/support/admin/message/${data.messageId}`, { content: data.content }),
+        onSuccess: (_, variables) => {
+            toast.success("Message updated.");
+            queryClient.invalidateQueries({ queryKey: ['ticket', variables.ticketId] });
+        },
+        onError: () => toast.error("Failed to update message.")
+    });
+};
+
+export const useDeleteMessage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { messageId: string; ticketId: string }) =>
+            apiClient.delete(`/support/admin/message/${data.messageId}`),
+        onSuccess: (_, variables) => {
+            toast.success("Message deleted.");
+            queryClient.invalidateQueries({ queryKey: ['ticket', variables.ticketId] });
+        },
+        onError: () => toast.error("Failed to delete message.")
     });
 };
 

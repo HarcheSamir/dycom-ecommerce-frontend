@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { useAdminTickets, useTicketDetails, useAdminReply } from '../hooks/useSupport';
+import { useQueryClient } from '@tanstack/react-query';
+import { useAdminTickets, useTicketDetails, useAdminReply, useEditMessage, useDeleteMessage } from '../hooks/useSupport';
+import type { Ticket } from '../hooks/useSupport';
 import { StatusBadge, MessageBubble } from '../components/support/TicketUI';
 import { FaExternalLinkAlt, FaPaperPlane, FaLock, FaCheckCircle, FaInbox, FaUser, FaPaperclip, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 export const AdminSupportPage = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const [reply, setReply] = useState('');
@@ -18,6 +21,30 @@ export const AdminSupportPage = () => {
     const { data: ticketList } = useAdminTickets(statusFilter);
     const { data: activeTicket } = useTicketDetails(selectedTicketId);
     const { mutate: sendReply, isPending } = useAdminReply();
+    const { mutate: editMessage, isPending: isEditPending } = useEditMessage();
+    const { mutate: deleteMessage, isPending: isDeletePending } = useDeleteMessage();
+
+    const handleEditMessage = (messageId: string, content: string) => {
+        if (!selectedTicketId) return;
+        editMessage({ messageId, content, ticketId: selectedTicketId });
+    };
+
+    const handleDeleteMessage = (messageId: string) => {
+        if (!selectedTicketId) return;
+        deleteMessage({ messageId, ticketId: selectedTicketId });
+    };
+
+    const handleSelectTicket = (ticketId: string) => {
+        setSelectedTicketId(ticketId);
+        // Optimistically clear the unread badge immediately
+        queryClient.setQueryData(['adminTickets', statusFilter], (old: { data: Ticket[], meta: any } | undefined) => {
+            if (!old) return old;
+            return {
+                ...old,
+                data: old.data.map(t => t.id === ticketId ? { ...t, adminUnread: false } : t)
+            };
+        });
+    };
 
     const handleGoToProfile = (e: React.MouseEvent, userId?: string | null) => {
         if (!userId) return;
@@ -113,7 +140,7 @@ export const AdminSupportPage = () => {
                     {ticketList?.data.map(ticket => (
                         <div
                             key={ticket.id}
-                            onClick={() => setSelectedTicketId(ticket.id)}
+                            onClick={() => handleSelectTicket(ticket.id)}
                             className={`p-4 border-b border-neutral-800 cursor-pointer transition-colors hover:bg-white/5 ${selectedTicketId === ticket.id ? 'bg-blue-900/10 border-l-4 border-l-blue-500' : 'border-l-4 border-l-transparent'}`}
                         >
                             <div className="flex justify-between items-start mb-1">
@@ -130,7 +157,18 @@ export const AdminSupportPage = () => {
                                     {formatTimeDisplay(ticket.createdAt)}
                                 </span>
                             </div>
-                            <h4 className="text-sm font-semibold text-white mb-1 truncate">{ticket.subject}</h4>
+                            <h4 className="text-sm font-semibold text-white mb-1 truncate flex items-center gap-2">
+                                {ticket.adminUnread && (
+                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" title={t('adminSupportPage.card.unread', 'New message')} />
+                                )}
+                                {ticket.subject}
+                            </h4>
+                            {ticket.messages?.[0] && (
+                                <p className="text-xs text-neutral-500 truncate mb-2">
+                                    <span className="text-neutral-600">{ticket.messages[0].senderType === 'ADMIN' ? t('adminSupportPage.card.you', 'You') : ticket.guestName?.split(' ')[0]}:</span>{' '}
+                                    {ticket.messages[0].content.slice(0, 80)}{ticket.messages[0].content.length > 80 ? '...' : ''}
+                                </p>
+                            )}
                             <div className="flex gap-2 mt-2">
                                 <StatusBadge status={ticket.status} />
                                 <span className="px-2 py-1 text-[10px] rounded bg-neutral-800 text-neutral-400">
@@ -170,6 +208,11 @@ export const AdminSupportPage = () => {
                                     key={msg.id}
                                     message={msg}
                                     isSelf={msg.senderType === 'ADMIN' || msg.senderType === 'SYSTEM'}
+                                    ticketId={selectedTicketId || undefined}
+                                    onEdit={handleEditMessage}
+                                    onDelete={handleDeleteMessage}
+                                    isEditPending={isEditPending}
+                                    isDeletePending={isDeletePending}
                                 />
                             ))}
                         </div>

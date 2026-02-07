@@ -73,7 +73,11 @@ export const SupportPage = () => {
             ) : (
                 <div className="grid gap-4">
                     {tickets?.map(ticket => (
-                        <GlassCard key={ticket.id} className="hover:border-neutral-600 transition-colors">
+                        <GlassCard
+                            key={ticket.id}
+                            className="hover:border-neutral-600 transition-colors cursor-pointer"
+                            onClick={() => window.open(`/support/ticket/${ticket.id}?key=${ticket.accessToken}`, '_blank')}
+                        >
                             <div className="flex justify-between items-center">
                                 <div>
                                     <div className="flex items-center gap-3 mb-1">
