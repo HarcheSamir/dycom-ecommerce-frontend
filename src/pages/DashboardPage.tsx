@@ -515,7 +515,11 @@ const DashboardPage: FC = () => {
             </div>
         );
     }
-    const showWelcomeModal = userProfile && !userProfile.hasSeenWelcomeModal;
+    // Only show welcome modal to active subscribers who haven't seen it
+    const isActiveMember = userProfile?.subscriptionStatus === 'ACTIVE' || 
+                           userProfile?.subscriptionStatus === 'TRIALING' || 
+                           userProfile?.subscriptionStatus === 'LIFETIME_ACCESS';
+    const showWelcomeModal = userProfile && !userProfile.hasSeenWelcomeModal && isActiveMember;
 
     return (
         <div className="min-h-screen font-sans " style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
