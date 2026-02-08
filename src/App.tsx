@@ -23,6 +23,7 @@ import { QuickPay } from './pages/QuickPay';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import SetPasswordPage from './pages/SetPasswordPage';
 import { CoursePlayerPage } from './pages/CoursePlayerPage';
 import AdminUserDetailsPage from './pages/AdminUserDetailsPage';
 import AdminPastDuePage from './pages/AdminPastDuePage';
@@ -58,6 +59,7 @@ function App() {
             <Route path="/home" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/set-password" element={<SetPasswordPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/pay/:plan" element={<QuickPay />} />
             <Route path="/support/ticket/:ticketId" element={<GuestTicketPage />} />
