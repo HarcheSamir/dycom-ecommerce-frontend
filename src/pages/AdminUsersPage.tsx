@@ -148,11 +148,103 @@ const ActionMenu: React.FC<{ user: AdminUser }> = ({ user }) => {
     );
 };
 
+// --- CREATE USER MODAL ---
+const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSuccess: () => void }> = ({ isOpen, onClose, onSuccess }) => {
+    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            await apiClient.post('/admin/users/create-lifetime', { email, firstName, lastName });
+            toast.success('Utilisateur créé/mis à jour avec succès !');
+            onSuccess();
+            onClose();
+            setEmail('');
+            setFirstName('');
+            setLastName('');
+        } catch (error: any) {
+            toast.error(error.response?.data?.error || "Échec de la création de l'utilisateur");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="fixed h-full inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className="bg-[#1C1E22] border border-neutral-700 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+                <button onClick={onClose} className="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <FaCrown className="text-purple-400" /> Créer un Utilisateur à Vie
+                </h2>
+                <p className="text-sm text-neutral-400 mb-6">
+                    Cela accordera immédiatement un <span className="text-purple-300 font-bold">ACCÈS À VIE</span>.
+                    Les nouveaux utilisateurs recevront un email pour définir leur mot de passe. Les utilisateurs existants seront mis à niveau.
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Email</label>
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
+                            placeholder="user@example.com"
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Prénom</label>
+                            <input
+                                type="text"
+                                required
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
+                                placeholder="Jean"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Nom</label>
+                            <input
+                                type="text"
+                                required
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
+                                placeholder="Dupont"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="pt-2">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Accorder l'Accès à Vie"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 // --- MAIN PAGE COMPONENT ---
 export const AdminUsersPage: React.FC = () => {
     const { t, i18n } = useTranslation();
     const [page, setPage] = useState(1);
     const [isExporting, setIsExporting] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const isRtl = i18n.language === 'ar';
     const currentLocale = i18n.language === 'fr' ? 'fr-FR' : (isRtl ? 'ar-AE' : 'en-US');
@@ -169,7 +261,7 @@ export const AdminUsersPage: React.FC = () => {
         return () => clearTimeout(timer);
     }, [tempSearch]);
 
-    const { data, isLoading } = useAdminUsers(page, {
+    const { data, isLoading, refetch } = useAdminUsers(page, {
         search,
         status: statusFilter,
         installments: planFilter
@@ -233,6 +325,11 @@ export const AdminUsersPage: React.FC = () => {
     return (
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-[#111317] min-h-screen text-white space-y-8">
             <Toaster position="bottom-right" />
+            <CreateUserModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={() => { refetch(); }}
+            />
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1">
@@ -242,14 +339,22 @@ export const AdminUsersPage: React.FC = () => {
                     <p className="text-neutral-300">{t('adminUsers.subtitle')}</p>
                 </div>
 
-                <button
-                    onClick={handleExport}
-                    disabled={isExporting}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-xl text-white font-medium transition-colors disabled:opacity-50 shadow-lg"
-                >
-                    <FaFileCsv className="text-green-400" />
-                    {isExporting ? 'Exporting...' : 'Export CSV'}
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 border border-purple-500 rounded-xl text-white font-medium transition-colors shadow-lg shadow-purple-500/20"
+                    >
+                        <FaCrown /> Créer un Utilisateur
+                    </button>
+                    <button
+                        onClick={handleExport}
+                        disabled={isExporting}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-xl text-white font-medium transition-colors disabled:opacity-50 shadow-lg"
+                    >
+                        <FaFileCsv className="text-green-400" />
+                        {isExporting ? 'Exporting...' : 'Export CSV'}
+                    </button>
+                </div>
             </div>
 
             <GlassCard padding="p-5">
