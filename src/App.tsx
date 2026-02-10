@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { SuppliersPage } from './pages/SuppliersPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import AgentPage from './pages/AgentPage';
 import DashboardPage, { DashboardContent } from './pages/DashboardPage';
 import { BillingPage } from './pages/BillingPage';
 import PrivateRoute from './components/PrivateRoute';
@@ -53,7 +54,7 @@ function App() {
       <AuthProvider>
         <Router>
           <SupportWidget />
-          <AcademyAgentWidget />
+          {/* <AcademyAgentWidget /> - Hidden per user request */}
 
           <Routes>
             <Route path="/home" element={<LandingPage />} />
@@ -72,7 +73,7 @@ function App() {
               <Route path="support" element={<SupportPage />} />
               <Route path="updates" element={<UpdatesPage />} />
               <Route path="training/:courseId" element={<CoursePlayerPage />} />
-
+              <Route path="agent-ia" element={<AgentPage />} />
               <Route path="influencers" element={<InfluencersPage />} />
               <Route path="influencers/:id" element={<CreatorProfilePage />} />
               <Route path="affiliate" element={<AffiliatePage />} />

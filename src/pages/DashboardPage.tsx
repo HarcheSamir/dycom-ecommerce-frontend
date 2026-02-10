@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -284,6 +284,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
             title: "🎓 Formation",
             items: [
                 { nameKey: 'training', label: 'Formation vidéo', icon: <FaVideo />, path: '/dashboard/training' },
+                { nameKey: 'agent', label: 'Coach Dylan', icon: <FaRobot />, path: '/dashboard/agent-ia' },
                 { nameKey: 'updates', label: 'Dernières nouveautés', icon: <FaBolt className="text-yellow-400" />, path: '/dashboard/updates' },
                 { nameKey: 'resources', label: 'Ressources', icon: <FaFolderOpen />, path: '/dashboard/resources' },
                 { nameKey: 'manageResources', label: 'Gestion ressources', icon: <FaFolderOpen />, path: '/dashboard/admin/resources', adminOnly: true },
@@ -516,9 +517,9 @@ const DashboardPage: FC = () => {
         );
     }
     // Only show welcome modal to active subscribers who haven't seen it
-    const isActiveMember = userProfile?.subscriptionStatus === 'ACTIVE' || 
-                           userProfile?.subscriptionStatus === 'TRIALING' || 
-                           userProfile?.subscriptionStatus === 'LIFETIME_ACCESS';
+    const isActiveMember = userProfile?.subscriptionStatus === 'ACTIVE' ||
+        userProfile?.subscriptionStatus === 'TRIALING' ||
+        userProfile?.subscriptionStatus === 'LIFETIME_ACCESS';
     const showWelcomeModal = userProfile && !userProfile.hasSeenWelcomeModal && isActiveMember;
 
     return (

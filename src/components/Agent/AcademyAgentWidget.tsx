@@ -61,7 +61,8 @@ export const AcademyAgentWidget = () => {
         setIsLoading(true);
 
         try {
-            const responseText = await agentService.sendMessage(userMsg.content);
+            const response = await agentService.sendMessage(userMsg.content);
+            const responseText = response.answer;
 
             const botMsg: Message = {
                 id: (Date.now() + 1).toString(),
