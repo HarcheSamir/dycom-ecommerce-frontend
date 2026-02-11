@@ -11,7 +11,7 @@ export const AdminSupportPage = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const [statusFilter, setStatusFilter] = useState('ALL');
+    const [statusFilter, setStatusFilter] = useState('OPEN');
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const [reply, setReply] = useState('');
     const [isInternal, setIsInternal] = useState(false);
@@ -127,7 +127,7 @@ export const AdminSupportPage = () => {
                         <FaInbox /> {t('adminSupportPage.inbox')}
                     </h2>
                     <div className="flex gap-2 flex-wrap">
-                        {['ALL', 'OPEN', 'IN_PROGRESS', 'RESOLVED'].map(status => (
+                        {['OPEN', 'IN_PROGRESS', 'RESOLVED', 'ALL'].map(status => (
                             <button
                                 key={status}
                                 onClick={() => setStatusFilter(status)}
