@@ -8,7 +8,7 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -234,8 +234,10 @@ export const DashboardContent: FC = () => {
     );
 }
 
+import { VideoModal } from '../components/VideoModal';
+
 // --- Sidebar Component ---
-const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onNavigate }) => {
+const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: () => void; }> = ({ isOpen, onNavigate, onOpenVideoModal }) => {
     const { data: user } = useUserProfile();
     const { logout } = useAuth();
     const location = useLocation();
@@ -380,6 +382,25 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
         <aside className={sidebarClasses}>
             <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
 
+            {/* Academy Presentation Button */}
+            <div className="px-2 mb-6">
+                <button
+                    onClick={onOpenVideoModal}
+                    className="relative w-full group overflow-hidden rounded-xl p-[1px] transition-all hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.4)]"
+                >
+                    {/* Gradient Border */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    {/* Inner Content */}
+                    <div className="relative flex items-center justify-center gap-2 w-full h-full bg-[#111317] group-hover:bg-[#16181d] rounded-xl px-4 py-3 transition-colors duration-300">
+                        <FaRocket className="text-purple-400 group-hover:text-pink-400 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-300 group-hover:from-white group-hover:to-white">
+                            {t('sidebar.academyPresentation', "Présentation de l'académie")}
+                        </span>
+                    </div>
+                </button>
+            </div>
+
             <nav className="flex flex-col gap-4 overflow-y-auto flex-1 pr-2">
                 {sidebarGroups.map((group, groupIndex) => {
                     // Filter groups: if group is adminOnly, user must be admin
@@ -493,6 +514,7 @@ export const ComingSoonPage: FC<{ pageTitle: string }> = ({ pageTitle }) => {
 // --- Main Page Component / Controller ---
 const DashboardPage: FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { data: userProfile, isLoading: isProfileLoading } = useUserProfile();
@@ -544,7 +566,7 @@ const DashboardPage: FC = () => {
                     {/* ^ Optional: Add blur/lock to background when modal is open */}
 
                     {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
-                    <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} />
+                    <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} onOpenVideoModal={() => setIsVideoModalOpen(true)} />
                     <div className="flex-1 flex flex-col min-w-0 ">
                         {/* MODIFICATION: Conditionally position the mobile menu button */}
                         <button
@@ -560,6 +582,15 @@ const DashboardPage: FC = () => {
 
                 </div>
             </div>
+            {/* Video Modal - Rendered at root level to be on top of everything including sidebar */}
+            {isVideoModalOpen && (
+                <VideoModal
+                    isOpen={isVideoModalOpen}
+                    onClose={() => setIsVideoModalOpen(false)}
+                    vimeoId="1151206665"
+                    title={t('sidebar.academyPresentation', "Présentation de l'académie")}
+                />
+            )}
         </div>
     );
 };
