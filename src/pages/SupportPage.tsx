@@ -65,7 +65,7 @@ export const SupportPage = () => {
             {isLoading ? (
                 <p className="text-neutral-500">{t('supportPage.loading')}</p>
             ) : tickets?.length === 0 ? (
-                <GlassCard className="text-center ">
+                <GlassCard className="text-center">
                     <FaTicketAlt className="mx-auto text-4xl text-neutral-600 mb-4" />
                     <h3 className="text-xl font-bold">{t('supportPage.emptyState.title')}</h3>
                     <p className="text-neutral-400">{t('supportPage.emptyState.description')}</p>
