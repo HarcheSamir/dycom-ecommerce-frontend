@@ -68,7 +68,9 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  lastName: string;
   phone?: string | null;
+  avatarUrl?: string | null;
   status: string;
   accountType: string;
   createdAt: string;
@@ -161,6 +163,24 @@ export const useUpdateUserProfile = () => {
     onError: (error: AxiosError) => {
       const errorData = error.response?.data as { message?: string };
       toast.error(errorData?.message || 'Échec de la mise à jour du profil.');
+    },
+  });
+};
+
+export const useUploadAvatar = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (formData: FormData) =>
+      apiClient.post<User>('/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      toast.success('Avatar mis à jour avec succès !');
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { error?: string };
+      toast.error(errorData?.error || "Échec de l'upload de l'avatar.");
     },
   });
 };

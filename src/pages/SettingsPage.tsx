@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type FC } from 'react';
-import { useUserProfile, useUpdateUserProfile, useCancelSubscription, useReactivateSubscription, useUpdatePassword, useRequestEmailChange, useConfirmEmailChange } from '../hooks/useUser';
+import { useUserProfile, useUpdateUserProfile, useCancelSubscription, useReactivateSubscription, useUpdatePassword, useRequestEmailChange, useConfirmEmailChange, useUploadAvatar } from '../hooks/useUser';
 import { useAffiliateDashboard } from '../hooks/useAffiliate';
 import { FaUser, FaTicketAlt, FaEnvelope, FaGift, FaUsers, FaCheckCircle, FaCopy, FaLink, FaExclamationTriangle, FaCrown, FaLock, FaEdit, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
@@ -56,6 +56,7 @@ const SettingsPage: FC = () => {
     const { mutate: updatePassword, isPending: isUpdatingPassword } = useUpdatePassword();
     const { mutate: requestEmailChange, isPending: isRequestingEmailChange } = useRequestEmailChange();
     const { mutate: confirmEmailChange, isPending: isConfirmingEmailChange } = useConfirmEmailChange();
+    const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
 
     // State for the profile form fields
     const [firstName, setFirstName] = useState('');
@@ -291,12 +292,41 @@ const SettingsPage: FC = () => {
                     <h2 className="text-xl font-bold text-white mb-6">{t('settingsPage.profile.title')}</h2>
                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                         <div className="flex items-center gap-6">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                                {(firstName.charAt(0) + lastName.charAt(0)).toUpperCase()}
+                            <div className="relative group">
+                                {user?.avatarUrl ? (
+                                    <img
+                                        src={user.avatarUrl}
+                                        alt="Profile"
+                                        className="w-20 h-20 rounded-full object-cover border-2 border-neutral-700 shadow-lg"
+                                    />
+                                ) : (
+                                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                                        {(firstName.charAt(0) + lastName.charAt(0)).toUpperCase()}
+                                    </div>
+                                )}
                             </div>
                             <div>
-                                <button type="button" className="px-5 py-2.5 rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-semibold transition-colors hover:bg-neutral-800">
-                                    {t('settingsPage.profile.changeAvatar')}
+                                <input
+                                    type="file"
+                                    id="avatar-upload"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            const formData = new FormData();
+                                            formData.append('avatar', file);
+                                            uploadAvatar(formData);
+                                        }
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                                    disabled={isUploadingAvatar}
+                                    className="px-5 py-2.5 rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-semibold transition-colors hover:bg-neutral-800 disabled:opacity-50"
+                                >
+                                    {isUploadingAvatar ? 'Uploading...' : t('settingsPage.profile.changeAvatar')}
                                 </button>
                                 <p className="text-xs text-neutral-500 mt-2">{t('settingsPage.profile.avatarHint')}</p>
                             </div>

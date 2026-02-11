@@ -452,15 +452,25 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; }> = ({ isOpen, onN
 
             <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-neutral-800">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C1E22]">
-                    <img
-                        src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=random`}
-                        alt={`${user?.firstName} ${user?.lastName}`}
-                        className="w-10 h-10 rounded-full"
-                    />
-                    <div className='min-w-0 flex-1 '>
-                        <p className="font-semibold text-white truncate">{user?.firstName} {user?.lastName}</p>
-                        <p className="text-xs w-full text-neutral-400 truncate">{user?.email}</p>
-                    </div>
+                    <Link to="/dashboard/settings" onClick={onNavigate} className="flex items-center gap-3 flex-1 min-w-0 group cursor-pointer">
+                        {user?.avatarUrl ? (
+                            <img
+                                src={user.avatarUrl}
+                                alt={`${user?.firstName} ${user?.lastName}`}
+                                className="w-10 h-10 rounded-full object-cover border border-neutral-700 group-hover:border-neutral-500 transition-colors"
+                            />
+                        ) : (
+                            <img
+                                src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=random`}
+                                alt={`${user?.firstName} ${user?.lastName}`}
+                                className="w-10 h-10 rounded-full group-hover:opacity-80 transition-opacity"
+                            />
+                        )}
+                        <div className='min-w-0 flex-1'>
+                            <p className="font-semibold text-white truncate group-hover:text-neutral-300 transition-colors">{user?.firstName} {user?.lastName}</p>
+                            <p className="text-xs w-full text-neutral-400 truncate">{user?.email}</p>
+                        </div>
+                    </Link>
                 </div>
                 <div className='flex ml-3 '><LanguageSwitcher /></div>
                 <button onClick={logout} className="ml-3 cursor-pointer flex items-center gap-3 text-neutral-400 hover:text-white w-full text-left"><FaSignOutAlt /><span>{t('sidebar.logout')}</span></button>
