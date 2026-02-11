@@ -18,11 +18,14 @@ export const AdminSupportPage = () => {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const { data: ticketList } = useAdminTickets(statusFilter);
+    const { data: ticketPages, fetchNextPage, hasNextPage, isFetchingNextPage } = useAdminTickets(statusFilter);
     const { data: activeTicket } = useTicketDetails(selectedTicketId);
     const { mutate: sendReply, isPending } = useAdminReply();
     const { mutate: editMessage, isPending: isEditPending } = useEditMessage();
     const { mutate: deleteMessage, isPending: isDeletePending } = useDeleteMessage();
+
+    // Flatten pages into a single list of tickets
+    const ticketList = ticketPages?.pages.flatMap(page => page.data) || [];
 
     const handleEditMessage = (messageId: string, content: string) => {
         if (!selectedTicketId) return;
@@ -37,11 +40,14 @@ export const AdminSupportPage = () => {
     const handleSelectTicket = (ticketId: string) => {
         setSelectedTicketId(ticketId);
         // Optimistically clear the unread badge immediately
-        queryClient.setQueryData(['adminTickets', statusFilter], (old: { data: Ticket[], meta: any } | undefined) => {
+        queryClient.setQueryData(['adminTickets', statusFilter], (old: any) => {
             if (!old) return old;
             return {
                 ...old,
-                data: old.data.map(t => t.id === ticketId ? { ...t, adminUnread: false } : t)
+                pages: old.pages.map((page: any) => ({
+                    ...page,
+                    data: page.data.map((t: Ticket) => t.id === ticketId ? { ...t, adminUnread: false } : t)
+                }))
             };
         });
     };
@@ -130,14 +136,14 @@ export const AdminSupportPage = () => {
                                     : 'bg-transparent border-neutral-700 text-neutral-400 hover:border-neutral-500'
                                     }`}
                             >
-                                {t(`adminSupportPage.filter.${status}`, status)}
+                                {t(`adminSupportPage.filter.${status}`, status) as string}
                             </button>
                         ))}
                     </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
-                    {ticketList?.data.map(ticket => (
+                    {ticketList.map(ticket => (
                         <div
                             key={ticket.id}
                             onClick={() => handleSelectTicket(ticket.id)}
@@ -172,11 +178,24 @@ export const AdminSupportPage = () => {
                             <div className="flex gap-2 mt-2">
                                 <StatusBadge status={ticket.status} />
                                 <span className="px-2 py-1 text-[10px] rounded bg-neutral-800 text-neutral-400">
-                                    {t(`supportPage.createModal.categories.${ticket.category}`, ticket.category)}
+                                    {t(`supportPage.createModal.categories.${ticket.category}`, ticket.category) as string}
                                 </span>
                             </div>
                         </div>
                     ))}
+
+                    {/* Load More Button */}
+                    {hasNextPage && (
+                        <div className="p-4 text-center">
+                            <button
+                                onClick={() => fetchNextPage()}
+                                disabled={isFetchingNextPage}
+                                className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                            >
+                                {isFetchingNextPage ? t('common.loading', 'Loading...') : t('common.loadMore', 'Load More')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 

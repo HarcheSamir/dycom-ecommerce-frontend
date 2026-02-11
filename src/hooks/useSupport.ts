@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import toast from 'react-hot-toast';
 
@@ -86,10 +86,24 @@ export const useCreateTicket = () => {
 // --- ADMIN HOOKS ---
 
 export const useAdminTickets = (status: string) => {
-    return useQuery<{ data: Ticket[], meta: any }>({
+    return useInfiniteQuery({
         queryKey: ['adminTickets', status],
-        queryFn: async () => (await apiClient.get('/support/admin/all', { params: { status } })).data,
-        refetchInterval: 15000 // Poll every 15 seconds for new tickets
+        queryFn: async ({ pageParam = 1 }) => {
+            const res = await apiClient.get('/support/admin/all', {
+                params: { status, page: pageParam, limit: 20 }
+            });
+            return res.data;
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage: any) => {
+            const { page, limit } = lastPage.meta;
+            const total = lastPage.meta.total;
+            if (page * limit < total) {
+                return page + 1;
+            }
+            return undefined;
+        },
+        refetchInterval: 15000
     });
 };
 

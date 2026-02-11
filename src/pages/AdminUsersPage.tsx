@@ -153,6 +153,12 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [status, setStatus] = useState<'LIFETIME' | 'ACTIVE'>('LIFETIME');
+    const [installmentsPaid, setInstallmentsPaid] = useState(0);
+    const [installmentsRequired, setInstallmentsRequired] = useState(1);
+    const [stripeSubscriptionId, setStripeSubscriptionId] = useState('');
+    const [stripePaymentId, setStripePaymentId] = useState('');
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!isOpen) return null;
@@ -161,13 +167,28 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await apiClient.post('/admin/users/create-lifetime', { email, firstName, lastName });
+            await apiClient.post('/admin/users/create', {
+                email,
+                firstName,
+                lastName,
+                status,
+                installmentsPaid,
+                installmentsRequired,
+                stripeSubscriptionId,
+                stripePaymentId
+            });
             toast.success('Utilisateur créé/mis à jour avec succès !');
             onSuccess();
             onClose();
+            // Reset fields
             setEmail('');
             setFirstName('');
             setLastName('');
+            setStatus('LIFETIME');
+            setInstallmentsPaid(0);
+            setInstallmentsRequired(1);
+            setStripeSubscriptionId('');
+            setStripePaymentId('');
         } catch (error: any) {
             toast.error(error.response?.data?.error || "Échec de la création de l'utilisateur");
         } finally {
@@ -176,61 +197,79 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
     };
 
     return (
-        <div className="fixed h-full inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-            <div className="bg-[#1C1E22] border border-neutral-700 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+        <div className="fixed h-full inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-[#1C1E22] border border-neutral-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative">
                 <button onClick={onClose} className="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <FaCrown className="text-purple-400" /> Créer un Utilisateur à Vie
+                    {status === 'LIFETIME' ? <FaCrown className="text-purple-400" /> : <FaUser className="text-blue-400" />}
+                    {status === 'LIFETIME' ? 'Créer un Utilisateur à Vie' : 'Créer un Utilisateur Actif'}
                 </h2>
-                <p className="text-sm text-neutral-400 mb-6">
-                    Cela accordera immédiatement un <span className="text-purple-300 font-bold">ACCÈS À VIE</span>.
-                    Les nouveaux utilisateurs recevront un email pour définir leur mot de passe. Les utilisateurs existants seront mis à niveau.
-                </p>
+
+                {/* Status Toggle */}
+                <div className="flex bg-[#111317] p-1 rounded-lg mb-6 border border-neutral-700">
+                    <button
+                        type="button"
+                        onClick={() => setStatus('LIFETIME')}
+                        className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${status === 'LIFETIME' ? 'bg-purple-600 text-white shadow' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                        LIFETIME
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setStatus('ACTIVE')}
+                        className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${status === 'ACTIVE' ? 'bg-blue-600 text-white shadow' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                        ACTIVE
+                    </button>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Email</label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
-                            placeholder="user@example.com"
-                        />
-                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Prénom</label>
-                            <input
-                                type="text"
-                                required
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
-                                placeholder="Jean"
-                            />
+                            <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="Jean" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Nom</label>
-                            <input
-                                type="text"
-                                required
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
-                                placeholder="Dupont"
-                            />
+                            <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="Dupont" />
                         </div>
                     </div>
+                    <div>
+                        <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Email</label>
+                        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="user@example.com" />
+                    </div>
 
-                    <div className="pt-2">
+                    {status === 'ACTIVE' && (
+                        <div className="space-y-4 pt-2 border-t border-neutral-700">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Installments Paid</label>
+                                    <input type="number" min="0" value={installmentsPaid} onChange={(e) => setInstallmentsPaid(Number(e.target.value))} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Total Required</label>
+                                    <input type="number" min="1" value={installmentsRequired} onChange={(e) => setInstallmentsRequired(Number(e.target.value))} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Stripe Subscription ID (Optional)</label>
+                                <input type="text" value={stripeSubscriptionId} onChange={(e) => setStripeSubscriptionId(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="sub_..." />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Stripe Payment ID (Optional)</label>
+                                <p className="text-[10px] text-neutral-500 mb-1">If provided, creates a transaction record.</p>
+                                <input type="text" value={stripePaymentId} onChange={(e) => setStripePaymentId(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="pi_..." />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="pt-4">
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={`w-full font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${status === 'LIFETIME' ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'}`}
                         >
-                            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Accorder l'Accès à Vie"}
+                            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (status === 'LIFETIME' ? "Accorder l'Accès à Vie" : "Créer l'Utilisateur Actif")}
                         </button>
                     </div>
                 </form>
