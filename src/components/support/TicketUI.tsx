@@ -164,7 +164,7 @@ export const MessageBubble = ({
                         {isAdmin && <FaShieldAlt />}
                         <span>{message.senderType}</span>
                         <span>•</span>
-                        <span>{new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span>{new Date(message.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}</span>
                         {isEdited && !isDeleted && onEdit && (
                             <span className="italic" title={`Edited: ${new Date(message.editedAt).toLocaleString()}`}>(edited)</span>
                         )}

@@ -33,6 +33,7 @@ export interface Ticket {
     priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
     category: string;
     createdAt: string;
+    updatedAt: string;
     messages?: TicketMessage[];
     user?: {
         id?: string;

@@ -160,7 +160,7 @@ export const AdminSupportPage = () => {
                                     {ticket.userId && <FaExternalLinkAlt size={10} className="opacity-50" />}
                                 </span>
                                 <span className="text-[10px] text-neutral-500 whitespace-nowrap ml-2">
-                                    {formatTimeDisplay(ticket.createdAt)}
+                                    {formatTimeDisplay(ticket.updatedAt)}
                                 </span>
                             </div>
                             <h4 className="text-sm font-semibold text-white mb-1 truncate flex items-center gap-2">
