@@ -7,6 +7,7 @@ import ProductDetailModal from '../components/ProductDetailModal';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
+import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
     FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket
 } from 'react-icons/fa';
@@ -158,6 +159,10 @@ export const DashboardContent: FC = () => {
                         </AnimatedSection>
                     ))}
                 </div>
+
+                <AnimatedSection>
+                    <TrustpilotBanner />
+                </AnimatedSection>
 
                 <AnimatedSection>
                     <div className="flex justify-between items-center mb-6"><h2 className="text-2xl font-bold text-white">{t('dashboard.productsOfTheDay')}</h2><Link to="/dashboard/products" className="px-4 py-2 text-sm rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-semibold transition-colors hover:bg-neutral-800">{t('dashboard.viewAllProducts')}</Link></div>

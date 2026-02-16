@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, type FC } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FaStar, FaCheck, FaChartLine, FaPlayCircle, FaUsers, FaRocket, FaChevronRight,  FaLock, FaBolt  } from 'react-icons/fa';
+import { FaStar, FaCheck, FaChartLine, FaPlayCircle, FaUsers, FaRocket, FaChevronRight, FaLock, FaBolt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
@@ -73,7 +73,7 @@ const Header: FC = () => {
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            
+
             // Show header when at top
             if (currentScrollY < 10) {
                 setIsVisible(true);
@@ -84,7 +84,7 @@ const Header: FC = () => {
             } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 setIsVisible(false);
             }
-            
+
             setLastScrollY(currentScrollY);
         };
 
@@ -94,7 +94,7 @@ const Header: FC = () => {
 
     return (
         <>
-            <header 
+            <header
                 className="fixed top-0 left-0 right-0 z-50 px-6 pt-6 transition-transform duration-300 ease-in-out"
                 style={{ transform: isVisible ? 'translateY(0)' : 'translateY(-100%)' }}
             >
