@@ -9,7 +9,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -146,6 +146,10 @@ export const DashboardContent: FC = () => {
                     <p className="text-neutral-400 mt-1">{t('dashboard.welcomeSubtitle')}</p>
                 </AnimatedSection>
 
+                <AnimatedSection>
+                    <TrustpilotBanner />
+                </AnimatedSection>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {statCards.map((stat, i) => (
                         <AnimatedSection key={i} delay={`${i * 100}ms`}>
@@ -160,9 +164,7 @@ export const DashboardContent: FC = () => {
                     ))}
                 </div>
 
-                <AnimatedSection>
-                    <TrustpilotBanner />
-                </AnimatedSection>
+
 
                 <AnimatedSection>
                     <div className="flex justify-between items-center mb-6"><h2 className="text-2xl font-bold text-white">{t('dashboard.productsOfTheDay')}</h2><Link to="/dashboard/products" className="px-4 py-2 text-sm rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-semibold transition-colors hover:bg-neutral-800">{t('dashboard.viewAllProducts')}</Link></div>
@@ -246,6 +248,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
     const { data: user } = useUserProfile();
     const { logout } = useAuth();
     const location = useLocation();
+    const [isDiscordModalOpen, setIsDiscordModalOpen] = useState(false);
     const { t, i18n } = useTranslation();
     const isRtl = i18n.language === 'ar';
     const isAdmin = user?.accountType === 'ADMIN';
@@ -384,124 +387,203 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
     };
 
     return (
-        <aside className={sidebarClasses}>
-            <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
+        <>
+            <aside className={sidebarClasses}>
+                <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
 
-            {/* Academy Presentation Button */}
-            <div className="px-2 mb-6">
-                <button
-                    onClick={onOpenVideoModal}
-                    className="relative w-full group overflow-hidden rounded-xl p-[1px] transition-all hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.4)]"
-                >
-                    {/* Gradient Border */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Academy Presentation Button */}
+                <div className="px-2 mb-6">
+                    <button
+                        onClick={onOpenVideoModal}
+                        className="relative w-full group overflow-hidden rounded-xl p-[1px] transition-all hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.4)]"
+                    >
+                        {/* Gradient Border */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    {/* Inner Content */}
-                    <div className="relative flex items-center justify-center gap-2 w-full h-full bg-[#111317] group-hover:bg-[#16181d] rounded-xl px-4 py-3 transition-colors duration-300">
-                        <FaRocket className="text-purple-400 group-hover:text-pink-400 group-hover:scale-110 transition-transform duration-300" />
-                        <span className="font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-300 group-hover:from-white group-hover:to-white">
-                            {t('sidebar.academyPresentation', "Présentation de l'académie")}
-                        </span>
-                    </div>
-                </button>
-            </div>
+                        {/* Inner Content */}
+                        <div className="relative flex items-center justify-center gap-2 w-full h-full bg-[#111317] group-hover:bg-[#16181d] rounded-xl px-4 py-3 transition-colors duration-300">
+                            <FaRocket className="text-purple-400 group-hover:text-pink-400 group-hover:scale-110 transition-transform duration-300" />
+                            <span className="font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-300 group-hover:from-white group-hover:to-white">
+                                {t('sidebar.academyPresentation', "Présentation de l'académie")}
+                            </span>
+                        </div>
+                    </button>
 
-            <nav className="flex flex-col gap-4 overflow-y-auto flex-1 pr-2">
-                {sidebarGroups.map((group, groupIndex) => {
-                    // Filter groups: if group is adminOnly, user must be admin
-                    if (group.adminOnly && !isAdmin) return null;
+                    {/* Discord Server — Coming Soon */}
+                    <button
+                        onClick={() => setIsDiscordModalOpen(true)}
+                        className="relative w-full group overflow-hidden rounded-xl p-[1px] mt-3 transition-all hover:shadow-[0_0_20px_-5px_rgba(99,102,241,0.4)]"
+                    >
+                        {/* Gradient Border */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    // Filter items within group
-                    const visibleItems = group.items.filter(item => !item.adminOnly || isAdmin);
+                        {/* Inner Content */}
+                        <div className="relative flex items-center justify-between w-full h-full bg-[#111317] group-hover:bg-[#16181d] rounded-xl px-4 py-3 transition-colors duration-300">
+                            <div className="flex items-center gap-2">
+                                <FaDiscord className="text-indigo-400 group-hover:text-indigo-300 text-lg transition-colors duration-300" />
+                                <span className="font-bold text-sm text-neutral-300 group-hover:text-white transition-colors duration-300">
+                                    Discord
+                                </span>
+                            </div>
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 rounded-full px-2.5 py-0.5">
+                                <span className="relative flex h-1.5 w-1.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-400"></span>
+                                </span>
+                                Bientôt
+                            </span>
+                        </div>
+                    </button>
+                </div>
 
-                    if (visibleItems.length === 0) return null;
+                <nav className="flex flex-col gap-4 overflow-y-auto flex-1 pr-2">
+                    {sidebarGroups.map((group, groupIndex) => {
+                        // Filter groups: if group is adminOnly, user must be admin
+                        if (group.adminOnly && !isAdmin) return null;
 
-                    const isExpanded = expandedGroups[group.title];
+                        // Filter items within group
+                        const visibleItems = group.items.filter(item => !item.adminOnly || isAdmin);
 
-                    return (
-                        <div key={groupIndex} className="border-b border-neutral-800/50 pb-2 last:border-0">
-                            {/* Group Header / Toggle */}
-                            <button
-                                onClick={() => toggleGroup(group.title)}
-                                className="w-full flex items-center justify-between px-2 py-2 text-xs font-bold text-neutral-500 uppercase tracking-wider hover:text-white transition-colors focus:outline-none"
-                            >
-                                <span>{group.title}</span>
-                                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-                            </button>
+                        if (visibleItems.length === 0) return null;
 
-                            {/* Collapsible Content */}
-                            <div className={`flex flex-col gap-1 mt-1 transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                                {visibleItems.map((link) => {
-                                    const linkLabel = link.label || (link.nameKey ? t(`sidebar.nav.${link.nameKey}`) : '');
+                        const isExpanded = expandedGroups[group.title];
 
-                                    if (link.isExternal) {
+                        return (
+                            <div key={groupIndex} className="border-b border-neutral-800/50 pb-2 last:border-0">
+                                {/* Group Header / Toggle */}
+                                <button
+                                    onClick={() => toggleGroup(group.title)}
+                                    className="w-full flex items-center justify-between px-2 py-2 text-xs font-bold text-neutral-500 uppercase tracking-wider hover:text-white transition-colors focus:outline-none"
+                                >
+                                    <span>{group.title}</span>
+                                    {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+                                </button>
+
+                                {/* Collapsible Content */}
+                                <div className={`flex flex-col gap-1 mt-1 transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    {visibleItems.map((link) => {
+                                        const linkLabel = link.label || (link.nameKey ? t(`sidebar.nav.${link.nameKey}`) : '');
+
+                                        if (link.isExternal) {
+                                            return (
+                                                <a
+                                                    key={link.path}
+                                                    href={link.path}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    onClick={onNavigate}
+                                                    className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-neutral-400 hover:bg-[#1C1E22] hover:text-white text-sm"
+                                                >
+                                                    <span className="text-lg">{link.icon}</span> <span>{linkLabel}</span>
+                                                </a>
+                                            );
+                                        }
+
+                                        const isActive = location.pathname === link.path;
+                                        const badgeCount = getBadgeCount(link.path);
                                         return (
-                                            <a
+                                            <Link
                                                 key={link.path}
-                                                href={link.path}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                to={link.path}
                                                 onClick={onNavigate}
-                                                className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-neutral-400 hover:bg-[#1C1E22] hover:text-white text-sm"
+                                                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-sm ${isActive ? 'bg-neutral-800 text-white font-medium' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}
                                             >
-                                                <span className="text-lg">{link.icon}</span> <span>{linkLabel}</span>
-                                            </a>
+                                                <span className="text-lg relative">
+                                                    {link.icon}
+                                                    {badgeCount && badgeCount > 0 && (
+                                                        <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                                                            {badgeCount > 9 ? '9+' : badgeCount}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                                <span>{linkLabel}</span>
+                                            </Link>
                                         );
-                                    }
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </nav>
 
-                                    const isActive = location.pathname === link.path;
-                                    const badgeCount = getBadgeCount(link.path);
-                                    return (
-                                        <Link
-                                            key={link.path}
-                                            to={link.path}
-                                            onClick={onNavigate}
-                                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors duration-200 text-left text-sm ${isActive ? 'bg-neutral-800 text-white font-medium' : 'text-neutral-400 hover:bg-[#1C1E22] hover:text-white'}`}
-                                        >
-                                            <span className="text-lg relative">
-                                                {link.icon}
-                                                {badgeCount && badgeCount > 0 && (
-                                                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                                                        {badgeCount > 9 ? '9+' : badgeCount}
-                                                    </span>
-                                                )}
-                                            </span>
-                                            <span>{linkLabel}</span>
-                                        </Link>
-                                    );
-                                })}
+                <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-neutral-800">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C1E22]">
+                        <Link to="/dashboard/settings" onClick={onNavigate} className="flex items-center gap-3 flex-1 min-w-0 group cursor-pointer">
+                            {user?.avatarUrl ? (
+                                <img
+                                    src={user.avatarUrl}
+                                    alt={`${user?.firstName} ${user?.lastName}`}
+                                    className="w-10 h-10 rounded-full object-cover border border-neutral-700 group-hover:border-neutral-500 transition-colors"
+                                />
+                            ) : (
+                                <img
+                                    src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=random`}
+                                    alt={`${user?.firstName} ${user?.lastName}`}
+                                    className="w-10 h-10 rounded-full group-hover:opacity-80 transition-opacity"
+                                />
+                            )}
+                            <div className='min-w-0 flex-1'>
+                                <p className="font-semibold text-white truncate group-hover:text-neutral-300 transition-colors">{user?.firstName} {user?.lastName}</p>
+                                <p className="text-xs w-full text-neutral-400 truncate">{user?.email}</p>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className='flex ml-3 '><LanguageSwitcher /></div>
+                    <button onClick={logout} className="ml-3 cursor-pointer flex items-center gap-3 text-neutral-400 hover:text-white w-full text-left"><FaSignOutAlt /><span>{t('sidebar.logout')}</span></button>
+                </div>
+            </aside>
+
+            {/* Discord Coming Soon Modal */}
+            {
+                isDiscordModalOpen && (
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={() => setIsDiscordModalOpen(false)}>
+                        {/* Backdrop */}
+                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+                        {/* Modal */}
+                        <div
+                            className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-neutral-700/50 shadow-2xl"
+                            style={{ background: 'linear-gradient(145deg, #1a1c23 0%, #111317 50%, #0d0f13 100%)' }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Decorative gradient glow */}
+                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl" />
+                            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/15 rounded-full blur-3xl" />
+
+                            <div className="relative p-8 flex flex-col items-center text-center">
+                                {/* Icon */}
+                                <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5">
+                                    <FaDiscord className="text-indigo-400 text-3xl" />
+                                </div>
+
+                                {/* Badge */}
+                                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-indigo-500/10 border border-indigo-500/25 rounded-full px-4 py-1.5 mb-4">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-400"></span>
+                                    </span>
+                                    Coming Soon
+                                </span>
+
+                                {/* Text */}
+                                <h3 className="text-xl font-bold text-white mb-2">Serveur Discord</h3>
+                                <p className="text-neutral-400 text-sm leading-relaxed">
+                                    Notre communauté Discord est en cours de préparation. Vous serez notifié dès son ouverture !
+                                </p>
+
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => setIsDiscordModalOpen(false)}
+                                    className="mt-6 w-full py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm font-semibold text-white hover:bg-neutral-700 transition-colors"
+                                >
+                                    Compris !
+                                </button>
                             </div>
                         </div>
-                    );
-                })}
-            </nav>
-
-            <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-neutral-800">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1C1E22]">
-                    <Link to="/dashboard/settings" onClick={onNavigate} className="flex items-center gap-3 flex-1 min-w-0 group cursor-pointer">
-                        {user?.avatarUrl ? (
-                            <img
-                                src={user.avatarUrl}
-                                alt={`${user?.firstName} ${user?.lastName}`}
-                                className="w-10 h-10 rounded-full object-cover border border-neutral-700 group-hover:border-neutral-500 transition-colors"
-                            />
-                        ) : (
-                            <img
-                                src={`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=random`}
-                                alt={`${user?.firstName} ${user?.lastName}`}
-                                className="w-10 h-10 rounded-full group-hover:opacity-80 transition-opacity"
-                            />
-                        )}
-                        <div className='min-w-0 flex-1'>
-                            <p className="font-semibold text-white truncate group-hover:text-neutral-300 transition-colors">{user?.firstName} {user?.lastName}</p>
-                            <p className="text-xs w-full text-neutral-400 truncate">{user?.email}</p>
-                        </div>
-                    </Link>
-                </div>
-                <div className='flex ml-3 '><LanguageSwitcher /></div>
-                <button onClick={logout} className="ml-3 cursor-pointer flex items-center gap-3 text-neutral-400 hover:text-white w-full text-left"><FaSignOutAlt /><span>{t('sidebar.logout')}</span></button>
-            </div>
-        </aside>
+                    </div>
+                )
+            }
+        </>
     );
 };
 
