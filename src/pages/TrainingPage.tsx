@@ -49,8 +49,8 @@ export const TrainingPage: FC = () => {
         if (!showOwnedOnly) return courses;
         return courses?.filter(course => {
             const isFreeCourse = course.price === null || course.price === 0;
-            // Admins & Subscribers own everything
-            return isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
+            // Paid courses require explicit purchase — subscribers only own free courses
+            return isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber) || isFreeCourse;
         });
     }, [courses, showOwnedOnly, isAdmin, isSubscriber, purchasedCourseIds]);
 
@@ -60,7 +60,8 @@ export const TrainingPage: FC = () => {
 
     const renderCourseCard = (course: VideoCourse) => {
         const isFreeCourse = course.price === null || course.price === 0;
-        const hasAccess = isAdmin || isSubscriber || purchasedCourseIds.has(course.id) || isFreeCourse;
+        // Paid courses require explicit purchase — subscribers only get free courses
+        const hasAccess = isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber) || isFreeCourse;
 
         return (
             <CourseCard
