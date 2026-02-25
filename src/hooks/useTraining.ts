@@ -112,3 +112,15 @@ export const useMarkCourseSeen = () => {
     }
   });
 };
+
+export const useHotmartCourseUrl = () => {
+  return useQuery<string | null>({
+    queryKey: ['hotmartCourseUrl'],
+    queryFn: async () => {
+      const res = await apiClient.get('/payment/hotmart-course-url');
+      return res.data.url || null;
+    },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  });
+};

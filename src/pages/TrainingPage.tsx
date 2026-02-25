@@ -1,5 +1,5 @@
 import { useState, useMemo, type FC } from 'react';
-import { useCourses, useMarkCourseSeen, type VideoCourse } from '../hooks/useTraining';
+import { useCourses, useMarkCourseSeen, useHotmartCourseUrl, type VideoCourse } from '../hooks/useTraining';
 import { useUserProfile } from '../hooks/useUser';
 import { FaSort, FaGlobe, FaBookReader, FaSearch } from 'react-icons/fa';
 import { Elements } from '@stripe/react-stripe-js';
@@ -34,6 +34,7 @@ export const TrainingPage: FC = () => {
         language: languageFilter,
     });
     const { data: userProfile, refetch: refetchUser } = useUserProfile();
+    const { data: hotmartCourseUrl } = useHotmartCourseUrl();
 
     // Updated Access Logic: Admins, Active Subs, Lifetime, Trialing
     const isSubscriber =
@@ -70,7 +71,17 @@ export const TrainingPage: FC = () => {
                     if (course.isNew) markCourseSeen(course.id);
                     navigate(`/dashboard/training/${course.id}`);
                 }}
-                onBuy={() => setCourseToBuy(course)}
+                onBuy={() => {
+                    // Redirect to Hotmart with tracking params
+                    if (hotmartCourseUrl && userProfile) {
+                        const fullName = `${userProfile.firstName} ${userProfile.lastName}`;
+                        const url = `${hotmartCourseUrl}?email=${encodeURIComponent(userProfile.email)}&name=${encodeURIComponent(fullName)}&sck=COURSE_${course.id}`;
+                        window.open(url, '_blank');
+                    } else {
+                        // Fallback to Stripe modal if no Hotmart URL configured
+                        setCourseToBuy(course);
+                    }
+                }}
             />
         );
     };
