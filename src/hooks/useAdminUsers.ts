@@ -7,8 +7,8 @@ export interface AdminUser {
     firstName: string;
     lastName: string;
     email: string;
-    phone?: string | null; 
-    subscriptionStatus: 'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'UNPAID' | 'INCOMPLETE' | 'LIFETIME_ACCESS';
+    phone?: string | null;
+    subscriptionStatus: 'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'UNPAID' | 'INCOMPLETE' | 'LIFETIME_ACCESS' | 'SMMA_ONLY';
     installmentsPaid: number;
     installmentsRequired: number;
     createdAt: string;
@@ -22,7 +22,7 @@ export interface AdminUser {
         date: string;
         amount: number;
         currency: string;
-    }[]; 
+    }[];
     // -----------------------------------------------------------
     referrer?: {
         id: string;
@@ -84,7 +84,7 @@ interface UsersResponse {
 
 export const useAdminUsers = (page: number, filters: UserFilters) => {
     return useQuery<UsersResponse>({
-        queryKey: ['adminUsers', page, filters], 
+        queryKey: ['adminUsers', page, filters],
         queryFn: async () => {
             const response = await apiClient.get('/admin/users', {
                 params: {

@@ -79,7 +79,7 @@ interface User {
   totalVisitsCount: number;
   hasPaid: boolean;
   // --- UPDATED STATUSES ---
-  subscriptionStatus: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE' | 'LIFETIME_ACCESS';
+  subscriptionStatus: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE' | 'LIFETIME_ACCESS' | 'SMMA_ONLY';
   currentPeriodEnd: string | null;
   // --- NEW FIELDS ---
   installmentsPaid: number;
