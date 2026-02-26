@@ -49,8 +49,8 @@ export const TrainingPage: FC = () => {
         if (!showOwnedOnly) return courses;
         return courses?.filter(course => {
             const isFreeCourse = course.price === null || course.price === 0;
-            // Paid courses require explicit purchase — subscribers only own free courses
-            return isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber) || isFreeCourse;
+            // Free courses require subscription — paid courses require explicit purchase
+            return isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber);
         });
     }, [courses, showOwnedOnly, isAdmin, isSubscriber, purchasedCourseIds]);
 
@@ -58,10 +58,12 @@ export const TrainingPage: FC = () => {
     const mainCourses = useMemo(() => filteredCourses?.filter(c => !c.category || c.category === 'MAIN') || [], [filteredCourses]);
     const archiveCourses = useMemo(() => filteredCourses?.filter(c => c.category === 'ARCHIVE') || [], [filteredCourses]);
 
+    const ACADEMY_HOTMART_URL = 'https://pay.hotmart.com/U103378139T';
+
     const renderCourseCard = (course: VideoCourse) => {
         const isFreeCourse = course.price === null || course.price === 0;
-        // Paid courses require explicit purchase — subscribers only get free courses
-        const hasAccess = isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber) || isFreeCourse;
+        // Free courses require subscription — paid courses require explicit purchase
+        const hasAccess = isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber);
 
         return (
             <CourseCard
@@ -73,14 +75,16 @@ export const TrainingPage: FC = () => {
                     navigate(`/dashboard/training/${course.id}`);
                 }}
                 onBuy={() => {
-                    // Redirect to Hotmart with tracking params
-                    if (hotmartCourseUrl && userProfile) {
-                        const fullName = `${userProfile.firstName} ${userProfile.lastName}`;
-                        const url = `${hotmartCourseUrl}?email=${encodeURIComponent(userProfile.email)}&name=${encodeURIComponent(fullName)}&sck=COURSE_${course.id}`;
-                        window.open(url, '_blank');
+                    if (!userProfile) return;
+                    const email = encodeURIComponent(userProfile.email);
+                    const fullName = encodeURIComponent(`${userProfile.firstName} ${userProfile.lastName}`);
+
+                    if (!isFreeCourse && hotmartCourseUrl) {
+                        // Paid course (SMMA) → redirect to SMMA Hotmart URL
+                        window.open(`${hotmartCourseUrl}?email=${email}&name=${fullName}`, '_blank');
                     } else {
-                        // Fallback to Stripe modal if no Hotmart URL configured
-                        setCourseToBuy(course);
+                        // Free course locked (no subscription) → redirect to Academy Hotmart URL (980€)
+                        window.open(`${ACADEMY_HOTMART_URL}?email=${email}&name=${fullName}`, '_blank');
                     }
                 }}
             />

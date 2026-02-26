@@ -20,9 +20,14 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
 
     const locale = i18n.language === 'fr' ? 'fr-FR' : (i18n.language === 'ar' ? 'ar-AE' : 'en-US');
     const isFree = course.price === 0 || course.price === null;
-    const formattedPrice = !isFree && course.currency
-        ? new Intl.NumberFormat(locale, { style: 'currency', currency: course.currency }).format(course.price!)
-        : t('trainingPage.courseCard.free');
+
+    // If user has no access to a free course, show the academy price (980€) instead of "Free"
+    const showAcademyPrice = isFree && !hasAccess;
+    const formattedPrice = showAcademyPrice
+        ? new Intl.NumberFormat(locale, { style: 'currency', currency: 'eur' }).format(980)
+        : (!isFree && course.currency
+            ? new Intl.NumberFormat(locale, { style: 'currency', currency: course.currency }).format(course.price!)
+            : t('trainingPage.courseCard.free'));
 
     return (
         <GlassCard className="flex flex-col h-full" padding="p-0">
@@ -84,9 +89,9 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
                                         e.stopPropagation();
                                         onBuy();
                                     }}
-                                    className={`px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors ${isFree ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-white text-black hover:bg-gray-200'}`}
+                                    className={`px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors ${(isFree && !showAcademyPrice) ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-white text-black hover:bg-gray-200'}`}
                                 >
-                                    {isFree ? t('trainingPage.courseCard.getFreeButton') : t('trainingPage.courseCard.buyButton')}
+                                    {(isFree && !showAcademyPrice) ? t('trainingPage.courseCard.getFreeButton') : t('trainingPage.courseCard.buyButton')}
                                 </button>
                             </>
                         )}

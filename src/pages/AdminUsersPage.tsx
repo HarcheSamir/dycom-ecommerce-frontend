@@ -77,6 +77,11 @@ const UserStatusBadge = ({ status }: { status: string }) => {
             'text-yellow-200',
             <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 mr-2" />
         ],
+        SMMA_ONLY: [
+            'bg-pink-500/20 border-pink-500/40',
+            'text-pink-200',
+            <FaCrown className="mr-1.5 text-pink-400" size={10} />
+        ],
     };
 
     const [styleClass, textClass, icon] = config[status] || config['INCOMPLETE'];
@@ -86,6 +91,7 @@ const UserStatusBadge = ({ status }: { status: string }) => {
     else if (status === 'LIFETIME_ACCESS') label = "LIFETIME";
     else if (status === 'PAST_DUE') label = "FAILED";
     else if (status === 'CANCELED') label = "CANCELED";
+    else if (status === 'SMMA_ONLY') label = "SMMA";
     else label = status.replace('_', ' ');
 
     return (
@@ -153,7 +159,7 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [status, setStatus] = useState<'LIFETIME' | 'ACTIVE'>('LIFETIME');
+    const [status, setStatus] = useState<'LIFETIME' | 'ACTIVE' | 'SMMA'>('LIFETIME');
     const [installmentsPaid, setInstallmentsPaid] = useState(0);
     const [installmentsRequired, setInstallmentsRequired] = useState(1);
     const [stripeSubscriptionId, setStripeSubscriptionId] = useState('');
@@ -201,8 +207,8 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
             <div className="bg-[#1C1E22] border border-neutral-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative">
                 <button onClick={onClose} className="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    {status === 'LIFETIME' ? <FaCrown className="text-purple-400" /> : <FaUser className="text-blue-400" />}
-                    {status === 'LIFETIME' ? 'Créer un Utilisateur à Vie' : 'Créer un Utilisateur Actif'}
+                    {status === 'LIFETIME' ? <FaCrown className="text-purple-400" /> : status === 'SMMA' ? <FaCrown className="text-pink-400" /> : <FaUser className="text-blue-400" />}
+                    {status === 'LIFETIME' ? 'Créer un Utilisateur à Vie' : status === 'SMMA' ? 'Créer un Utilisateur SMMA' : 'Créer un Utilisateur Actif'}
                 </h2>
 
                 {/* Status Toggle */}
@@ -213,6 +219,13 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
                         className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${status === 'LIFETIME' ? 'bg-purple-600 text-white shadow' : 'text-neutral-400 hover:text-white'}`}
                     >
                         LIFETIME
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setStatus('SMMA')}
+                        className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${status === 'SMMA' ? 'bg-pink-600 text-white shadow' : 'text-neutral-400 hover:text-white'}`}
+                    >
+                        SMMA
                     </button>
                     <button
                         type="button"
@@ -267,9 +280,9 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`w-full font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${status === 'LIFETIME' ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'}`}
+                            className={`w-full font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${status === 'LIFETIME' ? 'bg-purple-600 hover:bg-purple-500 text-white' : status === 'SMMA' ? 'bg-pink-600 hover:bg-pink-500 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'}`}
                         >
-                            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (status === 'LIFETIME' ? "Accorder l'Accès à Vie" : "Créer l'Utilisateur Actif")}
+                            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : (status === 'LIFETIME' ? "Accorder l'Accès à Vie" : status === 'SMMA' ? "Créer l'Utilisateur SMMA" : "Créer l'Utilisateur Actif")}
                         </button>
                     </div>
                 </form>
@@ -419,6 +432,7 @@ export const AdminUsersPage: React.FC = () => {
                                 { value: 'ACTIVE', label: t('adminUsers.filters.statusActive') },
                                 { value: 'PAST_DUE', label: t('adminUsers.filters.statusPastDue') },
                                 { value: 'LIFETIME_ACCESS', label: t('adminUsers.filters.statusLifetime') },
+                                { value: 'SMMA_ONLY', label: 'SMMA Only' },
                                 { value: 'CANCELED', label: t('adminUsers.filters.statusCanceled') },
                                 { value: 'INCOMPLETE', label: t('adminUsers.filters.statusIncomplete') },
                             ]}
