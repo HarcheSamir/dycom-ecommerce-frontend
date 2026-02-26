@@ -308,6 +308,12 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
 
     const sidebarGroups: NavGroup[] = [
         {
+            title: "🏠 Accueil",
+            items: [
+                { nameKey: 'home', label: 'Tableau de bord', icon: <FaTachometerAlt />, path: '/dashboard' },
+            ]
+        },
+        {
             title: "🔐 Admin",
             adminOnly: true,
             items: [
@@ -418,7 +424,9 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
     return (
         <>
             <aside className={sidebarClasses}>
-                <div className="flex items-center gap-3 mb-6 mt-4 "> <img className='w-[80%]' src='/logo2.png' alt='logo' /></div>
+                <Link to="/dashboard" onClick={onNavigate} className="flex items-center gap-3 mb-6 mt-4 cursor-pointer hover:opacity-80 transition-opacity">
+                    <img className='w-[80%]' src='/logo2.png' alt='logo' />
+                </Link>
 
                 {/* Academy Presentation Button */}
                 <div className="px-2 mb-6">
@@ -721,13 +729,15 @@ const DashboardPage: FC = () => {
                     {isSidebarOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>}
                     <Sidebar isOpen={isSidebarOpen} onNavigate={handleNavigate} onOpenVideoModal={() => setIsVideoModalOpen(true)} />
                     <div className="flex-1 flex flex-col min-w-0 ">
-                        {/* MODIFICATION: Conditionally position the mobile menu button */}
-                        <button
-                            onClick={() => setIsSidebarOpen(true)}
-                            className={`md:hidden absolute top-5 z-20 p-2 bg-[#1C1E22] rounded-md text-white ${isRtl ? 'right-5' : 'left-5'}`}
-                        >
-                            <FaBars />
-                        </button>
+                        {/* Mobile menu button — sticky bar */}
+                        <div className={`md:hidden sticky top-0 z-20 p-3 bg-[#030712]/90 backdrop-blur-md border-b border-neutral-800/50 ${isRtl ? 'text-right' : 'text-left'}`}>
+                            <button
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="p-2.5 bg-[#1C1E22] rounded-lg text-white border border-neutral-700 hover:bg-neutral-800 transition-colors"
+                            >
+                                <FaBars />
+                            </button>
+                        </div>
                         <Outlet />
                     </div>
                     {/* Floating Support Widget */}
