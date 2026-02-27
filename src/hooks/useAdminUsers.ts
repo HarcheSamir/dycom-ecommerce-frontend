@@ -132,7 +132,7 @@ export const useAdminUserDetails = (userId: string | undefined) => {
 export const useUpdateUserSubscription = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: { userId: string, subscriptionStatus: string, installmentsPaid: number, installmentsRequired: number }) =>
+        mutationFn: (data: { userId: string, subscriptionStatus: string, installmentsPaid: number, installmentsRequired: number, currentPeriodEnd?: string | null }) =>
             apiClient.put(`/admin/users/${data.userId}/subscription`, data),
         onSuccess: (_, variables) => {
             toast.success('User subscription details updated.');

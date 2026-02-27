@@ -658,6 +658,7 @@ export const ComingSoonPage: FC<{ pageTitle: string }> = ({ pageTitle }) => {
 const DashboardPage: FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+    const [showPastDueModal, setShowPastDueModal] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { data: userProfile, isLoading: isProfileLoading } = useUserProfile();
@@ -684,6 +685,18 @@ const DashboardPage: FC = () => {
         const isAdmin = userProfile?.accountType === 'ADMIN';
         const isOnBillingPage = location.pathname === '/dashboard/billing';
         const isOnSupportPage = location.pathname.startsWith('/dashboard/support');
+
+        // Show blocking popup for PAST_DUE users (installment expired)
+        if (!isAdmin && status === 'PAST_DUE') {
+            setShowPastDueModal(true);
+            // Only allow billing and support pages for PAST_DUE users
+            if (!isOnBillingPage && !isOnSupportPage) {
+                navigate('/dashboard/billing', { replace: true });
+            }
+            return;
+        } else {
+            setShowPastDueModal(false);
+        }
 
         // Redirect non-subscribers to billing
         if (!isAdmin && status !== 'ACTIVE' && status !== 'TRIALING' && status !== 'LIFETIME_ACCESS' && status !== 'SMMA_ONLY' && !isOnBillingPage && !isOnSupportPage) {
@@ -721,6 +734,83 @@ const DashboardPage: FC = () => {
 
                 {showWelcomeModal && (
                     <WelcomeModal onClose={() => {/* Logic handled inside component via mutation */ }} />
+                )}
+
+                {/* PAST_DUE Blocking Modal */}
+                {showPastDueModal && (
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)' }}>
+                        <div
+                            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-red-500/30 shadow-2xl"
+                            style={{ background: 'linear-gradient(145deg, #1a1c23 0%, #111317 50%, #0d0f13 100%)' }}
+                        >
+                            {/* Decorative glow */}
+                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/15 rounded-full blur-3xl" />
+                            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
+
+                            <div className="relative p-8 flex flex-col items-center text-center">
+                                {/* Warning Icon */}
+                                <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                                    <FaExclamationTriangle className="text-red-400 text-3xl" />
+                                </div>
+
+                                {/* Badge */}
+                                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-300 bg-red-500/10 border border-red-500/25 rounded-full px-4 py-1.5 mb-4">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400"></span>
+                                    </span>
+                                    Paiement en retard
+                                </span>
+
+                                {/* Title & Description */}
+                                <h3 className="text-2xl font-bold text-white mb-3">Accès suspendu</h3>
+                                <p className="text-neutral-400 text-sm leading-relaxed mb-2">
+                                    Votre période d'abonnement est arrivée à expiration.
+                                </p>
+                                <p className="text-neutral-400 text-sm leading-relaxed mb-6">
+                                    Veuillez procéder au paiement de votre prochaine mensualité pour restaurer votre accès.
+                                </p>
+
+                                {/* Installment Progress */}
+                                {userProfile && userProfile.installmentsRequired > 1 && (
+                                    <div className="w-full bg-neutral-800/50 border border-neutral-700 rounded-xl p-4 mb-6">
+                                        <div className="flex justify-between text-xs text-neutral-400 mb-2">
+                                            <span>Progression</span>
+                                            <span className="text-white font-bold">{userProfile.installmentsPaid} / {userProfile.installmentsRequired}</span>
+                                        </div>
+                                        <div className="w-full bg-neutral-700 rounded-full h-2.5">
+                                            <div
+                                                className="h-2.5 rounded-full bg-gradient-to-r from-red-500 to-orange-500"
+                                                style={{ width: `${Math.min((userProfile.installmentsPaid / userProfile.installmentsRequired) * 100, 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* CTA Buttons */}
+                                <button
+                                    onClick={() => { setShowPastDueModal(false); navigate('/dashboard/billing'); }}
+                                    className="w-full py-3 rounded-xl bg-white text-black font-bold text-sm hover:bg-gray-200 transition-colors mb-3 shadow-lg shadow-white/10"
+                                >
+                                    Voir ma facturation
+                                </button>
+                                <a
+                                    href="https://wa.me/message/SCESABMUBCVOF1"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-sm font-semibold text-[#25D366] hover:bg-[#25D366]/20 transition-colors mb-3 flex items-center justify-center gap-2"
+                                >
+                                    <FaWhatsapp size={18} /> Contacter sur WhatsApp
+                                </a>
+                                <button
+                                    onClick={() => { setShowPastDueModal(false); navigate('/dashboard/support'); }}
+                                    className="w-full py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm font-semibold text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                                >
+                                    Email de support
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 )}
 
                 <div className={`flex w-full ${showWelcomeModal ? 'blur-sm pointer-events-none h-screen overflow-hidden' : ''}`}>

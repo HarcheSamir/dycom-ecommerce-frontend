@@ -145,7 +145,77 @@ export const BillingPage: FC = () => {
 
         const status = userProfile?.subscriptionStatus;
 
-        // 1. Has Valid Subscription
+        // 1. PAST_DUE - Show overdue warning card
+        if (status === 'PAST_DUE') {
+            const paid = userProfile?.installmentsPaid || 0;
+            const required = userProfile?.installmentsRequired || 1;
+            const progressPercent = Math.min((paid / required) * 100, 100);
+
+            return (
+                <div className="w-full max-w-xl mx-auto">
+                    <GlassCard className="border-red-500/30">
+                        <div className="p-6">
+                            <div className="text-center mb-6">
+                                <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
+                                    <FaExclamationTriangle className="text-red-400 text-3xl" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">Paiement en retard</h3>
+                                <p className="text-neutral-400 text-sm max-w-sm mx-auto">
+                                    Votre période d'abonnement est arrivée à expiration. Votre accès est suspendu jusqu'au prochain paiement.
+                                </p>
+                            </div>
+
+                            {/* Installment Progress */}
+                            <div className="bg-[#111317] border border-neutral-800 rounded-2xl p-5 mb-6">
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-sm text-neutral-400">Progression des paiements</span>
+                                    <span className="text-white font-bold">{paid} / {required}</span>
+                                </div>
+                                <div className="w-full bg-neutral-800 rounded-full h-3 overflow-hidden">
+                                    <div
+                                        className="h-3 rounded-full transition-all duration-1000 bg-gradient-to-r from-red-500 to-orange-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                                        style={{ width: `${progressPercent}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-xs text-red-400 mt-3 text-center font-medium">
+                                    ⚠️ Mensualité {paid + 1} en attente de paiement
+                                </p>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="space-y-3">
+                                <button
+                                    onClick={handleBuyNow}
+                                    className="w-full py-4 rounded-xl bg-white text-black font-bold text-lg transition-all hover:bg-gray-200 shadow-lg shadow-white/10 transform hover:scale-[1.02]"
+                                >
+                                    Payer maintenant
+                                </button>
+                                <a
+                                    href="/dashboard/support"
+                                    className="block w-full py-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center text-sm font-semibold text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                                >
+                                    Contacter le support
+                                </a>
+                            </div>
+
+                            {/* Payment methods */}
+                            <div className="mt-6 text-center border-t border-neutral-800 pt-5">
+                                <div className="flex justify-center items-center gap-4 text-neutral-400">
+                                    <FaCcVisa size={24} />
+                                    <FaCcMastercard size={24} />
+                                    <FaCcPaypal size={24} />
+                                    <div className="flex items-center gap-1 font-bold text-white bg-pink-500/10 px-2 py-1 rounded">
+                                        <SiKlarna size={18} className="text-pink-500" /> <span className="text-xs text-pink-500">Klarna.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </GlassCard>
+                </div>
+            );
+        }
+
+        // 2. Has Valid Subscription
         if (status === 'ACTIVE' || status === 'TRIALING' || status === 'LIFETIME_ACCESS') {
             return (
                 <div className="w-full max-w-xl mx-auto">
@@ -157,7 +227,7 @@ export const BillingPage: FC = () => {
         }
         const { data: priceData, isLoading: isPriceLoading } = useHotmartPrice();
         const displayPrice = isPriceLoading ? "..." : (priceData?.formatted || "981,00 €");
-        // 2. No Subscription - Show the FULL PRICING CARD
+        // 3. No Subscription - Show the FULL PRICING CARD
         return (
             <div className="w-full max-w-md mx-auto">
                 <GlassCard className="border-primary/50 shadow-2xl shadow-primary/10 bg-neutral-900/40">

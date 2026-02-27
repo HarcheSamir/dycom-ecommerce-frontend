@@ -29,6 +29,7 @@ const AdminUserDetailsPage = () => {
     const [instReq, setInstReq] = useState(1);
     const [stripeSubId, setStripeSubId] = useState('');
     const [stripePayId, setStripePayId] = useState('');
+    const [periodEnd, setPeriodEnd] = useState('');
 
     useEffect(() => {
         if (data?.user) {
@@ -36,6 +37,11 @@ const AdminUserDetailsPage = () => {
             setInstPaid(data.user.installmentsPaid);
             setInstReq(data.user.installmentsRequired);
             setStripeSubId(data.user.stripeSubscriptionId || '');
+            if (data.user.currentPeriodEnd) {
+                setPeriodEnd(data.user.currentPeriodEnd.split('T')[0]);
+            } else {
+                setPeriodEnd('');
+            }
         }
     }, [data]);
 
@@ -66,12 +72,22 @@ const AdminUserDetailsPage = () => {
     // --- Handlers ---
     const handleManualUpdate = () => {
         if (!userId) return;
-        updateSubscription({
+
+        // Check if the date string changed from what the server gave us
+        const originalDate = data?.user?.currentPeriodEnd ? data.user.currentPeriodEnd.split('T')[0] : '';
+        const payload: any = {
             userId,
             subscriptionStatus: status,
             installmentsPaid: instPaid,
             installmentsRequired: instReq
-        });
+        };
+
+        // If explicitly modified (or cleared -> null), send it. If empty string -> null
+        if (periodEnd !== originalDate) {
+            payload.currentPeriodEnd = periodEnd || null;
+        }
+
+        updateSubscription(payload);
     };
 
     const handleSyncSubscription = () => {
@@ -184,9 +200,34 @@ const AdminUserDetailsPage = () => {
                                             <option value="PAST_DUE">PAST_DUE</option>
                                             <option value="CANCELED">CANCELED</option>
                                             <option value="LIFETIME_ACCESS">LIFETIME_ACCESS</option>
+                                            <option value="SMMA_ONLY">SMMA_ONLY</option>
                                             <option value="TRIALING">TRIALING</option>
                                             <option value="INCOMPLETE">INCOMPLETE</option>
                                         </select>
+                                    </div>
+
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="text-[10px] text-neutral-500 block">Current Period End</label>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const d = new Date();
+                                                    d.setDate(d.getDate() + 30);
+                                                    setPeriodEnd(d.toISOString().split('T')[0]);
+                                                }}
+                                                className="text-[9px] text-blue-400 hover:text-blue-300 font-bold"
+                                            >
+                                                +30 Days
+                                            </button>
+                                        </div>
+                                        <input
+                                            type="date"
+                                            value={periodEnd}
+                                            onChange={e => setPeriodEnd(e.target.value)}
+                                            className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none [color-scheme:dark]"
+                                        />
+                                        <p className="text-[9px] text-neutral-500 mt-1">If blank, access is permanent (unless PAST_DUE).</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-3">

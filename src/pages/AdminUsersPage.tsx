@@ -164,6 +164,15 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
     const [installmentsRequired, setInstallmentsRequired] = useState(1);
     const [stripeSubscriptionId, setStripeSubscriptionId] = useState('');
     const [stripePaymentId, setStripePaymentId] = useState('');
+    const [hasMensualities, setHasMensualities] = useState(false);
+
+    // Default currentPeriodEnd to today + 30 days
+    const getDefault30Days = () => {
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        return d.toISOString().split('T')[0]; // YYYY-MM-DD format
+    };
+    const [currentPeriodEnd, setCurrentPeriodEnd] = useState(getDefault30Days());
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -178,10 +187,11 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
                 firstName,
                 lastName,
                 status,
-                installmentsPaid,
-                installmentsRequired,
-                stripeSubscriptionId,
-                stripePaymentId
+                installmentsPaid: status === 'SMMA' && !hasMensualities ? 0 : installmentsPaid,
+                installmentsRequired: status === 'SMMA' && !hasMensualities ? 0 : installmentsRequired,
+                stripeSubscriptionId: status === 'SMMA' && !hasMensualities ? '' : stripeSubscriptionId,
+                stripePaymentId: status === 'SMMA' && !hasMensualities ? '' : stripePaymentId,
+                ...((status === 'ACTIVE' || (status === 'SMMA' && hasMensualities)) && !stripeSubscriptionId ? { currentPeriodEnd: currentPeriodEnd || null } : { currentPeriodEnd: null })
             });
             toast.success('Utilisateur créé/mis à jour avec succès !');
             onSuccess();
@@ -195,6 +205,8 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
             setInstallmentsRequired(1);
             setStripeSubscriptionId('');
             setStripePaymentId('');
+            setHasMensualities(false);
+            setCurrentPeriodEnd(getDefault30Days());
         } catch (error: any) {
             toast.error(error.response?.data?.error || "Échec de la création de l'utilisateur");
         } finally {
@@ -252,7 +264,20 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
                         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="user@example.com" />
                     </div>
 
-                    {status === 'ACTIVE' && (
+                    {status === 'SMMA' && (
+                        <div className="flex items-center justify-between bg-[#111317] border border-neutral-700 p-3 rounded-lg">
+                            <div>
+                                <h3 className="text-sm font-bold text-white">Activer les mensualités</h3>
+                                <p className="text-[10px] text-neutral-500">Si désactivé, l'utilisateur aura un accès à vie au programme complet.</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" className="sr-only peer" checked={hasMensualities} onChange={(e) => setHasMensualities(e.target.checked)} />
+                                <div className="w-9 h-5 bg-neutral-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-pink-600"></div>
+                            </label>
+                        </div>
+                    )}
+
+                    {(status === 'ACTIVE' || (status === 'SMMA' && hasMensualities)) && (
                         <div className="space-y-4 pt-2 border-t border-neutral-700">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
@@ -273,6 +298,22 @@ const CreateUserModal: React.FC<{ isOpen: boolean; onClose: () => void; onSucces
                                 <p className="text-[10px] text-neutral-500 mb-1">If provided, creates a transaction record.</p>
                                 <input type="text" value={stripePaymentId} onChange={(e) => setStripePaymentId(e.target.value)} className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none" placeholder="pi_..." />
                             </div>
+                            {/* Period End Date - only shown when no Stripe subscription */}
+                            {!stripeSubscriptionId && (
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <label className="block text-xs font-bold text-neutral-500 uppercase">Fin de période</label>
+                                        <button type="button" onClick={() => setCurrentPeriodEnd('')} className="text-[10px] font-bold text-blue-400 hover:text-blue-300">Clear (Access Permanent)</button>
+                                    </div>
+                                    <p className="text-[10px] text-neutral-500 mb-1">L'accès sera suspendu après cette date. Laissez vide pour un accès illimité.</p>
+                                    <input
+                                        type="date"
+                                        value={currentPeriodEnd}
+                                        onChange={(e) => setCurrentPeriodEnd(e.target.value)}
+                                        className="w-full bg-[#111317] border border-neutral-600 rounded-lg p-2.5 text-white focus:border-blue-500 focus:outline-none [color-scheme:dark]"
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
 
