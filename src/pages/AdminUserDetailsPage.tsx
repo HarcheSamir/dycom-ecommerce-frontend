@@ -188,9 +188,11 @@ const AdminUserDetailsPage = () => {
                                     <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Manual Override</span>
                                 </div>
 
-                                <div className="space-y-3 bg-black/20 p-4 rounded-xl border border-neutral-800">
+                                <div className="space-y-4 bg-black/20 p-4 rounded-xl border border-neutral-800">
+
+                                    {/* Status Dropdown */}
                                     <div>
-                                        <label className="text-[10px] text-neutral-500 block mb-1">Subscription Status</label>
+                                        <label className="text-[10px] text-neutral-500 block mb-1.5">Subscription Status</label>
                                         <select
                                             value={status}
                                             onChange={e => setStatus(e.target.value)}
@@ -204,11 +206,28 @@ const AdminUserDetailsPage = () => {
                                             <option value="TRIALING">TRIALING</option>
                                             <option value="INCOMPLETE">INCOMPLETE</option>
                                         </select>
+
+                                        {/* Contextual notes — only when CHANGING status */}
+                                        {status !== user.subscriptionStatus && (
+                                            <p className={`text-[10px] mt-1.5 font-medium ${status === 'CANCELED' || status === 'INCOMPLETE' ? 'text-red-400' :
+                                                status === 'LIFETIME_ACCESS' ? 'text-purple-400' :
+                                                    status === 'ACTIVE' || status === 'SMMA_ONLY' ? 'text-green-400' :
+                                                        'text-neutral-500'
+                                                }`}>
+                                                {status === 'CANCELED' && '⚠ User will lose platform access immediately.'}
+                                                {status === 'INCOMPLETE' && '⚠ User will lose platform access immediately.'}
+                                                {status === 'LIFETIME_ACCESS' && '👑 Permanent access — Stripe subscription will be unlinked.'}
+                                                {status === 'ACTIVE' && '✓ User will regain platform access.'}
+                                                {status === 'SMMA_ONLY' && '✓ User will have SMMA-only access.'}
+                                                {status === 'PAST_DUE' && '⚠ User will be flagged as past due.'}
+                                            </p>
+                                        )}
                                     </div>
 
+                                    {/* Period End */}
                                     <div>
-                                        <div className="flex items-center justify-between mb-1">
-                                            <label className="text-[10px] text-neutral-500 block">Current Period End</label>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="text-[10px] text-neutral-500">Current Period End</label>
                                             <button
                                                 type="button"
                                                 onClick={() => {
@@ -227,27 +246,55 @@ const AdminUserDetailsPage = () => {
                                             onChange={e => setPeriodEnd(e.target.value)}
                                             className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none [color-scheme:dark]"
                                         />
-                                        <p className="text-[9px] text-neutral-500 mt-1">If blank, access is permanent (unless PAST_DUE).</p>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="text-[10px] text-neutral-500 block mb-1">Installments Paid</label>
-                                            <input
-                                                type="number"
-                                                value={instPaid}
-                                                onChange={e => setInstPaid(Number(e.target.value))}
-                                                className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
+                                    {/* Installments — compact row */}
+                                    <div className="pt-1 border-t border-neutral-800/50">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-[10px] text-neutral-500">Installments</label>
+                                            <span className={`text-[10px] font-bold tabular-nums ${instReq > 0 && instPaid >= instReq ? 'text-green-400' : 'text-neutral-400'}`}>
+                                                {instPaid} / {instReq} {instReq > 0 && instPaid >= instReq ? '✓' : ''}
+                                            </span>
+                                        </div>
+
+                                        {/* Progress bar */}
+                                        <div className="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden mb-3">
+                                            <div
+                                                className={`h-full rounded-full transition-all duration-300 ${instReq > 0 && instPaid >= instReq ? 'bg-green-500' : 'bg-blue-500'}`}
+                                                style={{ width: instReq > 0 ? `${Math.min(100, (instPaid / instReq) * 100)}%` : '0%' }}
                                             />
                                         </div>
-                                        <div>
+
+                                        <div className="grid grid-cols-2 gap-2">
                                             <div>
-                                                <label className="text-[10px] text-neutral-500 block mb-1">Required (Total)</label>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Paid</label>
+                                                <div className="flex gap-1.5">
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        pattern="[0-9]*"
+                                                        value={instPaid}
+                                                        onChange={e => { const v = e.target.value.replace(/[^0-9]/g, ''); setInstPaid(v === '' ? 0 : Number(v)); }}
+                                                        className="flex-1 min-w-0 bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-sm text-white text-center focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setInstPaid(prev => prev + 1)}
+                                                        className="px-3 bg-green-600/20 hover:bg-green-600/40 border border-green-500/30 text-green-400 rounded-lg text-xs font-bold transition-colors shrink-0"
+                                                    >
+                                                        +1
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Required</label>
                                                 <input
-                                                    type="number"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
                                                     value={instReq}
-                                                    onChange={e => setInstReq(Number(e.target.value))}
-                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2.5 text-sm text-white focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
+                                                    onChange={e => { const v = e.target.value.replace(/[^0-9]/g, ''); setInstReq(v === '' ? 0 : Number(v)); }}
+                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-sm text-white text-center focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all outline-none"
                                                 />
                                             </div>
                                         </div>
@@ -256,7 +303,7 @@ const AdminUserDetailsPage = () => {
                                     <button
                                         onClick={handleManualUpdate}
                                         disabled={isUpdating}
-                                        className="w-full mt-2 bg-neutral-100 hover:bg-white text-black font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                        className="w-full mt-1 bg-neutral-100 hover:bg-white text-black font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                                     >
                                         <FaSave /> Save Changes
                                     </button>
@@ -364,7 +411,7 @@ const AdminUserDetailsPage = () => {
                                 <tbody className="divide-y divide-neutral-800">
                                     {financials.transactions.map(tx => {
                                         const { date, time } = formatDateTime(tx.createdAt);
-                                        const stripeId = tx.stripePaymentId || tx.stripeInvoiceId || tx.id; // --- DISPLAY CHANGE ---
+                                        const stripeId = tx.stripePaymentId || tx.stripeInvoiceId || tx.id;
 
                                         return (
                                             <tr key={tx.id} className="hover:bg-white/5 transition-colors">
