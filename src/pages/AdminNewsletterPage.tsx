@@ -325,6 +325,9 @@ export const AdminNewsletterPage: React.FC = () => {
                                     <p style={{ fontSize: '12px', color: '#9ca3af', margin: '5px 0 0 0' }}>
                                         <a href="https://dycom-club.com" style={{ color: '#9ca3af', textDecoration: 'none' }}>dycom-club.com</a>
                                     </p>
+                                    <p style={{ fontSize: '11px', color: '#9ca3af', margin: '15px 0 0 0' }}>
+                                        Vous ne souhaitez plus recevoir ces annonces ? <a href="mailto:support@dycom-club.com?subject=Désinscription" style={{ color: '#9ca3af', textDecoration: 'underline' }}>Se désinscrire</a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -442,6 +445,9 @@ export const AdminNewsletterPage: React.FC = () => {
                                     </p>
                                     <p style={{ fontSize: '12px', color: '#9ca3af', margin: '5px 0 0 0' }}>
                                         <a href="https://dycom-club.com" style={{ color: '#9ca3af', textDecoration: 'none' }}>dycom-club.com</a>
+                                    </p>
+                                    <p style={{ fontSize: '11px', color: '#9ca3af', margin: '15px 0 0 0' }}>
+                                        Vous ne souhaitez plus recevoir ces annonces ? <a href="mailto:support@dycom-club.com?subject=Désinscription" style={{ color: '#9ca3af', textDecoration: 'underline' }}>Se désinscrire</a>
                                     </p>
                                 </div>
                             </div>

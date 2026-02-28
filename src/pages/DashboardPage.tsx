@@ -11,6 +11,7 @@ import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
     FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle, FaEnvelope
 } from 'react-icons/fa';
+import { SiTrustpilot } from 'react-icons/si';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -373,6 +374,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
             items: [
                 { nameKey: 'support', label: 'Support', icon: <FaHeadset />, path: '/dashboard/support' },
                 { nameKey: 'whatsapp', label: 'Whatsapp SAV Dycom', icon: <FaWhatsapp className="text-green-500" />, path: 'https://wa.me/message/SCESABMUBCVOF1', isExternal: true },
+                { nameKey: 'trustpilot', label: 'Avis Trustpilot', icon: <SiTrustpilot className="text-green-500" />, path: 'https://fr.trustpilot.com/evaluate/dycom-academie.com', isExternal: true },
             ]
         },
         {
