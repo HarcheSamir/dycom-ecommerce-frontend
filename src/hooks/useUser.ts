@@ -89,6 +89,7 @@ interface User {
   coursePurchases: { courseId: string }[];
   isCancellationScheduled?: boolean;
   hasSeenWelcomeModal: boolean;
+  discordId?: string | null;
 
   planDetails?: {
     name: string;
@@ -288,6 +289,51 @@ export const useConfirmEmailChange = () => {
     onError: (error: AxiosError) => {
       const errorData = error.response?.data as { error?: string };
       toast.error(errorData?.error || 'Invalid or expired verification code.');
+    },
+  });
+};
+
+// --- DISCORD HOOKS ---
+
+export const useDiscordAuthUrl = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.get<{ url: string }>('/discord/auth-url');
+      return response.data;
+    },
+    onError: () => {
+      toast.error('Impossible de générer le lien Discord.');
+    },
+  });
+};
+
+export const useDiscordCallback = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { code: string }) =>
+      apiClient.post<{ message: string; discordId: string; discordUsername: string }>('/discord/callback', data),
+    onSuccess: (response) => {
+      toast.success(response.data.message || 'Discord connecté !');
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { message?: string };
+      toast.error(errorData?.message || 'Échec de la connexion Discord.');
+    },
+  });
+};
+
+export const useDiscordDisconnect = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiClient.post('/discord/disconnect'),
+    onSuccess: () => {
+      toast.success('Discord déconnecté.');
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as { message?: string };
+      toast.error(errorData?.message || 'Erreur lors de la déconnexion Discord.');
     },
   });
 };

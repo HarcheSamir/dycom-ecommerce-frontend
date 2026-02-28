@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, type FC } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useUserProfile } from '../hooks/useUser';
+import { useUserProfile, useDiscordAuthUrl, useDiscordCallback, useDiscordDisconnect } from '../hooks/useUser';
 import { useWinningProducts, type WinningProduct } from '../hooks/useWinningProducts';
 import ProductDetailModal from '../components/ProductDetailModal';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -9,7 +9,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -281,6 +281,27 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
     const isSmmaOnly = user?.subscriptionStatus === 'SMMA_ONLY';
     const { data: unreadCounts } = useAdminUnreadCounts();
 
+    // Discord hooks
+    const discordAuthUrl = useDiscordAuthUrl();
+    const discordCallback = useDiscordCallback();
+    const discordDisconnect = useDiscordDisconnect();
+    const isDiscordConnected = !!user?.discordId;
+    const discordCallbackFired = useRef(false);
+
+    // Handle Discord OAuth2 callback
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const state = params.get('state');
+        const code = params.get('code');
+
+        if (state === 'discord_connect' && code && !discordCallbackFired.current) {
+            discordCallbackFired.current = true;
+            // Clean up URL immediately to prevent re-fires
+            window.history.replaceState({}, '', window.location.pathname);
+            discordCallback.mutate({ code });
+        }
+    }, [location.search]);
+
     // Map paths to unread count keys
     const getBadgeCount = (path: string): number | undefined => {
         if (!unreadCounts) return undefined;
@@ -446,29 +467,47 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                         </div>
                     </button>
 
-                    {/* Discord Server — Coming Soon */}
+                    {/* Discord Server */}
                     <button
-                        onClick={() => setIsDiscordModalOpen(true)}
+                        onClick={() => {
+                            if (isDiscordConnected) {
+                                setIsDiscordModalOpen(true);
+                            } else {
+                                discordAuthUrl.mutate(undefined, {
+                                    onSuccess: (data) => {
+                                        window.location.href = data.url;
+                                    },
+                                });
+                            }
+                        }}
+                        disabled={discordAuthUrl.isPending || discordCallback.isPending}
                         className="relative w-full group overflow-hidden rounded-xl p-[1px] mt-3 transition-all hover:shadow-[0_0_20px_-5px_rgba(99,102,241,0.4)]"
                     >
                         {/* Gradient Border */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className={`absolute inset-0 bg-gradient-to-r ${isDiscordConnected ? 'from-green-500 via-emerald-500 to-teal-500' : 'from-indigo-500 via-blue-500 to-purple-500'} opacity-50 group-hover:opacity-100 transition-opacity duration-500`} />
 
                         {/* Inner Content */}
                         <div className="relative flex items-center justify-between w-full h-full bg-[#111317] group-hover:bg-[#16181d] rounded-xl px-4 py-3 transition-colors duration-300">
                             <div className="flex items-center gap-2">
-                                <FaDiscord className="text-indigo-400 group-hover:text-indigo-300 text-lg transition-colors duration-300" />
+                                <FaDiscord className={`${isDiscordConnected ? 'text-green-400 group-hover:text-green-300' : 'text-indigo-400 group-hover:text-indigo-300'} text-lg transition-colors duration-300`} />
                                 <span className="font-bold text-sm text-neutral-300 group-hover:text-white transition-colors duration-300">
                                     Discord
                                 </span>
                             </div>
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 rounded-full px-2.5 py-0.5">
-                                <span className="relative flex h-1.5 w-1.5">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-400"></span>
+                            {isDiscordConnected ? (
+                                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-green-300 bg-green-500/15 border border-green-500/30 rounded-full px-2.5 py-0.5">
+                                    <FaCheck className="text-[8px]" />
+                                    connecté
                                 </span>
-                                rejoindre
-                            </span>
+                            ) : (
+                                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-500/15 border border-indigo-500/30 rounded-full px-2.5 py-0.5">
+                                    <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-400"></span>
+                                    </span>
+                                    rejoindre
+                                </span>
+                            )}
                         </div>
                     </button>
                 </div>
@@ -589,9 +628,9 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                 </div>
             </aside>
 
-            {/* Discord Coming Soon Modal */}
+            {/* Discord Connected Modal — Disconnect option */}
             {
-                isDiscordModalOpen && (
+                isDiscordModalOpen && isDiscordConnected && (
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={() => setIsDiscordModalOpen(false)}>
                         {/* Backdrop */}
                         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -603,36 +642,57 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Decorative gradient glow */}
-                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl" />
-                            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/15 rounded-full blur-3xl" />
+                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl" />
+                            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl" />
 
                             <div className="relative p-8 flex flex-col items-center text-center">
                                 {/* Icon */}
-                                <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5">
-                                    <FaDiscord className="text-indigo-400 text-3xl" />
+                                <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-5">
+                                    <FaDiscord className="text-green-400 text-3xl" />
                                 </div>
 
                                 {/* Badge */}
-                                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300 bg-indigo-500/10 border border-indigo-500/25 rounded-full px-4 py-1.5 mb-4">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-400"></span>
-                                    </span>
-                                    Coming Soon
+                                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-300 bg-green-500/10 border border-green-500/25 rounded-full px-4 py-1.5 mb-4">
+                                    <FaCheck className="text-[10px]" />
+                                    Connecté
                                 </span>
 
                                 {/* Text */}
                                 <h3 className="text-xl font-bold text-white mb-2">Serveur Discord</h3>
                                 <p className="text-neutral-400 text-sm leading-relaxed">
-                                    Notre communauté Discord est en cours de préparation. Vous serez notifié dès son ouverture !
+                                    Votre compte Discord est connecté et vous avez accès au serveur de la communauté.
                                 </p>
+
+                                {/* Open Server Button */}
+                                <a
+                                    href="https://discord.com/channels/1445714338731262063"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-6 w-full py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-sm font-semibold text-white transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
+                                >
+                                    <FaDiscord className="text-base" />
+                                    Ouvrir le Serveur
+                                </a>
+
+                                {/* Disconnect Button */}
+                                <button
+                                    onClick={() => {
+                                        discordDisconnect.mutate();
+                                        setIsDiscordModalOpen(false);
+                                    }}
+                                    disabled={discordDisconnect.isPending}
+                                    className="mt-3 w-full py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-sm font-semibold text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <FaTimesCircle className="text-xs" />
+                                    {discordDisconnect.isPending ? 'Déconnexion...' : 'Déconnecter Discord'}
+                                </button>
 
                                 {/* Close Button */}
                                 <button
                                     onClick={() => setIsDiscordModalOpen(false)}
-                                    className="mt-6 w-full py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm font-semibold text-white hover:bg-neutral-700 transition-colors"
+                                    className="mt-3 w-full py-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-sm font-semibold text-white hover:bg-neutral-700 transition-colors"
                                 >
-                                    Compris !
+                                    Fermer
                                 </button>
                             </div>
                         </div>
