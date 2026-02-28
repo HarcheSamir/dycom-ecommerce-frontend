@@ -40,6 +40,7 @@ import { AdminResourcesPage } from './pages/AdminResourcesPage';
 import { OrderShopPage } from './pages/OrderShopPage';
 import { AdminShopOrdersPage } from './pages/AdminShopOrdersPage';
 import { MyShopOrdersPage } from './pages/MyShopOrdersPage';
+import { AdminNewsletterPage } from './pages/AdminNewsletterPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -86,6 +87,7 @@ function App() {
               <Route path="admin/support" element={<AdminSupportPage />} />
               <Route path="admin/resources" element={<AdminResourcesPage />} />
               <Route path="admin/shop-orders" element={<AdminShopOrdersPage />} />
+              <Route path="admin/newsletter" element={<AdminNewsletterPage />} />
               <Route path="resources" element={<ResourcesPage />} />
               <Route path="order-shop" element={<OrderShopPage />} />
               <Route path="my-orders" element={<MyShopOrdersPage />} />

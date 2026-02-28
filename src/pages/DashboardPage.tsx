@@ -9,7 +9,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle, FaEnvelope
 } from 'react-icons/fa';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -343,6 +343,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                 { nameKey: 'pastDue', label: 'Past Due', icon: <FaExclamationTriangle />, path: '/dashboard/admin/financials/past-due' },
                 { nameKey: 'supportInbox', label: 'Support Inbox', icon: <FaTicketAlt />, path: '/dashboard/admin/support' },
                 { nameKey: 'shopOrders', label: 'Commandes boutiques', icon: <FaShoppingBag />, path: '/dashboard/admin/shop-orders' },
+                { nameKey: 'newsletter', label: 'Annonce Email', icon: <FaEnvelope />, path: '/dashboard/admin/newsletter' },
                 { nameKey: 'dashboard', label: 'Tableau de bord', icon: <FaTachometerAlt />, path: '/dashboard/admin' },
             ]
         },

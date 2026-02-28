@@ -448,7 +448,7 @@
       "pricing": "Pricing",
       "about": "About",
       "login": "Login",
-      "getStarted": "Get started free",
+      "getStarted": "Get Started Now",
       "dashboard": "Dashboard"
     },
     "hero": {
@@ -518,7 +518,7 @@
     "cta": {
       "title": "Ready to grow your business?",
       "subtitle": "Join thousands of entrepreneurs using our tools to find winning products and grow their online store.",
-      "ctaPrimary": "Start for free",
+      "ctaPrimary": "Get Started Now",
       "ctaSecondary": "View demo"
     },
     "footer": {
@@ -543,7 +543,7 @@
       "pricing": "Pricing",
       "about": "About",
       "login": "Login",
-      "getStarted": "Get started free",
+      "getStarted": "Get Started Now",
       "dashboard": "Dashboard"
     },
     "hero": {
@@ -593,7 +593,7 @@
     "cta": {
       "title": "Ready to grow your business?",
       "subtitle": "Join thousands of entrepreneurs using our tools to find winning products and grow their online store.",
-      "ctaPrimary": "Start for free"
+      "ctaPrimary": "Get Started Now"
     },
     "footer": {
       "tagline": "The all-in-one platform for e-commerce success.",
