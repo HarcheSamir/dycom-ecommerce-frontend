@@ -6,7 +6,8 @@ import { useSendNewsletter, useNewsletterHistory, useRecipientCount } from '../h
 
 const AUDIENCE_OPTIONS = [
     { value: 'ALL', label: 'Tous les membres', description: 'Inclut tous les utilisateurs, actifs ou non' },
-    { value: 'ACTIVE', label: 'Actifs uniquement', description: 'ACTIVE + TRIALING' },
+    { value: 'ALL_PAID', label: 'Tous les membres payants', description: 'Actifs, SMMA, et Lifetime' },
+    { value: 'ACTIVE', label: 'Actifs uniquement', description: 'Abonnements actifs' },
     { value: 'LIFETIME', label: 'Lifetime uniquement', description: 'Accès à vie confirmé' },
     { value: 'SMMA', label: 'SMMA uniquement', description: 'Cours SMMA seulement' },
     { value: 'SPECIFIC', label: 'Membres spécifiques', description: 'Cibler des emails précis' },
@@ -251,9 +252,10 @@ export const AdminNewsletterPage: React.FC = () => {
                                                 </td>
                                                 <td className="px-5 py-4">
                                                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${nl.audience === 'ALL' ? 'bg-blue-500/15 text-blue-300' :
-                                                        nl.audience === 'LIFETIME' ? 'bg-purple-500/15 text-purple-300' :
-                                                            nl.audience === 'ACTIVE' ? 'bg-green-500/15 text-green-300' :
-                                                                'bg-yellow-500/15 text-yellow-300'
+                                                        nl.audience === 'ALL_PAID' ? 'bg-emerald-500/15 text-emerald-300' :
+                                                            nl.audience === 'LIFETIME' ? 'bg-purple-500/15 text-purple-300' :
+                                                                nl.audience === 'ACTIVE' ? 'bg-green-500/15 text-green-300' :
+                                                                    'bg-yellow-500/15 text-yellow-300'
                                                         }`}>
                                                         {AUDIENCE_OPTIONS.find(o => o.value === nl.audience)?.label || nl.audience}
                                                     </span>
