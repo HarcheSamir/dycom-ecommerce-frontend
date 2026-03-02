@@ -9,7 +9,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { TrustpilotBanner } from '../components/TrustpilotBanner';
 import {
-    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle, FaEnvelope
+    FaTachometerAlt, FaTicketAlt, FaBolt, FaHeadset, FaExclamationTriangle, FaChartLine, FaStore, FaVideo, FaGift, FaUsers, FaCog, FaShieldAlt, FaSignOutAlt, FaGlobe, FaChevronRight, FaStar, FaSearch, FaBars, FaBell, FaCreditCard, FaCrown, FaFolderOpen, FaShoppingBag, FaWhatsapp, FaChevronDown, FaRobot, FaRocket, FaDiscord, FaLock, FaCheck, FaTimesCircle, FaEnvelope, FaBullhorn
 } from 'react-icons/fa';
 import { SiTrustpilot } from 'react-icons/si';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
@@ -17,6 +17,9 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { SupportWidget } from '../components/support/SupportWidget';
 import { useAdminUnreadCounts } from '../hooks/useAdminUnreadCounts';
+import { AnnouncementBanner } from '../components/AnnouncementBanner';
+import { AnnouncementModal } from '../components/AnnouncementModal';
+import { AnnouncementCarousel } from '../components/AnnouncementCarousel';
 
 // --- Type Definitions ---
 type NavLink = {
@@ -147,6 +150,8 @@ export const DashboardContent: FC = () => {
                     <h1 className="text-4xl font-bold text-white">{t('dashboard.welcome', { name: userProfile?.firstName || 'User' })}</h1>
                     <p className="text-neutral-400 mt-1">{t('dashboard.welcomeSubtitle')}</p>
                 </AnimatedSection>
+
+                <AnnouncementCarousel />
 
                 <AnimatedSection>
                     <TrustpilotBanner />
@@ -345,6 +350,7 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                 { nameKey: 'supportInbox', label: 'Support Inbox', icon: <FaTicketAlt />, path: '/dashboard/admin/support' },
                 { nameKey: 'shopOrders', label: 'Commandes boutiques', icon: <FaShoppingBag />, path: '/dashboard/admin/shop-orders' },
                 { nameKey: 'newsletter', label: 'Annonce Email', icon: <FaEnvelope />, path: '/dashboard/admin/newsletter' },
+                { nameKey: 'announcements', label: 'Bandes Annonces', icon: <FaBullhorn />, path: '/dashboard/admin/announcements' },
                 { nameKey: 'dashboard', label: 'Tableau de bord', icon: <FaTachometerAlt />, path: '/dashboard/admin' },
             ]
         },
@@ -799,6 +805,9 @@ const DashboardPage: FC = () => {
                     <WelcomeModal onClose={() => {/* Logic handled inside component via mutation */ }} />
                 )}
 
+                {/* Announcement Modal */}
+                <AnnouncementModal />
+
                 {/* PAST_DUE Blocking Modal */}
                 {showPastDueModal && (
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)' }}>
@@ -891,6 +900,7 @@ const DashboardPage: FC = () => {
                                 <FaBars />
                             </button>
                         </div>
+                        <AnnouncementBanner />
                         <Outlet />
                     </div>
                     {/* Floating Support Widget */}
