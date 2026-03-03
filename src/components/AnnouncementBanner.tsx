@@ -85,11 +85,12 @@ export const AnnouncementBanner = ({ previewAnnouncement, onPreviewDismiss }: { 
 
 const BannerItem = ({
     banner,
-    onDismiss,
 }: {
     banner: ActiveAnnouncement;
-    onDismiss: (id: string) => void;
+    onDismiss?: (id: string) => void;
 }) => {
+    const [showDetails, setShowDetails] = useState(false);
+
     const gradient = banner.colorScheme === 'custom' && banner.customGradient
         ? banner.customGradient
         : GRADIENTS[banner.colorScheme || 'purple'] || GRADIENTS.purple;
@@ -127,9 +128,18 @@ const BannerItem = ({
                             {banner.headline}
                         </p>
                         {banner.description && (
-                            <p className="text-white/80 text-xs mt-0.5 line-clamp-1">
-                                {banner.description}
-                            </p>
+                            <div className="mt-0.5 flex items-end gap-2">
+                                <p className="text-white/80 text-xs line-clamp-1">
+                                    {banner.description}
+                                </p>
+                                {/* Only show "Voir plus" if there is a description */}
+                                <button
+                                    onClick={() => setShowDetails(true)}
+                                    className="text-xs font-semibold text-white hover:underline whitespace-nowrap opacity-90"
+                                >
+                                    Voir plus
+                                </button>
+                            </div>
                         )}
                     </div>
 
@@ -154,18 +164,78 @@ const BannerItem = ({
                                 </Link>
                             )
                         )}
-
-                        {/* Always show dismiss for session-based testing/banner flow */}
-                        <button
-                            onClick={() => onDismiss(banner.id)}
-                            className="p-1.5 text-white/60 hover:text-white rounded-lg hover:bg-white/10 transition-colors ml-2"
-                            aria-label="Fermer"
-                        >
-                            <FaTimes size={14} />
-                        </button>
                     </div>
                 </div>
             </div>
+
+            {/* Popup Modal for "Voir plus" */}
+            <AnimatePresence>
+                {showDetails && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+                        onClick={() => setShowDetails(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            className="bg-[#0a0a0a] border border-neutral-800 rounded-2xl max-w-2xl w-full relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Top Gradient Line to match announcement color */}
+                            <div className="absolute top-0 left-0 right-0 h-1 z-20 opacity-90" style={{ background: gradient }} />
+
+                            <button
+                                onClick={() => setShowDetails(false)}
+                                className="absolute top-4 right-4 z-30 p-2 rounded-lg bg-black/50 text-white/60 hover:text-white hover:bg-black/70 transition-colors backdrop-blur-sm"
+                                aria-label="Fermer"
+                            >
+                                <FaTimes size={14} />
+                            </button>
+
+                            {/* Scrollable Content Area */}
+                            <div className="p-8 md:p-10 flex-1 overflow-y-auto custom-scrollbar">
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 pr-8 leading-tight">
+                                    {banner.headline}
+                                </h3>
+
+                                <div className="text-neutral-400 text-sm md:text-base whitespace-pre-wrap leading-relaxed">
+                                    {banner.description}
+                                </div>
+
+                                {banner.ctaText && banner.ctaUrl && (
+                                    <div className="mt-10 flex justify-center md:justify-start">
+                                        {isExternalUrl ? (
+                                            <a
+                                                href={banner.ctaUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
+                                                onClick={() => setShowDetails(false)}
+                                            >
+                                                {banner.ctaText}
+                                            </a>
+                                        ) : (
+                                            <Link
+                                                to={banner.ctaUrl}
+                                                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
+                                                onClick={() => setShowDetails(false)}
+                                            >
+                                                {banner.ctaText}
+                                            </Link>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };

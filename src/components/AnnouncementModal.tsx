@@ -136,7 +136,7 @@ const ModalContent = ({
                 <div className="flex-1 overflow-y-auto">
                     {/* Hero Image */}
                     {announcement.imageUrl && !announcement.videoVimeoId && (
-                        <div className="w-full h-56 md:h-72 overflow-hidden">
+                        <div className="w-full h-56 md:h-72 overflow-hidden relative">
                             <img
                                 src={announcement.imageUrl}
                                 alt=""
@@ -181,7 +181,7 @@ const ModalContent = ({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={() => announcement.isDismissible && onDismiss(announcement.id)}
-                                    className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
+                                    className="relative z-10 inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
                                 >
                                     {announcement.ctaText}
                                 </a>
@@ -189,7 +189,7 @@ const ModalContent = ({
                                 <Link
                                     to={announcement.ctaUrl}
                                     onClick={() => announcement.isDismissible && onDismiss(announcement.id)}
-                                    className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
+                                    className="relative z-10 inline-flex items-center gap-2 px-8 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
                                 >
                                     {announcement.ctaText}
                                 </Link>
