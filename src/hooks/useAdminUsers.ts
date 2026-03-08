@@ -64,6 +64,17 @@ export interface DetailedAdminUser {
         referredBy: string | null;
         referralsCount: number;
     }
+    smmaAccess: {
+        id: string;
+        courseId: string;
+        courseTitle: string;
+        status: 'ACTIVE' | 'PAST_DUE' | 'REVOKED';
+        purchasePrice: number;
+        purchasedAt: string;
+        installmentsPaid: number;
+        installmentsRequired: number;
+        currentPeriodEnd: string | null;
+    }[];
 }
 
 export interface UserFilters {
@@ -165,5 +176,31 @@ export const useAddStripePayment = () => {
             queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
         },
         onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to add payment.')
+    });
+};
+
+export const useGrantSmmaAccess = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { userId: string, installmentsPaid?: number, installmentsRequired?: number, currentPeriodEnd?: string | null }) =>
+            apiClient.post(`/admin/users/${data.userId}/grant-smma`, data),
+        onSuccess: (_, variables) => {
+            toast.success('SMMA access granted!');
+            queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
+        },
+        onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to grant SMMA access.')
+    });
+};
+
+export const useUpdateSmmaAccess = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: { userId: string, installmentsPaid?: number, installmentsRequired?: number, currentPeriodEnd?: string | null, status?: string }) =>
+            apiClient.put(`/admin/users/${data.userId}/smma-access`, data),
+        onSuccess: (_, variables) => {
+            toast.success('SMMA access updated!');
+            queryClient.invalidateQueries({ queryKey: ['adminUserDetails', variables.userId] });
+        },
+        onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to update SMMA access.')
     });
 };

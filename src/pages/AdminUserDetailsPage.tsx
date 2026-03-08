@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     useAdminUserDetails, useUpdateUserSubscription,
-    useSyncStripeSubscription, useAddStripePayment
+    useSyncStripeSubscription, useAddStripePayment,
+    useGrantSmmaAccess, useUpdateSmmaAccess
 } from '../hooks/useAdminUsers';
 import {
     FaArrowLeft, FaEnvelope, FaCreditCard,
     FaCheckCircle, FaClock, FaUniversity, FaGem, FaTimesCircle, FaPhone,
     FaTools, FaSync, FaSave, FaPlus, FaExclamationTriangle, FaStripe,
-    FaExternalLinkAlt
+    FaExternalLinkAlt, FaBookOpen, FaBan
 } from 'react-icons/fa';
 import { GlassCard } from '../components/admin/AdminUI';
 import { Toaster } from 'react-hot-toast';
@@ -22,6 +23,8 @@ const AdminUserDetailsPage = () => {
     const { mutate: updateSubscription, isPending: isUpdating } = useUpdateUserSubscription();
     const { mutate: syncSubscription, isPending: isSyncing } = useSyncStripeSubscription();
     const { mutate: addPayment, isPending: isAddingPayment } = useAddStripePayment();
+    const { mutate: grantSmma, isPending: isGrantingSmma } = useGrantSmmaAccess();
+    const { mutate: updateSmma, isPending: isUpdatingSmma } = useUpdateSmmaAccess();
 
     // Local State for Forms
     const [status, setStatus] = useState('');
@@ -30,6 +33,12 @@ const AdminUserDetailsPage = () => {
     const [stripeSubId, setStripeSubId] = useState('');
     const [stripePayId, setStripePayId] = useState('');
     const [periodEnd, setPeriodEnd] = useState('');
+
+    // SMMA Access State
+    const [smmaInstPaid, setSmmaInstPaid] = useState(1);
+    const [smmaInstReq, setSmmaInstReq] = useState(1);
+    const [smmaPeriodEnd, setSmmaPeriodEnd] = useState('');
+    const [smmaStatus, setSmmaStatus] = useState('ACTIVE');
 
     useEffect(() => {
         if (data?.user) {
@@ -48,7 +57,8 @@ const AdminUserDetailsPage = () => {
     if (isLoading) return <div className="flex h-screen items-center justify-center text-neutral-400">Loading profile...</div>;
     if (isError || !data) return <div className="flex h-screen items-center justify-center text-red-500">User not found.</div>;
 
-    const { user, financials, courses, affiliate } = data;
+    const { user, financials, courses, affiliate, smmaAccess } = data;
+    const smmaRecord = smmaAccess?.[0] || null; // SMMA is a single course
 
     // --- Helper: Date & Time Formatter ---
     const formatDateTime = (dateString: string) => {
@@ -390,6 +400,125 @@ const AdminUserDetailsPage = () => {
                                 </div>
                             ))}
                             {courses.length === 0 && <div className="col-span-full p-6 text-center border border-dashed border-neutral-800 rounded-xl text-neutral-500">User has not started any courses yet.</div>}
+                        </div>
+                    </section>
+
+                    {/* SMMA Course Access */}
+                    <section>
+                        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <FaBookOpen className="text-orange-500" /> SMMA Course Access
+                        </h2>
+                        <div className="bg-[#1C1E22] border border-neutral-800 rounded-xl p-5 space-y-4">
+                            {smmaRecord ? (
+                                <>
+                                    {/* Current Status Badge */}
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-neutral-400">Status</span>
+                                        <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${smmaRecord.status === 'ACTIVE' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                                                smmaRecord.status === 'PAST_DUE' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                                    'bg-neutral-500/10 text-neutral-400 border-neutral-500/20'
+                                            }`}>
+                                            {smmaRecord.status}
+                                        </span>
+                                    </div>
+
+                                    {/* Installment Progress */}
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-neutral-400">Installments</span>
+                                        <span className="font-bold text-white">{smmaRecord.installmentsPaid} / {smmaRecord.installmentsRequired}</span>
+                                    </div>
+                                    <div className="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all duration-300 ${smmaRecord.installmentsPaid >= smmaRecord.installmentsRequired ? 'bg-green-500' : 'bg-orange-500'}`}
+                                            style={{ width: smmaRecord.installmentsRequired > 0 ? `${Math.min(100, (smmaRecord.installmentsPaid / smmaRecord.installmentsRequired) * 100)}%` : '0%' }}
+                                        />
+                                    </div>
+
+                                    {smmaRecord.currentPeriodEnd && (
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span className="text-neutral-400">Period End</span>
+                                            <span className="text-white">{new Date(smmaRecord.currentPeriodEnd).toLocaleDateString('fr-FR')}</span>
+                                        </div>
+                                    )}
+
+                                    {/* Edit Controls */}
+                                    <div className="pt-3 border-t border-neutral-800 space-y-3">
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Status</label>
+                                                <select
+                                                    defaultValue={smmaRecord.status}
+                                                    onChange={e => setSmmaStatus(e.target.value)}
+                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-orange-500/50 outline-none"
+                                                >
+                                                    <option value="ACTIVE">ACTIVE</option>
+                                                    <option value="PAST_DUE">PAST_DUE</option>
+                                                    <option value="REVOKED">REVOKED</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Paid</label>
+                                                <input
+                                                    type="number" min="0"
+                                                    defaultValue={smmaRecord.installmentsPaid}
+                                                    onChange={e => setSmmaInstPaid(Number(e.target.value))}
+                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-xs text-white text-center focus:border-orange-500/50 outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-neutral-500 block mb-1">Required</label>
+                                                <input
+                                                    type="number" min="1"
+                                                    defaultValue={smmaRecord.installmentsRequired}
+                                                    onChange={e => setSmmaInstReq(Number(e.target.value))}
+                                                    className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-xs text-white text-center focus:border-orange-500/50 outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center justify-between mb-1">
+                                                <label className="text-[10px] text-neutral-500">Period End</label>
+                                                <button type="button" onClick={() => {
+                                                    const d = new Date(); d.setDate(d.getDate() + 30);
+                                                    setSmmaPeriodEnd(d.toISOString().split('T')[0]);
+                                                }} className="text-[9px] text-orange-400 hover:text-orange-300 font-bold">+30 Days</button>
+                                            </div>
+                                            <input
+                                                type="date"
+                                                defaultValue={smmaRecord.currentPeriodEnd ? smmaRecord.currentPeriodEnd.split('T')[0] : ''}
+                                                onChange={e => setSmmaPeriodEnd(e.target.value)}
+                                                className="w-full bg-[#0f1115] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-orange-500/50 outline-none [color-scheme:dark]"
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={() => userId && updateSmma({
+                                                userId,
+                                                status: smmaStatus,
+                                                installmentsPaid: smmaInstPaid,
+                                                installmentsRequired: smmaInstReq,
+                                                currentPeriodEnd: smmaPeriodEnd || null
+                                            })}
+                                            disabled={isUpdatingSmma}
+                                            className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                        >
+                                            <FaSave /> Update SMMA Access
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                /* No SMMA access — Grant button */
+                                <div className="text-center py-4">
+                                    <FaBan className="text-neutral-600 text-3xl mx-auto mb-3" />
+                                    <p className="text-neutral-500 text-sm mb-4">User does not have SMMA course access.</p>
+                                    <button
+                                        onClick={() => userId && grantSmma({ userId })}
+                                        disabled={isGrantingSmma}
+                                        className="px-6 py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-lg text-sm flex items-center justify-center gap-2 mx-auto transition-all disabled:opacity-50"
+                                    >
+                                        <FaPlus /> Grant SMMA Access
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </section>
 
