@@ -53,7 +53,7 @@ const SignupPage = (): JSX.Element => {
                             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-purple-600 mb-5">
                                 <FaGraduationCap className="text-white text-xl" />
                             </div>
-                            <h2 className="text-2xl font-bold text-white mb-1">Dycom SMMA</h2>
+                            <h2 className="text-2xl font-bold text-white mb-1">Indépendance Pro</h2>
                             <p className="text-neutral-400 text-sm mb-6">Trouve et signe tes premiers clients</p>
 
                             <div className="mb-6">
@@ -63,7 +63,7 @@ const SignupPage = (): JSX.Element => {
 
                             <ul className="space-y-3 mb-8">
                                 {[
-                                    'Dycom SMMA complète',
+                                    'Indépendance Pro complète',
                                     'De A à Z : prospection → closing',
                                     'Méthodes et scripts éprouvés',
                                     'Accès aux mises à jour',
@@ -129,7 +129,7 @@ const SignupPage = (): JSX.Element => {
                                 ))}
                                 <li className="flex items-start gap-3 text-sm text-neutral-500">
                                     <span className="mt-0.5 shrink-0">✕</span>
-                                    <span>Dycom SMMA (vendue séparément)</span>
+                                    <span>Indépendance Pro (vendue séparément)</span>
                                 </li>
                             </ul>
 
