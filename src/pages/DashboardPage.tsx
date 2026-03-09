@@ -843,18 +843,34 @@ const DashboardPage: FC = () => {
                                     Veuillez procéder au paiement de votre prochaine mensualité pour restaurer votre accès.
                                 </p>
 
-                                {/* Installment Progress */}
-                                {userProfile && userProfile.installmentsRequired > 1 && (
-                                    <div className="w-full bg-neutral-800/50 border border-neutral-700 rounded-xl p-4 mb-6">
-                                        <div className="flex justify-between text-xs text-neutral-400 mb-2">
-                                            <span>Progression</span>
-                                            <span className="text-white font-bold">{userProfile.installmentsPaid} / {userProfile.installmentsRequired}</span>
-                                        </div>
-                                        <div className="w-full bg-neutral-700 rounded-full h-2.5">
-                                            <div
-                                                className="h-2.5 rounded-full bg-gradient-to-r from-red-500 to-orange-500"
-                                                style={{ width: `${Math.min((userProfile.installmentsPaid / userProfile.installmentsRequired) * 100, 100)}%` }}
-                                            />
+                                {/* Installment Details */}
+                                {userProfile && (
+                                    <div className="w-full bg-neutral-800/50 border border-neutral-700 rounded-xl p-4 mb-6 space-y-3">
+                                        {userProfile.installmentsRequired > 0 && (
+                                            <>
+                                                <div className="flex justify-between text-xs text-neutral-400">
+                                                    <span>Versements</span>
+                                                    <span className="text-white font-bold">{userProfile.installmentsPaid} / {userProfile.installmentsRequired} payés</span>
+                                                </div>
+                                                <div className="w-full bg-neutral-700 rounded-full h-2.5">
+                                                    <div
+                                                        className={`h-2.5 rounded-full ${userProfile.installmentsPaid >= userProfile.installmentsRequired ? 'bg-green-500' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}
+                                                        style={{ width: `${Math.min((userProfile.installmentsPaid / userProfile.installmentsRequired) * 100, 100)}%` }}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                        {userProfile.currentPeriodEnd && (
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-neutral-400">Échéance</span>
+                                                <span className="text-red-400 font-bold">
+                                                    {new Date(userProfile.currentPeriodEnd).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                                </span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-neutral-400">Statut du compte</span>
+                                            <span className="text-red-400 font-bold text-[10px] uppercase bg-red-500/10 border border-red-500/25 rounded px-2 py-0.5">En retard</span>
                                         </div>
                                     </div>
                                 )}
