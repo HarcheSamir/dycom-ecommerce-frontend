@@ -60,6 +60,10 @@ export const useCourse = (courseId: string | null) => {
     },
     enabled: !!courseId,
     refetchOnWindowFocus: false,
+    retry: (failureCount, error: any) => {
+      if (error?.response?.status === 403) return false;
+      return failureCount < 3;
+    },
   });
 };
 
