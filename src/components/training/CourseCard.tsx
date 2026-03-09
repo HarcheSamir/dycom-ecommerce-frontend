@@ -8,10 +8,11 @@ interface CourseCardProps {
     course: VideoCourse;
     onClick: () => void;
     hasAccess: boolean;
+    purchaseStatus?: string | null;
     onBuy: () => void;
 }
 
-export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, onBuy }) => {
+export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, purchaseStatus, onBuy }) => {
     const { t, i18n } = useTranslation();
 
     const progressPercent = course.totalVideos && course.totalVideos > 0
@@ -77,6 +78,16 @@ export const CourseCard: FC<CourseCardProps> = ({ course, onClick, hasAccess, on
                         {hasAccess ? (
                             <button className="w-full h-10 cursor-pointer rounded-lg bg-[#1C1E22] border border-neutral-700 text-white font-medium hover:bg-neutral-800 transition-colors">
                                 {progressPercent > 0 ? t('trainingPage.courseCard.continue') : t('trainingPage.courseCard.begin')}
+                            </button>
+                        ) : purchaseStatus ? (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onClick(); }}
+                                className={`w-full h-10 cursor-pointer rounded-lg border font-bold text-sm transition-colors ${purchaseStatus === 'PAST_DUE'
+                                        ? 'bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20'
+                                        : 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20'
+                                    }`}
+                            >
+                                {purchaseStatus === 'PAST_DUE' ? '⚠ Accès Suspendu' : '🚫 Accès Révoqué'}
                             </button>
                         ) : (
                             <>

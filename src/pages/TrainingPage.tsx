@@ -44,6 +44,13 @@ export const TrainingPage: FC = () => {
 
     const isAdmin = userProfile?.accountType === 'ADMIN';
     const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.filter(p => !p.status || p.status === 'ACTIVE').map(p => p.courseId) || []), [userProfile]);
+    const suspendedPurchases = useMemo(() => {
+        const map = new Map<string, string>();
+        userProfile?.coursePurchases.forEach(p => {
+            if (p.status && p.status !== 'ACTIVE') map.set(p.courseId, p.status);
+        });
+        return map;
+    }, [userProfile]);
 
     const filteredCourses = useMemo(() => {
         if (!showOwnedOnly) return courses;
@@ -64,12 +71,14 @@ export const TrainingPage: FC = () => {
         const isFreeCourse = course.price === null || course.price === 0;
         // Free courses require subscription — paid courses require explicit purchase
         const hasAccess = isAdmin || purchasedCourseIds.has(course.id) || (isFreeCourse && isSubscriber);
+        const purchaseStatus = suspendedPurchases.get(course.id) || null;
 
         return (
             <CourseCard
                 key={course.id}
                 course={course}
                 hasAccess={hasAccess}
+                purchaseStatus={purchaseStatus}
                 onClick={() => {
                     if (course.isNew) markCourseSeen(course.id);
                     navigate(`/dashboard/training/${course.id}`);
