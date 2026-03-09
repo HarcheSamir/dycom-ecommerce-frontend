@@ -43,7 +43,7 @@ export const TrainingPage: FC = () => {
         userProfile?.subscriptionStatus === 'TRIALING';
 
     const isAdmin = userProfile?.accountType === 'ADMIN';
-    const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.filter(p => p.status === 'ACTIVE').map(p => p.courseId) || []), [userProfile]);
+    const purchasedCourseIds = useMemo(() => new Set(userProfile?.coursePurchases.filter(p => !p.status || p.status === 'ACTIVE').map(p => p.courseId) || []), [userProfile]);
 
     const filteredCourses = useMemo(() => {
         if (!showOwnedOnly) return courses;
