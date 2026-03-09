@@ -3,13 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     useAdminUserDetails, useUpdateUserSubscription,
     useSyncStripeSubscription, useAddStripePayment,
-    useGrantSmmaAccess, useUpdateSmmaAccess
+    useGrantSmmaAccess, useUpdateSmmaAccess, useResendWelcomeEmail
 } from '../hooks/useAdminUsers';
 import {
     FaArrowLeft, FaEnvelope, FaCreditCard,
     FaCheckCircle, FaClock, FaUniversity, FaGem, FaTimesCircle, FaPhone,
     FaTools, FaSync, FaSave, FaPlus, FaExclamationTriangle, FaStripe,
-    FaExternalLinkAlt, FaBookOpen, FaBan
+    FaExternalLinkAlt, FaBookOpen, FaBan, FaPaperPlane
 } from 'react-icons/fa';
 import { GlassCard } from '../components/admin/AdminUI';
 import { Toaster } from 'react-hot-toast';
@@ -25,6 +25,7 @@ const AdminUserDetailsPage = () => {
     const { mutate: addPayment, isPending: isAddingPayment } = useAddStripePayment();
     const { mutate: grantSmma, isPending: isGrantingSmma } = useGrantSmmaAccess();
     const { mutate: updateSmma, isPending: isUpdatingSmma } = useUpdateSmmaAccess();
+    const { mutate: resendWelcome, isPending: isResending } = useResendWelcomeEmail();
 
     // Local State for Forms
     const [status, setStatus] = useState('');
@@ -130,6 +131,15 @@ const AdminUserDetailsPage = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => userId && resendWelcome(userId)}
+                        disabled={isResending}
+                        className="flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
+                        title="Resend welcome & password setup email"
+                    >
+                        <FaPaperPlane size={12} className={isResending ? 'animate-pulse' : ''} />
+                        <span>{isResending ? 'Sending...' : 'Resend Welcome Email'}</span>
+                    </button>
                     {user.stripeCustomerId && (
                         <a
                             href={`https://dashboard.stripe.com/customers/${user.stripeCustomerId}`}
@@ -415,8 +425,8 @@ const AdminUserDetailsPage = () => {
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm text-neutral-400">Status</span>
                                         <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${smmaRecord.status === 'ACTIVE' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                                smmaRecord.status === 'PAST_DUE' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                    'bg-neutral-500/10 text-neutral-400 border-neutral-500/20'
+                                            smmaRecord.status === 'PAST_DUE' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                                'bg-neutral-500/10 text-neutral-400 border-neutral-500/20'
                                             }`}>
                                             {smmaRecord.status}
                                         </span>

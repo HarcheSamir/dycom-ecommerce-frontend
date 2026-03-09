@@ -204,3 +204,12 @@ export const useUpdateSmmaAccess = () => {
         onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to update SMMA access.')
     });
 };
+
+export const useResendWelcomeEmail = () => {
+    return useMutation({
+        mutationFn: (userId: string) =>
+            apiClient.post(`/admin/users/${userId}/resend-welcome`),
+        onSuccess: () => toast.success('Welcome email resent successfully!'),
+        onError: (error: any) => toast.error(error.response?.data?.error || 'Failed to resend welcome email.')
+    });
+};
