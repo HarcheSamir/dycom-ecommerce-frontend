@@ -86,7 +86,7 @@ interface User {
   installmentsRequired: number;
   stripeSubscriptionId?: string | null;
   hotmartTransactionCode?: string | null;
-  coursePurchases: { courseId: string }[];
+  coursePurchases: { courseId: string; status: string }[];
   isCancellationScheduled?: boolean;
   hasSeenWelcomeModal: boolean;
   discordId?: string | null;
