@@ -1,7 +1,8 @@
 import { useState, useMemo, type FC } from 'react';
 import { useCourses, useMarkCourseSeen, useHotmartCourseUrl, type VideoCourse } from '../hooks/useTraining';
 import { useUserProfile } from '../hooks/useUser';
-import { FaSort, FaGlobe, FaBookReader, FaSearch } from 'react-icons/fa';
+import { FaSort, FaBookReader, FaSearch } from 'react-icons/fa';
+import { AnnouncementCarousel } from '../components/AnnouncementCarousel';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import toast from 'react-hot-toast';
@@ -24,14 +25,14 @@ export const TrainingPage: FC = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('createdAt');
-    const [languageFilter, setLanguageFilter] = useState('');
+
     const [showOwnedOnly, setShowOwnedOnly] = useState(false);
     const { mutate: markCourseSeen } = useMarkCourseSeen();
     const { data: courses, isLoading, isError, refetch: refetchCourses } = useCourses({
         lang: i18n.language,
         search: searchTerm,
         sortBy: sortBy,
-        language: languageFilter,
+        language: 'ALL',
     });
     const { data: userProfile, refetch: refetchUser } = useUserProfile();
     const { data: hotmartCourseUrl } = useHotmartCourseUrl();
@@ -120,7 +121,6 @@ export const TrainingPage: FC = () => {
     };
 
     const sortOptions = [{ value: 'createdAt', label: 'Sort by Recency' }, { value: 'title', label: 'Sort by Name (A-Z)' }];
-    const languageOptions = [{ value: '', label: 'Default Language' }, { value: 'ALL', label: 'All Languages' }, { value: 'EN', label: 'English' }, { value: 'FR', label: 'Français' }, { value: 'AR', label: 'Arabic' }];
 
     return (
         <>
@@ -129,6 +129,8 @@ export const TrainingPage: FC = () => {
                     <h1 className="text-4xl font-bold text-white">{t('trainingPage.title')}</h1>
                     <p className="text-neutral-400 mt-1">{t('trainingPage.subtitle')}</p>
                 </div>
+
+                <AnnouncementCarousel />
 
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="relative flex-grow min-w-[250px]">
@@ -143,9 +145,6 @@ export const TrainingPage: FC = () => {
                     </div>
                     <div className="flex-grow w-full sm:w-auto sm:min-w-[200px]">
                         <FilterDropdown icon={<FaSort />} options={sortOptions} value={sortBy} onChange={setSortBy} />
-                    </div>
-                    <div className="flex-grow w-full sm:w-auto sm:min-w-[200px]">
-                        <FilterDropdown icon={<FaGlobe />} options={languageOptions} value={languageFilter} onChange={setLanguageFilter} />
                     </div>
                     <div className="flex-grow w-full sm:w-auto">
                         <FilterButton icon={<FaBookReader />} label="My Courses" onClick={() => setShowOwnedOnly(!showOwnedOnly)} isActive={showOwnedOnly} />

@@ -777,6 +777,11 @@ const DashboardPage: FC = () => {
         if (!isAdmin && status === 'SMMA_ONLY' && PREMIUM_ONLY_ROUTES.some(route => location.pathname.startsWith(route))) {
             navigate('/dashboard/training', { replace: true });
         }
+
+        // Redirect SMMA_ONLY users from main dashboard to training page
+        if (!isAdmin && status === 'SMMA_ONLY' && location.pathname === '/dashboard') {
+            navigate('/dashboard/training', { replace: true });
+        }
     }, [isProfileLoading, userProfile, location.pathname, navigate]);
 
     const handleNavigate = () => {
