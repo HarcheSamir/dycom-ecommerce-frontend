@@ -51,6 +51,75 @@ const ManageSubscription: FC = () => {
         );
     }
 
+    // --- CASE 1.5: SMMA_ONLY ---
+    const isSmmaOnly = user?.subscriptionStatus === 'SMMA_ONLY';
+    if (isSmmaOnly) {
+        const smmaPaid = user?.installmentsPaid || 0;
+        const smmaRequired = user?.installmentsRequired || 1;
+        const smmaProgress = Math.min((smmaPaid / smmaRequired) * 100, 100);
+        const smmaDate = user?.currentPeriodEnd ? new Date(user.currentPeriodEnd).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+
+        return (
+            <div>
+                <div className="text-center mb-8">
+                    <div className="inline-flex justify-center items-center w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 mb-5 shadow-lg shadow-pink-500/20">
+                        <FaGem className="text-white text-3xl" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-1">Formation SMMA</h3>
+                    <p className="text-neutral-400 text-sm">Votre accès à la formation SMMA est actif.</p>
+                </div>
+
+                <div className="bg-[#111317] border border-neutral-800 rounded-2xl p-6 mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-sm text-neutral-400">Progression des paiements</span>
+                        <span className="text-white font-bold">{smmaPaid} / {smmaRequired}</span>
+                    </div>
+                    <div className="w-full bg-neutral-800 rounded-full h-3 mb-4 overflow-hidden">
+                        <div
+                            className="h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(219,39,119,0.5)] bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"
+                            style={{ width: `${smmaProgress}%` }}
+                        ></div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-center gap-3 text-sm text-neutral-400">
+                            <FaCheckCircle className="text-green-400" />
+                            <span>Accès actif</span>
+                        </div>
+                        {smmaDate && (
+                            <div className="text-center text-xs text-neutral-500">
+                                Prochain paiement le {smmaDate}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <a
+                    href="/dashboard/training"
+                    className="block w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-center font-bold text-white text-sm hover:from-pink-500 hover:to-purple-500 transition-all transform hover:scale-[1.02] shadow-lg shadow-purple-500/20 mb-6"
+                >
+                    Accéder à ma formation
+                </a>
+
+                {/* Upgrade CTA */}
+                <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/5 border border-purple-500/20 rounded-2xl p-6 text-center">
+                    <FaCrown className="text-purple-400 text-2xl mx-auto mb-3" />
+                    <h4 className="text-lg font-bold text-white mb-2">Passez à l'Académie Dycom</h4>
+                    <p className="text-neutral-400 text-sm mb-4 max-w-sm mx-auto">
+                        Débloquez les produits tendance, les influenceurs, le Coach IA, et bien plus.
+                    </p>
+                    <a
+                        href={HOTMART_LINK}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-white text-black font-bold hover:bg-gray-200 transition-all transform hover:scale-[1.02] shadow-lg shadow-white/10"
+                    >
+                        <FaCrown className="text-purple-500" /> Découvrir l'offre
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
     // --- CASE 2: ACTIVE LEGACY STRIPE USER ---
     const paid = user?.installmentsPaid || 0;
     const required = user?.installmentsRequired || 1;
@@ -216,7 +285,7 @@ export const BillingPage: FC = () => {
         }
 
         // 2. Has Valid Subscription
-        if (status === 'ACTIVE' || status === 'TRIALING' || status === 'LIFETIME_ACCESS') {
+        if (status === 'ACTIVE' || status === 'TRIALING' || status === 'LIFETIME_ACCESS' || status === 'SMMA_ONLY') {
             return (
                 <div className="w-full max-w-xl mx-auto">
                     <GlassCard>
