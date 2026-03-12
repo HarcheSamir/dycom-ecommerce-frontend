@@ -6,8 +6,8 @@ import apiClient from '../lib/apiClient';
 /**
  * WelcomePage — Post-Hotmart-payment landing page.
  * 
- * Hotmart redirects buyers here after payment with ?email=buyer@email.com
- * This page polls GET /auth/account-ready?email=X until the webhook has
+ * Hotmart redirects buyers here after payment with ?transaction=HP...
+ * This page polls GET /auth/account-ready?transaction=X until the webhook has
  * created the user account, then auto-redirects to /set-password?token=X.
  * 
  * Falls back to a "check your email" message after 30s timeout.
@@ -15,27 +15,27 @@ import apiClient from '../lib/apiClient';
 const WelcomePage = (): JSX.Element => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const email = searchParams.get('email')?.trim().toLowerCase() || '';
+    const transaction = searchParams.get('transaction')?.trim() || '';
 
-    const [status, setStatus] = useState<'polling' | 'timeout' | 'already-setup' | 'no-email'>('polling');
+    const [status, setStatus] = useState<'polling' | 'timeout' | 'already-setup' | 'no-transaction'>('polling');
     const pollCount = useRef(0);
     const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const hasRedirected = useRef(false);
 
-    // If no email param, show error immediately
+    // If no transaction param, show error immediately
     useEffect(() => {
-        if (!email) {
-            setStatus('no-email');
+        if (!transaction) {
+            setStatus('no-transaction');
         }
-    }, [email]);
+    }, [transaction]);
 
     // Polling logic
     useEffect(() => {
-        if (!email || status !== 'polling') return;
+        if (!transaction || status !== 'polling') return;
 
         const poll = async () => {
             try {
-                const res = await apiClient.get(`/auth/account-ready?email=${encodeURIComponent(email)}`);
+                const res = await apiClient.get(`/auth/account-ready?transaction=${encodeURIComponent(transaction)}`);
                 const data = res.data;
 
                 if (data.ready && data.token && !hasRedirected.current) {
@@ -78,10 +78,10 @@ const WelcomePage = (): JSX.Element => {
         return () => {
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         };
-    }, [email, status, navigate]);
+    }, [transaction, status, navigate]);
 
-    // --- No email param ---
-    if (status === 'no-email') {
+    // --- No transaction param ---
+    if (status === 'no-transaction') {
         return (
             <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #000000 0%, #030712 50%, #000000 100%)' }}>
                 <div className="max-w-md w-full mx-4 p-8 rounded-2xl border border-neutral-800" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
@@ -89,7 +89,7 @@ const WelcomePage = (): JSX.Element => {
                         <FaExclamationCircle className="text-red-500 text-5xl mx-auto mb-4" />
                         <h1 className="text-2xl font-bold text-white mb-2">Lien invalide</h1>
                         <p className="text-neutral-400 mb-6">
-                            Ce lien ne contient pas les informations nécessaires. Veuillez vérifier vos emails pour le lien de création de mot de passe.
+                            Ce lien ne contient pas de code de transaction. Veuillez vérifier vos emails pour le lien de création de mot de passe.
                         </p>
                         <a
                             href="/login"
@@ -139,9 +139,9 @@ const WelcomePage = (): JSX.Element => {
                         </div>
                         <h1 className="text-2xl font-bold text-white mb-2">Vérifiez vos emails</h1>
                         <p className="text-neutral-400 mb-2">
-                            Votre achat a bien été enregistré ! Un email de bienvenue a été envoyé à :
+                            Votre achat a bien été enregistré ! Un email de bienvenue vous a été envoyé.
                         </p>
-                        <p className="text-white font-semibold mb-4">{email}</p>
+                        <p className="text-white font-semibold mb-4">Transaction: {transaction}</p>
                         <p className="text-neutral-500 text-sm mb-6">
                             Cliquez sur le lien dans l'email pour finaliser votre compte.
                             <br />Pensez à vérifier vos <span className="text-yellow-400 font-medium">spams</span>.
@@ -165,7 +165,7 @@ const WelcomePage = (): JSX.Element => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 
@@ -203,10 +203,10 @@ const WelcomePage = (): JSX.Element => {
                             <span className="text-neutral-400 text-sm">Configuration en cours...</span>
                         </div>
 
-                        {/* Email displayed */}
+                        {/* Transaction displayed */}
                         <div className="bg-[#1C1E22] border border-neutral-700 rounded-lg px-4 py-3 text-sm">
-                            <span className="text-neutral-500">Compte : </span>
-                            <span className="text-white font-medium">{email}</span>
+                            <span className="text-neutral-500">Transaction : </span>
+                            <span className="text-white font-medium">{transaction}</span>
                         </div>
                     </div>
                 </div>
