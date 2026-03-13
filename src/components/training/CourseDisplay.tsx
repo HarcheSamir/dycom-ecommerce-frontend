@@ -174,9 +174,9 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                                     href={activeVideo.buttonUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg text-[10px] font-bold text-center transition-colors"
+                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg shadow-lg shadow-blue-500/20 text-[10px] font-bold text-center transition-all duration-300 transform hover:-translate-y-0.5"
                                 >
-                                    {activeVideo.buttonText}
+                                    <span>{activeVideo.buttonText}</span> <FaChevronRight size={10} />
                                 </a>
                             )}
                         </div>
@@ -210,9 +210,9 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                                     href={activeVideo.buttonUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 px-6 py-3 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg text-sm font-bold transition-colors"
+                                    className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.5)] text-sm font-bold transition-all duration-300 transform hover:scale-[1.02]"
                                 >
-                                    {activeVideo.buttonText}
+                                    <span>{activeVideo.buttonText}</span> <FaChevronRight size={14} />
                                 </a>
                             )}
 
