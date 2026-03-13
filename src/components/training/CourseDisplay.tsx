@@ -159,12 +159,27 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                         <h2 className="text-base font-bold text-white line-clamp-2 leading-tight">
                             {activeVideo.title}
                         </h2>
-                        <button
-                            onClick={handleVideoEnded}
-                            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-white text-[10px] uppercase font-bold hover:bg-white/20 transition-colors"
-                        >
-                            <span>{t('trainingPage.next')}</span> <FaChevronRight size={10} />
-                        </button>
+
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                            <button
+                                onClick={handleVideoEnded}
+                                className="w-full justify-center shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 text-white text-[10px] uppercase font-bold hover:bg-white/20 transition-colors"
+                            >
+                                <span>{t('trainingPage.next')}</span> <FaChevronRight size={10} />
+                            </button>
+
+                            {/* --- OPTIONAL BUTTON: Mobile --- */}
+                            {activeVideo.buttonText && activeVideo.buttonUrl && (
+                                <a
+                                    href={activeVideo.buttonUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg text-[10px] font-bold text-center transition-colors"
+                                >
+                                    {activeVideo.buttonText}
+                                </a>
+                            )}
+                        </div>
                     </div>
 
                     <button
@@ -175,8 +190,10 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                     </button>
 
                     {isDescExpanded && (
-                        <div className="mt-1 text-xs text-neutral-400 bg-neutral-900/50 p-2 rounded-lg animate-[fadeIn-up_0.2s_ease-out]">
-                            {activeVideo.description || t('adminPage.courseManagement.noDescription')}
+                        <div className="mt-1 flex flex-col gap-3 animate-[fadeIn-up_0.2s_ease-out]">
+                            <div className="text-xs text-neutral-400 bg-neutral-900/50 p-2 rounded-lg">
+                                {activeVideo.description || t('adminPage.courseManagement.noDescription')}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -185,18 +202,33 @@ export const CourseDisplay: FC<CourseDisplayProps> = ({ course, initialVideoId, 
                 <div className="hidden lg:block mt-6">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-2xl font-bold text-white">{activeVideo.title}</h2>
-                        <button
-                            onClick={handleVideoEnded}
-                            className="flex items-center gap-2 px-6 py-3 rounded-lg bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-colors"
-                        >
-                            <span>{t('trainingPage.markAsCompleted')}</span>
-                            <FaChevronRight />
-                        </button>
+
+                        <div className="flex items-center gap-4">
+                            {/* --- OPTIONAL BUTTON: Desktop --- */}
+                            {activeVideo.buttonText && activeVideo.buttonUrl && (
+                                <a
+                                    href={activeVideo.buttonUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-6 py-3 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg text-sm font-bold transition-colors"
+                                >
+                                    {activeVideo.buttonText}
+                                </a>
+                            )}
+
+                            <button
+                                onClick={handleVideoEnded}
+                                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-colors"
+                            >
+                                <span>{t('trainingPage.markAsCompleted')}</span>
+                                <FaChevronRight />
+                            </button>
+                        </div>
                     </div>
 
                     <GlassCard>
                         <h3 className="text-lg font-bold text-white mb-2">{t('adminPage.modals.common.description')}</h3>
-                        <p className="text-neutral-400">{activeVideo.description || t('adminPage.courseManagement.noDescription')}</p>
+                        <p className="text-neutral-400 mb-4">{activeVideo.description || t('adminPage.courseManagement.noDescription')}</p>
                     </GlassCard>
                 </div>
             </div>

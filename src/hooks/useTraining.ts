@@ -17,6 +17,8 @@ export interface Video {
   vimeoId: string;
   duration: number | null;
   order: number;
+  buttonText: string | null;
+  buttonUrl: string | null;
   progress: VideoProgress[];
   isNew?: boolean; // Added
 

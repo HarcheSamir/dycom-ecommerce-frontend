@@ -383,10 +383,12 @@ export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: 
     const [vimeoId, setVimeoId] = useState('');
     const [description, setDescription] = useState('');
     const [duration, setDuration] = useState<number | ''>('');
+    const [buttonText, setButtonText] = useState('');
+    const [buttonUrl, setButtonUrl] = useState('');
     const { mutate: addVideo, isPending } = useAddVideoToSection();
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        addVideo({ title, vimeoId, description, duration: Number(duration) || undefined, sectionId, courseId }, { onSuccess: () => { toast.success(t('adminPage.toasts.videoAdded')); setTitle(''); setVimeoId(''); setDescription(''); setDuration(''); onClose(); }, onError: () => { toast.error(t('adminPage.toasts.genericError')); } });
+        addVideo({ title, vimeoId, description, duration: Number(duration) || undefined, sectionId, courseId, buttonText: buttonText || undefined, buttonUrl: buttonUrl || undefined }, { onSuccess: () => { toast.success(t('adminPage.toasts.videoAdded')); setTitle(''); setVimeoId(''); setDescription(''); setDuration(''); setButtonText(''); setButtonUrl(''); onClose(); }, onError: () => { toast.error(t('adminPage.toasts.genericError')); } });
     };
     if (!show) return null;
     return (
@@ -397,6 +399,8 @@ export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div><label>{t('adminPage.modals.common.title')}</label><input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div><label>{t('adminPage.modals.common.vimeoId')}</label><input type="text" value={vimeoId} onChange={e => setVimeoId(e.target.value)} required className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
+                        <div><label>Button Text (Optional)</label><input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} placeholder="e.g. Join Discord" className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
+                        <div><label>Button URL (Optional)</label><input type="url" value={buttonUrl} onChange={e => setButtonUrl(e.target.value)} placeholder="e.g. https://discord.gg/..." className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div><label>{t('adminPage.modals.common.description')}</label><textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} className="w-full bg-[#1C1E22] border rounded-lg p-4 text-white" /></div>
                         <div><label>{t('adminPage.modals.common.duration')}</label><input type="number" value={duration} onChange={e => setDuration(e.target.value === '' ? '' : Number(e.target.value))} className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div className="flex justify-end gap-4 pt-4"><button type="button" onClick={onClose}>{t('adminPage.modals.common.cancel')}</button><button type="submit" disabled={isPending}>{t('adminPage.modals.common.add')}</button></div>
@@ -438,6 +442,8 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
     const [vimeoId, setVimeoId] = useState('');
     // --- CONFIRMATION: Description Field Logic ---
     const [description, setDescription] = useState('');
+    const [buttonText, setButtonText] = useState('');
+    const [buttonUrl, setButtonUrl] = useState('');
 
     const { mutate: updateVideo, isPending } = useUpdateVideo();
 
@@ -447,6 +453,8 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
             setVimeoId(video.vimeoId);
             // Ensure description isn't null
             setDescription(video.description || '');
+            setButtonText(video.buttonText || '');
+            setButtonUrl(video.buttonUrl || '');
         }
     }, [video]);
 
@@ -455,7 +463,7 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
         updateVideo({
             videoId: video.id,
             courseId,
-            data: { title, vimeoId, description }
+            data: { title, vimeoId, description, buttonText: buttonText || undefined, buttonUrl: buttonUrl || undefined }
         }, { onSuccess: onClose });
     };
 
@@ -473,6 +481,14 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
                         <div>
                             <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.vimeoId')}</label>
                             <input type="text" value={vimeoId} onChange={e => setVimeoId(e.target.value)} required className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
+                        </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">Button Text (Optional)</label>
+                            <input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} placeholder="e.g. Join Discord" className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
+                        </div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">Button URL (Optional)</label>
+                            <input type="url" value={buttonUrl} onChange={e => setButtonUrl(e.target.value)} placeholder="e.g. https://discord.gg/..." className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                         </div>
                         {/* --- EXPLICIT DESCRIPTION FIELD --- */}
                         <div>
