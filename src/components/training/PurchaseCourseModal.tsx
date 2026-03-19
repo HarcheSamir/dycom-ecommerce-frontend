@@ -152,6 +152,9 @@ export const PurchaseCourseModal: FC<PurchaseCourseModalProps> = ({ course, onCl
                                         : t('trainingPage.courseCard.getFreeButton'))
                                 }
                             </button>
+                            <p className="text-center text-xs text-neutral-400 mt-4">
+                                En cliquant sur le bouton, vous acceptez nos <a href="https://dycom-academie.com/cgu" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:underline">CGV et CGU</a>.
+                            </p>
                         </>
                     )}
                 </div>

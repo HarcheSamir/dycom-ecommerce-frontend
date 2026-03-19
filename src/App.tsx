@@ -43,6 +43,7 @@ import { AdminShopOrdersPage } from './pages/AdminShopOrdersPage';
 import { MyShopOrdersPage } from './pages/MyShopOrdersPage';
 import { AdminNewsletterPage } from './pages/AdminNewsletterPage';
 import { AdminAnnouncementsPage } from './pages/AdminAnnouncementsPage';
+import CguPage from './pages/CguPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -100,6 +101,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/" element={<LandingPage />} />
+            <Route path="/cgu" element={<CguPage />} />
           </Routes>
         </Router>
       </AuthProvider>

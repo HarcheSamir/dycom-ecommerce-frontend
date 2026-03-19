@@ -289,6 +289,9 @@ const PricingCard: FC<PricingCardProps> = ({ plan, isBestValue, features, curren
             >
                 {t(hasAccess ? 'membershipPricing.card.goToDashboard' : 'membershipPricing.card.startNow')}
             </button>
+            <p className="text-center text-xs text-neutral-400 mt-4">
+                En cliquant sur ce bouton, vous acceptez nos <a href="https://dycom-academie.com/cgu" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:underline">CGV et CGU</a>.
+            </p>
 
             {/* KLARNA & PAYMENT LOGOS SECTION */}
             <div className="mt-6 text-center border-t border-neutral-800 pt-6">

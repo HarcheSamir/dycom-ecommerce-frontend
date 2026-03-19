@@ -143,8 +143,13 @@ const SignupPage = (): JSX.Element => {
                     </div>
                 </div>
 
-                {/* Login Link */}
+                {/* Payment terms */}
                 <p className="text-center text-sm text-neutral-400 mt-8 opacity-0 animate-[fadeIn-up_1s_ease-out_0.5s] [animation-fill-mode:forwards]">
+                    En cliquant sur acheter ou commencer, vous acceptez nos <a href="https://dycom-academie.com/cgu" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:underline">CGV et CGU</a>.
+                </p>
+
+                {/* Login Link */}
+                <p className="text-center text-sm text-neutral-400 mt-4 opacity-0 animate-[fadeIn-up_1s_ease-out_0.5s] [animation-fill-mode:forwards]">
                     Déjà un compte ?{' '}
                     <Link to="/login" className="font-semibold text-white hover:underline">Se connecter</Link>
                 </p>
