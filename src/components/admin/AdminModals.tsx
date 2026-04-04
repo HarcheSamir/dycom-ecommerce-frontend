@@ -385,15 +385,16 @@ export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: 
     const [duration, setDuration] = useState<number | ''>('');
     const [buttonText, setButtonText] = useState('');
     const [buttonUrl, setButtonUrl] = useState('');
+    const [scheduledAt, setScheduledAt] = useState('');
     const { mutate: addVideo, isPending } = useAddVideoToSection();
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        addVideo({ title, vimeoId, description, duration: Number(duration) || undefined, sectionId, courseId, buttonText: buttonText || undefined, buttonUrl: buttonUrl || undefined }, { onSuccess: () => { toast.success(t('adminPage.toasts.videoAdded')); setTitle(''); setVimeoId(''); setDescription(''); setDuration(''); setButtonText(''); setButtonUrl(''); onClose(); }, onError: () => { toast.error(t('adminPage.toasts.genericError')); } });
+        addVideo({ title, vimeoId, description, duration: Number(duration) || undefined, sectionId, courseId, buttonText: buttonText || undefined, buttonUrl: buttonUrl || undefined, scheduledAt: scheduledAt || undefined }, { onSuccess: () => { toast.success(t('adminPage.toasts.videoAdded')); setTitle(''); setVimeoId(''); setDescription(''); setDuration(''); setButtonText(''); setButtonUrl(''); setScheduledAt(''); onClose(); }, onError: () => { toast.error(t('adminPage.toasts.genericError')); } });
     };
     if (!show) return null;
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[60] p-4" onClick={onClose}>
-            <div className="relative border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
+            <div className="relative border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
                 <div className="p-8">
                     <h2 className="text-2xl font-bold text-white mb-6">{t('adminPage.modals.addVideo.title')}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -401,6 +402,11 @@ export const AddVideoModal: FC<{ show: boolean; onClose: () => void; sectionId: 
                         <div><label>{t('adminPage.modals.common.vimeoId')}</label><input type="text" value={vimeoId} onChange={e => setVimeoId(e.target.value)} required className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div><label>Button Text (Optional)</label><input type="text" value={buttonText} onChange={e => setButtonText(e.target.value)} placeholder="e.g. Join Discord" className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div><label>Button URL (Optional)</label><input type="url" value={buttonUrl} onChange={e => setButtonUrl(e.target.value)} placeholder="e.g. https://discord.gg/..." className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">📅 Date de publication (optionnel)</label>
+                            <input type="datetime-local" value={scheduledAt} onChange={e => setScheduledAt(e.target.value)} className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
+                            <p className="text-xs text-neutral-500 mt-1">Laisser vide pour publier immédiatement.</p>
+                        </div>
                         <div><label>{t('adminPage.modals.common.description')}</label><textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} className="w-full bg-[#1C1E22] border rounded-lg p-4 text-white" /></div>
                         <div><label>{t('adminPage.modals.common.duration')}</label><input type="number" value={duration} onChange={e => setDuration(e.target.value === '' ? '' : Number(e.target.value))} className="w-full bg-[#1C1E22] border rounded-lg h-12 px-4 text-white" /></div>
                         <div className="flex justify-end gap-4 pt-4"><button type="button" onClick={onClose}>{t('adminPage.modals.common.cancel')}</button><button type="submit" disabled={isPending}>{t('adminPage.modals.common.add')}</button></div>
@@ -444,6 +450,7 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
     const [description, setDescription] = useState('');
     const [buttonText, setButtonText] = useState('');
     const [buttonUrl, setButtonUrl] = useState('');
+    const [scheduledAt, setScheduledAt] = useState('');
 
     const { mutate: updateVideo, isPending } = useUpdateVideo();
 
@@ -455,6 +462,14 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
             setDescription(video.description || '');
             setButtonText(video.buttonText || '');
             setButtonUrl(video.buttonUrl || '');
+            // Format existing scheduledAt for datetime-local input (YYYY-MM-DDTHH:mm)
+            if (video.scheduledAt) {
+                const d = new Date(video.scheduledAt);
+                const pad = (n: number) => n.toString().padStart(2, '0');
+                setScheduledAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+            } else {
+                setScheduledAt('');
+            }
         }
     }, [video]);
 
@@ -463,14 +478,19 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
         updateVideo({
             videoId: video.id,
             courseId,
-            data: { title, vimeoId, description, buttonText: buttonText || undefined, buttonUrl: buttonUrl || undefined }
+            data: {
+                title, vimeoId, description,
+                buttonText: buttonText || undefined,
+                buttonUrl: buttonUrl || undefined,
+                scheduledAt: scheduledAt ? new Date(scheduledAt).toISOString() : null
+            }
         }, { onSuccess: onClose });
     };
 
     if (!show) return null;
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[60] p-4" onClick={onClose}>
-            <div className="relative border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
+            <div className="relative border border-neutral-800 rounded-3xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto" style={{ background: '#111317' }} onClick={e => e.stopPropagation()}>
                 <div className="p-8">
                     <h2 className="text-2xl font-bold text-white mb-6">{t('adminPage.modals.editVideo.title')}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -490,6 +510,29 @@ export const EditVideoModal: FC<{ show: boolean; onClose: () => void; video: any
                             <label className="text-sm text-neutral-400 mb-2 block">Button URL (Optional)</label>
                             <input type="url" value={buttonUrl} onChange={e => setButtonUrl(e.target.value)} placeholder="e.g. https://discord.gg/..." className="w-full bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white" />
                         </div>
+                        {/* --- SCHEDULED RELEASE DATE --- */}
+                        <div>
+                            <label className="text-sm text-neutral-400 mb-2 block">📅 Date de publication</label>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="datetime-local"
+                                    value={scheduledAt}
+                                    onChange={e => setScheduledAt(e.target.value)}
+                                    className="flex-1 bg-[#1C1E22] border border-neutral-700 rounded-lg h-12 px-4 text-white"
+                                />
+                                {scheduledAt && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setScheduledAt('')}
+                                        className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 text-xs font-bold hover:bg-red-500/20 transition-colors"
+                                    >
+                                        Effacer
+                                    </button>
+                                )}
+                            </div>
+                            <p className="text-xs text-neutral-500 mt-1">Vide = disponible immédiatement.</p>
+                        </div>
+                        {/* ---------------------------------- */}
                         {/* --- EXPLICIT DESCRIPTION FIELD --- */}
                         <div>
                             <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.modals.common.description')}</label>

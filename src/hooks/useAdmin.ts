@@ -51,7 +51,7 @@ interface NewCourseData {
     language?: string;
     category?: 'MAIN' | 'ARCHIVE';
 }
-export interface AdminVideo { id: string; title: string; vimeoId: string; description: string | null; duration: number | null; order: number; buttonText: string | null; buttonUrl: string | null; }
+export interface AdminVideo { id: string; title: string; vimeoId: string; description: string | null; duration: number | null; order: number; buttonText: string | null; buttonUrl: string | null; scheduledAt: string | null; }
 export interface AdminSection { id: string; title: string; videos: AdminVideo[]; }
 export interface AdminCourseDetails extends AdminCourse { sections: AdminSection[]; }
 export interface AdminSettings { [key: string]: string; }
@@ -107,7 +107,7 @@ export const useCreateCourse = () => { const queryClient = useQueryClient(); ret
 export const useAdminCourseDetails = (courseId: string | null) => useQuery({ queryKey: ['adminCourseDetails', courseId], queryFn: async (): Promise<AdminCourseDetails> => { if (!courseId) throw new Error("No course ID provided"); const response: AxiosResponse<AdminCourseDetails> = await apiClient.get(`/admin/courses/${courseId}`); return response.data; }, enabled: !!courseId });
 interface NewSectionData { title: string; courseId: string; }
 export const useCreateSection = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: ({ title, courseId }: NewSectionData) => apiClient.post(`/admin/courses/${courseId}/sections`, { title }), onSuccess: (_, variables) => { queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] }); } }); };
-interface NewVideoData { title: string; vimeoId: string; description?: string; duration?: number; order?: number; sectionId: string; courseId: string; buttonText?: string; buttonUrl?: string; }
+interface NewVideoData { title: string; vimeoId: string; description?: string; duration?: number; order?: number; sectionId: string; courseId: string; buttonText?: string; buttonUrl?: string; scheduledAt?: string; }
 export const useAddVideoToSection = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: (videoData: NewVideoData) => apiClient.post(`/admin/sections/${videoData.sectionId}/videos`, videoData), onSuccess: (_, variables) => { queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] }); } }); };
 export const useDeleteCourse = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: (courseId: string) => apiClient.delete(`/admin/courses/${courseId}`), onSuccess: () => { toast.success("Formation supprimée !"); queryClient.invalidateQueries({ queryKey: ['adminCourses'] }); } }); };
 
@@ -117,7 +117,7 @@ export const useUpdateSection = () => { const queryClient = useQueryClient(); re
 
 interface DeleteSectionData { sectionId: string; courseId: string; }
 export const useDeleteSection = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: ({ sectionId }: DeleteSectionData) => apiClient.delete(`/admin/sections/${sectionId}`), onSuccess: (_, variables) => { toast.success("Section supprimée !"); queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] }); } }); };
-interface UpdateVideoData { videoId: string; courseId: string; data: { title: string; vimeoId: string; description?: string; duration?: number; buttonText?: string; buttonUrl?: string; } }
+interface UpdateVideoData { videoId: string; courseId: string; data: { title: string; vimeoId: string; description?: string; duration?: number; buttonText?: string; buttonUrl?: string; scheduledAt?: string | null; } }
 export const useUpdateVideo = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: ({ videoId, data }: UpdateVideoData) => apiClient.put(`/admin/videos/${videoId}`, data), onSuccess: (_, variables) => { toast.success("Vidéo mise à jour !"); queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] }); } }); };
 interface DeleteVideoData { videoId: string; courseId: string; }
 export const useDeleteVideo = () => { const queryClient = useQueryClient(); return useMutation({ mutationFn: ({ videoId }: DeleteVideoData) => apiClient.delete(`/admin/videos/${videoId}`), onSuccess: (_, variables) => { toast.success("Vidéo supprimée !"); queryClient.invalidateQueries({ queryKey: ['adminCourseDetails', variables.courseId] }); } }); };

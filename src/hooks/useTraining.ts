@@ -21,6 +21,8 @@ export interface Video {
   buttonUrl: string | null;
   progress: VideoProgress[];
   isNew?: boolean; // Added
+  isLocked?: boolean;
+  scheduledAt?: string | null;
 
 }
 
