@@ -6,7 +6,7 @@ export const usePublicSettings = () => {
     return useQuery({
         queryKey: ['publicSettings'],
         queryFn: async () => {
-            const { data } = await apiClient.get<{ urgencyEnabled: boolean }>('/settings/public');
+            const { data } = await apiClient.get<{ urgencyEnabled: boolean, disabledServices: string[] }>('/settings/public');
             return data;
         },
         staleTime: 1000 * 60 * 5, // 5 minutes cache
@@ -16,7 +16,7 @@ export const usePublicSettings = () => {
 export const useUpdateSettings = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (data: { urgencyEnabled: boolean }) => {
+        mutationFn: async (data: { urgencyEnabled?: boolean, disabledServices?: string[] }) => {
             return apiClient.patch('/settings', data);
         },
         onSuccess: () => {

@@ -125,14 +125,21 @@ export const PlatformSettings: FC = () => {
     const { data: settings, isLoading: isLoadingSettings } = useGetSettings();
     const { mutate: updateSettings, isPending: isUpdatingSettings } = useUpdateSettings();
     const { data: globalSettings } = usePublicSettings();
-    const { mutate: updateGlobalSettings, isPending: isUpdatingGlobal } = useUpdateGlobalSettings(); // Rename to avoid conflict
+    const { mutate: updateGlobalSettings, isPending: isUpdatingGlobal } = useUpdateGlobalSettings();
     const [discountPercentage, setDiscountPercentage] = useState('');
+    const [disabledServices, setDisabledServices] = useState<string[]>([]);
 
     useEffect(() => {
         if (settings) {
             setDiscountPercentage(settings.affiliateCourseDiscountPercentage || '50');
         }
     }, [settings]);
+
+    useEffect(() => {
+        if (globalSettings?.disabledServices) {
+            setDisabledServices(globalSettings.disabledServices);
+        }
+    }, [globalSettings]);
 
     const handleSave = () => {
         const rateValue = parseFloat(discountPercentage);
@@ -141,6 +148,8 @@ export const PlatformSettings: FC = () => {
             return;
         }
         updateSettings({ affiliateCourseDiscountPercentage: String(rateValue) });
+        // Save the disabled services globally
+        updateGlobalSettings({ disabledServices });
     };
 
     const toggleUrgency = () => {
@@ -148,18 +157,35 @@ export const PlatformSettings: FC = () => {
         updateGlobalSettings({ urgencyEnabled: newValue });
     };
 
+    const toggleService = (serviceId: string) => {
+        if (disabledServices.includes(serviceId)) {
+            setDisabledServices(disabledServices.filter(id => id !== serviceId));
+        } else {
+            setDisabledServices([...disabledServices, serviceId]);
+        }
+    };
+
     if (isLoadingSettings) return <DashboardCard><p className="text-neutral-500">{t('adminPage.platformSettings.loading')}</p></DashboardCard>;
+
+    const availableServices = [
+        { id: 'orderShop', label: 'Commander ma boutique' },
+        { id: 'visuelsAds', label: 'Visuels Ads' },
+        { id: 'influencers', label: 'Influencers' },
+        { id: 'trendtrack', label: 'TrendTrack' },
+        { id: 'suppliers', label: 'Fournisseurs' },
+        { id: 'products', label: 'Produits tendance' }
+    ];
 
     return (
         <DashboardCard>
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4"><FaCog /> {t('adminPage.platformSettings.title')}</h2>
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4"><FaCog /> {t('adminPage.platformSettings.title', 'Paramètres de la plateforme')}</h2>
             <div className="space-y-6">
 
                 {/* URGENCY MODE TOGGLE */}
                 <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
                     <div>
-                        <h3 className="text-white font-medium">{t('adminPage.urgencyMode.label')}</h3>
-                        <p className="text-sm text-neutral-400">{t('adminPage.urgencyMode.description')}</p>
+                        <h3 className="text-white font-medium">{t('adminPage.urgencyMode.label', 'Mode urgence')}</h3>
+                        <p className="text-sm text-neutral-400">{t('adminPage.urgencyMode.description', 'Affiche une bannière urgence')}</p>
                     </div>
                     <button
                         onClick={toggleUrgency}
@@ -170,13 +196,37 @@ export const PlatformSettings: FC = () => {
                     </button>
                 </div>
 
+                {/* MAINTENANCE MODE TOGGLES */}
+                <div className="border-b border-neutral-800 pb-4">
+                    <div className="mb-4">
+                        <h3 className="text-white font-medium">Maintenance des Services</h3>
+                        <p className="text-sm text-neutral-400">Désactiver temporairement certains services (Menu Lancer mon business)</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {availableServices.map((service) => {
+                            const isDisabled = disabledServices.includes(service.id);
+                            return (
+                                <div key={service.id} className="flex items-center justify-between p-3 rounded-lg bg-[#111317] border border-neutral-800">
+                                    <span className="text-sm text-white">{service.label}</span>
+                                    <button
+                                        onClick={() => toggleService(service.id)}
+                                        className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${isDisabled ? 'bg-red-500' : 'bg-green-500'}`}
+                                    >
+                                        <div className={`absolute top-0.5 left-0.5 bg-white w-4 h-4 rounded-full transition-transform duration-300 ${isDisabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
                 <div>
                     <label className="text-sm text-neutral-400 mb-2 block">{t('adminPage.platformSettings.discountRateLabel', 'Affiliate Reward Discount (%)')}</label>
                     <input type="number" value={discountPercentage} onChange={(e) => setDiscountPercentage(e.target.value)} className="w-full bg-[#111317] border border-neutral-700 rounded-lg h-12 px-4 text-white" placeholder={t('adminPage.platformSettings.commissionRatePlaceholder', 'e.g., 50')} />
                 </div>
                 <div className="flex justify-end">
-                    <button onClick={handleSave} disabled={isUpdatingSettings} className="px-5 py-2.5 rounded-lg bg-gray-200 text-black font-semibold disabled:opacity-50">
-                        {isUpdatingSettings ? t('adminPage.platformSettings.saving') : t('adminPage.platformSettings.save')}
+                    <button onClick={handleSave} disabled={isUpdatingSettings || isUpdatingGlobal} className="px-5 py-2.5 rounded-lg bg-gray-200 text-black font-semibold disabled:opacity-50">
+                        {(isUpdatingSettings || isUpdatingGlobal) ? t('adminPage.platformSettings.saving', 'Sauvegarde...') : t('adminPage.platformSettings.save', 'Sauvegarder')}
                     </button>
                 </div>
             </div>

@@ -20,6 +20,7 @@ import { useAdminUnreadCounts } from '../hooks/useAdminUnreadCounts';
 import { AnnouncementBanner } from '../components/AnnouncementBanner';
 import { AnnouncementModal } from '../components/AnnouncementModal';
 import { AnnouncementCarousel } from '../components/AnnouncementCarousel';
+import { usePublicSettings } from '../hooks/useSettings';
 
 // --- Type Definitions ---
 type NavLink = {
@@ -286,6 +287,8 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
     const isAdmin = user?.accountType === 'ADMIN';
     const isSmmaOnly = user?.subscriptionStatus === 'SMMA_ONLY';
     const { data: unreadCounts } = useAdminUnreadCounts();
+    const { data: publicSettings } = usePublicSettings();
+    const disabledServices = publicSettings?.disabledServices || [];
 
     // Discord hooks
     const discordAuthUrl = useDiscordAuthUrl();
@@ -551,6 +554,22 @@ const Sidebar: FC<{ isOpen: boolean; onNavigate: () => void; onOpenVideoModal: (
                                     {visibleItems.map((link) => {
                                         const linkLabel = link.label || (link.nameKey ? t(`sidebar.nav.${link.nameKey}`) : '');
                                         const isLocked = link.premiumOnly && isSmmaOnly;
+                                        const isMaintenance = link.nameKey && disabledServices.includes(link.nameKey);
+
+                                        // Disabled for maintenance
+                                        if (isMaintenance) {
+                                            return (
+                                                <div
+                                                    key={link.path}
+                                                    className="flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left text-sm text-neutral-600 bg-neutral-900/40 opacity-80 cursor-not-allowed group relative"
+                                                    title="Ce service est temporairement en maintenance"
+                                                >
+                                                    <span className="text-lg opacity-40">{link.icon}</span>
+                                                    <span className="flex-1 opacity-50">{linkLabel}</span>
+                                                    <span className="text-[10px] font-bold text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Maintenance</span>
+                                                </div>
+                                            );
+                                        }
 
                                         // Locked premium items for SMMA users — visible but greyed out with lock
                                         if (isLocked) {
